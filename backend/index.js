@@ -13,6 +13,14 @@ app.use(
   //   allowedHeaders: ["Content-Type"],
   // })
 );
+
+app.use(express.json());
+app.use("/hostels", hostelRoutes);
+app.use("/parkings", parkingRoutes);
+app.use("/owner", ownerRoutes);
+app.use("/applicant", applicantRoutes);
+app.use("/tenant", tenantRoutes);
+
 mongoose
   .connect(DB_URL)
   .then(() => {
