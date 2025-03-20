@@ -11,7 +11,6 @@ import ownerRoutes from "./routes/ownerRoutes.js";
 import applicantRoutes from "./routes/applicantRoutes.js";
 
 const app = express();
-
 app.use(
   cors()
   // cors({
