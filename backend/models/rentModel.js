@@ -1,4 +1,5 @@
-const rentSchema = new mongoose.Schema({
+const rentSchema = new mongoose.Schema(
+  {
     amount: {
       type: mongoose.Schema.Types.Number,
       required: true,
@@ -18,7 +19,10 @@ const rentSchema = new mongoose.Schema({
       ref: "Rental", // References the Rental collection
       required: true,
     },
-  });
-  
-  export const Rent = mongoose.model("Rent", rentSchema);
-  
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export const Rent = mongoose.model("Rent", rentSchema);

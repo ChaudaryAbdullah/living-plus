@@ -7,8 +7,8 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate(); // ✅ Corrected Navigation
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
+    
     console.log('Login attempt with:', { email, password });
     navigate('/rental-view');
     // try {
