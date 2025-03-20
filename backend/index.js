@@ -2,7 +2,12 @@ import mongoose from "mongoose";
 import express from "express";
 import { PORT, DB_URL } from "./config.js";
 import cors from "cors";
-
+import applicantRoutes from "./routes/applicantRoutes.js";
+import ownerRoutes from "./routes/ownerRoutes.js";
+import parkingAllocationRoutes from "./routes/parkingAllocationRoutes.js";
+import rentalRoutes from "./routes/rentalRoutes.js";
+import tenantRoutes from "./routes/tenantRoutes.js";
+// import parkingRequestRoutes from "./routes/parkingRequestRoutes.js";
 const app = express();
 
 app.use(
@@ -15,8 +20,8 @@ app.use(
 );
 
 app.use(express.json());
-app.use("/hostels", hostelRoutes);
-app.use("/parkings", parkingRoutes);
+app.use("/rentals", rentalRoutes);
+app.use("/parkingAllocation", parkingAllocationRoutes);
 app.use("/owner", ownerRoutes);
 app.use("/applicant", applicantRoutes);
 app.use("/tenant", tenantRoutes);
