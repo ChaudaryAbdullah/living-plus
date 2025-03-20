@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './HomePage.css';
+import './css/HomePage.css';
 
 const HomePage = () => {
   // Placeholder data for properties that would be fetched from backend

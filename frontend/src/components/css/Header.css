@@ -1,0 +1,64 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 2px solid #e0e0e0;
+    background-color: white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 22px;
+    color: #00205b;
+    margin-right: 20px;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #00205b;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.start-listing-btn {
+    background-color: transparent;
+    color: #00205b;
+    border: 2px solid #00205b;
+    border-radius: 20px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.start-listing-btn:hover {
+    background-color: #00205b;
+    color: white;
+}
+
+.font-size-btn {
+    background-color: transparent;
+    color: #00205b;
+    border: 2px solid #00205b;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.font-size-btn:hover {
+    background-color: #00205b;
+    color: white;
+}

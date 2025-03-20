@@ -4,6 +4,8 @@ import SignUp from "./components/signUp";
 import Login from "./components/Login";
 import HomePage from "./components/HomePage";
 import RentalView from "./components/rental-view";
+import AddRooms from "./components/AddRooms";
+import ApplyRental from "./components/apply-rental";
 import './App.css'
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/rental-view" element={<RentalView />} />
+        <Route path="/addRooms" element={<AddRooms />} />
+        <Route path="/apply-rental" element={<ApplyRental />} />
       </Routes>
     </Router>
     </div>
