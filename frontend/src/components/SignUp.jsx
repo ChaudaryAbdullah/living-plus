@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import "./SignUp.css"
+import "./css/SignUp.css"
 
 export default function SignUp() {
   const [passwordVisible, setPasswordVisible] = useState(false)
