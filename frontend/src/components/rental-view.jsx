@@ -1,71 +1,24 @@
-import React, { useState } from 'react';
-import './rental-view.css';
-
-// Placeholder data - this would be replaced with data from your backend
-const placeholderProperties = [
-  {
-    id: 1,
-    title: 'Eastleigh 2nd Avenue',
-    address: '2500 B 2nd Avenue For Sale',
-    units: '10+ Units',
-    beds: '2 Beds',
-    bath: '1 bath',
-    price: 'Ksh 200,000',
-    applicants: 25,
-    image: '/placeholder-house1.jpg'
-  },
-  {
-    id: 2,
-    title: 'Eastleigh 2nd Avenue',
-    address: '2500 B 2nd Avenue opposite Road',
-    units: '10+ Units available',
-    beds: '2 Beds',
-    bath: '1 bath',
-    price: 'Ksh 200,000',
-    applicants: 25,
-    image: '/placeholder-house2.jpg'
-  },
-  {
-    id: 3,
-    title: 'Eastleigh 2nd Avenue',
-    address: '2500 B 2nd Avenue opposite Road',
-    units: '10+ Units available',
-    price: 'Ksh 200,000',
-    applicants: 25,
-    image: '/placeholder-house3.jpg'
-  },
-  {
-    id: 4,
-    title: 'Eastleigh 2nd Avenue',
-    address: '2500 B 2nd Avenue opposite Road',
-    units: '10+ Units available',
-    price: 'Ksh 200,000',
-    applicants: 25,
-    image: '/placeholder-house1.jpg'
-  },
-  {
-    id: 5,
-    title: 'Eastleigh 2nd Avenue',
-    address: '2500 B 2nd Avenue opposite Road',
-    units: '10+ Units available',
-    price: 'Ksh 200,000',
-    applicants: 25,
-    image: '/placeholder-house2.jpg'
-  },
-  {
-    id: 6,
-    title: 'Eastleigh 2nd Avenue',
-    address: '2500 B 2nd Avenue opposite Road',
-    units: '10+ Units available',
-    price: 'Ksh 200,000',
-    applicants: 25,
-    image: '/placeholder-house3.jpg'
-  }
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./rental-view.css";
 
 const RentalView = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  
+  const [rentals, setRentals] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Fetch rentals from DB
+  useEffect(() => {
+    const fetchRentals = async () => {
+      try {
+        const response = await axios.get("http://localhost:5555/rentals");
+        setRentals(response.data);
+      } catch (error) {
+        console.error("Error fetching rentals:", error);
+      }
+    };
+    fetchRentals();
+  }, []);
+
   return (
     <div className="rental-app">
       {/* Header */}
@@ -111,9 +64,9 @@ const RentalView = () => {
           {/* Search Bar */}
           <div className="search-container">
             <div className="search-bar">
-              <input 
-                type="text" 
-                placeholder="Search for location..." 
+              <input
+                type="text"
+                placeholder="Search for location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -129,27 +82,38 @@ const RentalView = () => {
 
           {/* Property Grid */}
           <div className="property-grid">
-            {placeholderProperties.map(property => (
-              <div className="property-card" key={property.id}>
-                <div className="property-image">
-                  <img src={property.image || "/placeholder.svg"} alt={property.title} />
-                </div>
-                <div className="property-details">
-                  <h3 className="property-title">{property.title}</h3>
-                  <p className="property-address">{property.address}</p>
-                  <div className="property-specs">
-                    <span className="property-units">{property.units}</span>
-                    {property.beds && <span className="property-beds">{property.beds}</span>}
-                    {property.bath && <span className="property-bath">{property.bath}</span>}
+            {rentals.length > 0 ? (
+              rentals.map((rental) => (
+                <div className="property-card" key={rental._id}>
+                  <div className="property-image">
+                    <img
+                      src={rental.image || "/placeholder.svg"}
+                      alt={rental.rentalName}
+                    />
                   </div>
-                  <div className="property-footer">
-                    <span className="property-price">{property.price}</span>
-                    <span className="property-applicants">Applicants {property.applicants}</span>
+                  <div className="property-details">
+                    <h3 className="property-title">{rental.rentalName}</h3>
+                    <p className="property-address">{rental.address}</p>
+                    <div className="property-specs">
+                      <span className="property-units">
+                        {rental.totalRooms} Total Rooms
+                      </span>
+                      <span className="property-beds">
+                        {rental.availableRooms} Available
+                      </span>
+                    </div>
+                    <div className="property-footer">
+                      <span className="property-price">
+                        Facilities: {rental.facilities.join(", ")}
+                      </span>
+                    </div>
+                    <button className="view-property-btn">View Property</button>
                   </div>
-                  <button className="view-property-btn">View Property</button>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>No properties found.</p>
+            )}
           </div>
         </main>
       </div>
