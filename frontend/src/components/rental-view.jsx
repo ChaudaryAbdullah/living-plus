@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./rental-view.css";
+import "./css/rental-view.css";
 
 const RentalView = () => {
   const [rentals, setRentals] = useState([]);
@@ -107,7 +107,7 @@ const RentalView = () => {
                         Facilities: {rental.facilities.join(", ")}
                       </span>
                     </div>
-                    <button className="view-property-btn">View Property</button>
+                    <button href = "/addRooms" className="view-property-btn">View Property</button>
                   </div>
                 </div>
               ))
