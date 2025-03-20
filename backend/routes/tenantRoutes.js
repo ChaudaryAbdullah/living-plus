@@ -10,6 +10,7 @@ router.post("/", async (req, res) => {
       !req.body.userName ||
       !req.body.address ||
       !req.body.dob ||
+      !req.body.email ||
       !req.body.password
     ) {
       return res.status(400).send({ message: "Please fill all the fields" });
@@ -20,6 +21,7 @@ router.post("/", async (req, res) => {
       lastName: req.body.lastName,
       address: req.body.address,
       dob: req.body.dob,
+      email: req.body.email,
       password: req.body.password,
     });
     await newTenant.save();
@@ -60,6 +62,7 @@ router.put("/:id", async (req, res) => {
       !req.body.userName ||
       !req.body.address ||
       !req.body.dob ||
+      !req.body.email ||
       !req.body.password
     ) {
       return res.status(400).send({ message: "Please fill all the fields" });
@@ -74,6 +77,7 @@ router.put("/:id", async (req, res) => {
     tenant.lastName = req.body.lastName;
     tenant.address = req.body.address;
     tenant.dob = req.body.dob;
+    tenant.email = req.body.email;
     tenant.password = req.body.password;
     await tenant.save();
     return res.status(200).send({ message: "Tenant updated successfully!" });

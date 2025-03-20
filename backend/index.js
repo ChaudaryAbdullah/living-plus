@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import express from "express";
 import { PORT, DB_URL } from "./config.js";
 import cors from "cors";
-
 import renatlRoutes from "./routes/rentalRoutes.js";
 import parkingAllocationRoutes from "./routes/parkingAllocationRoutes.js";
 import parkingRequestRoutes from "./routes/parkingRequestRoutes.js";
@@ -10,7 +9,8 @@ import parkingSlotRoutes from "./routes/parkingSlotRoutes.js";
 import tenantRoutes from "./routes/tenantRoutes.js";
 import ownerRoutes from "./routes/ownerRoutes.js";
 import applicantRoutes from "./routes/applicantRoutes.js";
-const app = express()
+
+const app = express();
 app.use(
   cors()
   // cors({

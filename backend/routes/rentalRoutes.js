@@ -5,14 +5,29 @@ const router = express.Router();
 // Create a new rental
 router.post("/", async (req, res) => {
   try {
-    const { rentalName, address, facilities, totalRooms, availableRooms } = req.body;
-    if (!rentalName || !address || !facilities || !totalRooms || !availableRooms) {
+    const { rentalName, address, facilities, totalRooms, availableRooms } =
+      req.body;
+    if (
+      !rentalName ||
+      !address ||
+      !facilities ||
+      !totalRooms ||
+      !availableRooms
+    ) {
       return res.status(400).send({ message: "Please fill all the fields" });
     }
-    
-    const newRental = new Rental({ rentalName, address, facilities, totalRooms, availableRooms });
+
+    const newRental = new Rental({
+      rentalName,
+      address,
+      facilities,
+      totalRooms,
+      availableRooms,
+    });
     await newRental.save();
-    return res.status(201).send({ message: "New rental created successfully!" });
+    return res
+      .status(201)
+      .send({ message: "New rental created successfully!" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
@@ -44,23 +59,30 @@ router.get("/:id", async (req, res) => {
 // Update a rental by ID
 router.put("/:id", async (req, res) => {
   try {
-    const { rentalName, address, facilities, totalRooms, availableRooms } = req.body;
-    if (!rentalName || !address || !facilities || !totalRooms || !availableRooms) {
+    const { rentalName, address, facilities, totalRooms, availableRooms } =
+      req.body;
+    if (
+      !rentalName ||
+      !address ||
+      !facilities ||
+      !totalRooms ||
+      !availableRooms
+    ) {
       return res.status(400).send({ message: "Please fill all the fields" });
     }
-    
+
     const rental = await Rental.findById(req.params.id);
     if (!rental) {
       return res.status(404).send({ message: "Rental not found" });
     }
-    
+
     rental.rentalName = rentalName;
     rental.address = address;
     rental.facilities = facilities;
     rental.totalRooms = totalRooms;
     rental.availableRooms = availableRooms;
     await rental.save();
-    
+
     return res.status(200).send({ message: "Rental updated successfully!" });
   } catch (err) {
     return res.status(500).send({ message: err.message });

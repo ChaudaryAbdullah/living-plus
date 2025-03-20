@@ -10,6 +10,7 @@ router.post("/", async (req, res) => {
       !req.body.userName ||
       !req.body.address ||
       !req.body.dob ||
+      !req.body.email ||
       !req.body.password
     ) {
       return res.status(400).send({ message: "Please fill all the fields" });
@@ -20,6 +21,7 @@ router.post("/", async (req, res) => {
       lastName: req.body.lastName,
       address: req.body.address,
       dob: req.body.dob,
+      email: req.body.email,
       password: req.body.password,
     });
     await newApplicant.save();
@@ -40,9 +42,12 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:userName", async (req, res) => {
   try {
-    const applicant = await Applicant.findById(req.params.id);
+    const applicant = await Applicant.findOne({
+      userName: req.params.userName,
+    });
+
     if (!applicant) {
       return res.status(404).send({ message: "Applicant not found" });
     }
@@ -60,6 +65,7 @@ router.put("/:id", async (req, res) => {
       !req.body.userName ||
       !req.body.address ||
       !req.body.dob ||
+      !req.body.email ||
       !req.body.password
     ) {
       return res.status(400).send({ message: "Please fill all the fields" });
@@ -74,6 +80,7 @@ router.put("/:id", async (req, res) => {
     applicant.lastName = req.body.lastName;
     applicant.address = req.body.address;
     applicant.dob = req.body.dob;
+    applicant.email = req.body.email;
     applicant.password = req.body.password;
     await applicant.save();
     return res.status(200).send({ message: "Applicant updated successfully!" });
@@ -92,6 +99,38 @@ router.delete("/:id", async (req, res) => {
     return res.status(200).send({ message: "Applicant deleted successfully!" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
+  }
+});
+
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find applicant by email
+    let applicant = await Applicant.findOne({ userName: email });
+
+    if (!applicant) {
+      applicant = await Applicant.findOne({ email: email });
+      if (!applicant) {
+        return res.status(404).send({ message: "Invalid credentials" });
+      }
+    }
+
+    // Check password
+    if (applicant.password !== password) {
+      return res.status(400).send({ message: "Invalid credentials" });
+    }
+
+    // Login successful
+    res.status(200).send({
+      message: "Login successful",
+      user: {
+        userName: applicant.userName,
+        email: email,
+      },
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
   }
 });
 
