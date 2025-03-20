@@ -10,7 +10,7 @@ import parkingSlotRoutes from "./routes/parkingSlotRoutes.js";
 import tenantRoutes from "./routes/tenantRoutes.js";
 import ownerRoutes from "./routes/ownerRoutes.js";
 import applicantRoutes from "./routes/applicantRoutes.js";
-
+const app = express()
 app.use(
   cors()
   // cors({
