@@ -9,6 +9,7 @@ import parkingSlotRoutes from "./routes/parkingSlotRoutes.js";
 import tenantRoutes from "./routes/tenantRoutes.js";
 import ownerRoutes from "./routes/ownerRoutes.js";
 import applicantRoutes from "./routes/applicantRoutes.js";
+import ownsRoutes from "./routes/ownsRoutes.js";
 
 const app = express();
 app.use(
@@ -28,6 +29,7 @@ app.use("/parkingSlot", parkingSlotRoutes);
 app.use("/owner", ownerRoutes);
 app.use("/applicant", applicantRoutes);
 app.use("/tenant", tenantRoutes);
+app.use("/owns", ownsRoutes);
 
 mongoose
   .connect(DB_URL)
