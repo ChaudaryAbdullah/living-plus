@@ -9,6 +9,7 @@ import ApplyRental from "./components/apply-rental";
 import ApplyParking from "./components/applyParking";
 import ApproveApplicants from "./components/approveApplicants";
 import RegisterHostel from "./components/register-hostel";
+import GiveFeedback from "./components/give-feedback";
 import "./App.css";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/applyParking" element={<ApplyParking />} />
           <Route path="/approveApplicants" element={<ApproveApplicants />} />
           <Route path="/register-hostel" element={<RegisterHostel />} />
+          <Route path="/give-feedback" element={<GiveFeedback />} />
         </Routes>
       </Router>
     </div>
