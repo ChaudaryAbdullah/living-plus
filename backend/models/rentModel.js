@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const rentSchema = new mongoose.Schema(
   {
     amount: {

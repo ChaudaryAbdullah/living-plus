@@ -1,19 +1,67 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import "./css/SignUp.css"
+import { useState } from "react";
+import axios from "axios";
+import "./css/SignUp.css";
+function SignUp() {
+  const [formData, setFormData] = useState({
+    userName: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    dob: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-export default function SignUp() {
-  const [passwordVisible, setPasswordVisible] = useState(false)
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false)
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible)
-  }
+  // Fix: Add handleChange function
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-  const toggleConfirmPasswordVisibility = () => {
-    setConfirmPasswordVisible(!confirmPasswordVisible)
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMessage("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const endpoints = [
+        axios.post("http://localhost:5555/applicant", formData),
+        axios.post("http://localhost:5555/tenant", formData),
+        axios.post("http://localhost:5555/owner", formData),
+      ];
+
+      await Promise.all(endpoints);
+      setSuccessMessage("Account created successfully!");
+      setFormData({
+        userName: "",
+        firstName: "",
+        lastName: "",
+        address: "",
+        dob: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong.");
+    }
+  };
 
   return (
     <div className="modal-overlay">
@@ -24,50 +72,90 @@ export default function SignUp() {
         </div>
 
         <p className="description">
-          Creating an account allows you to access your saved and contacted properties on any device
+          Creating an account allows you to access your saved and contacted
+          properties on any device
         </p>
 
-        <button className="google-button">
-          <img src="/placeholder.svg?height=20&width=20" alt="Google logo" className="google-icon" />
-          Continue with Google
-        </button>
+        {error && <p className="error-message">{error}</p>}
+        {successMessage && <p className="success-message">{successMessage}</p>}
 
-        <div className="login-link">
-          Already have an account ? <a href="/login">Login</a>
-        </div>
-
-        <div className="divider">
-          <span>or</span>
-        </div>
-
-        <form className="signup-form">
+        <form className="signup-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <input type="text" placeholder="Username" name="userName" required />
+            <input
+              type="text"
+              placeholder="Username"
+              name="userName"
+              value={formData.userName}
+              onChange={handleChange} // Now correctly defined
+              required
+            />
           </div>
 
           <div className="name-row">
             <div className="form-group">
-              <input type="text" placeholder="First Name" name="firstName" required />
+              <input
+                type="text"
+                placeholder="First Name"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="form-group">
-              <input type="text" placeholder="Last Name" name="lastName" required />
+              <input
+                type="text"
+                placeholder="Last Name"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+              />
             </div>
           </div>
 
           <div className="form-group">
-            <input type="text" placeholder="Address" name="address" required />
+            <input
+              type="text"
+              placeholder="Address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">
             <label className="date-label">Date of Birth</label>
-            <input type="date" name="dob" required />
+            <input
+              type="date"
+              name="dob"
+              value={formData.dob}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group password-group">
-            <input type={passwordVisible ? "text" : "password"} placeholder="Password" name="password" required />
-            <button type="button" className="toggle-password" onClick={togglePasswordVisibility}>
-              {passwordVisible ? "👁️" : "👁️‍🗨️"}
-            </button>
+            <input
+              type={passwordVisible ? "text" : "password"}
+              placeholder="Password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group password-group">
@@ -75,11 +163,10 @@ export default function SignUp() {
               type={confirmPasswordVisible ? "text" : "password"}
               placeholder="Retype Password"
               name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
               required
             />
-            <button type="button" className="toggle-password" onClick={toggleConfirmPasswordVisibility}>
-              {confirmPasswordVisible ? "👁️" : "👁️‍🗨️"}
-            </button>
           </div>
 
           <button type="submit" className="signup-button">
@@ -88,6 +175,6 @@ export default function SignUp() {
         </form>
       </div>
     </div>
-  )
+  );
 }
-
+export default SignUp;

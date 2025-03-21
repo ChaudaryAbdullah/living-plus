@@ -8,36 +8,42 @@ const router = express.Router();
 // Create a new ownership record
 router.post("/", async (req, res) => {
   try {
+    console.log("Incoming Request Body:", req.body); // Debugging line
+
     const { ownerId, rentalId } = req.body;
 
     if (!ownerId || !rentalId) {
-      return res.status(400).send({ message: "Please fill all the fields" });
+      return res.status(400).json({ message: "Please fill all the fields" });
     }
 
-    // Convert string IDs to ObjectId
+    // Convert IDs to ObjectId
     const ownerObjectId = new mongoose.Types.ObjectId(ownerId);
     const rentalObjectId = new mongoose.Types.ObjectId(rentalId);
 
-    console.log(ownerObjectId, rentalObjectId);
-    const owner = await Owner.findById(ownerId);
-    const rental = await Rental.findById(rentalId);
+    const owner = await Owner.findById(ownerObjectId);
+    const rental = await Rental.findById(rentalObjectId);
 
-    if (!owner || !rental) {
-      return res.status(404).send({ message: "Owner or rental not found" });
+    if (!owner) {
+      return res.status(404).json({ message: "Owner not found" });
+    }
+    if (!rental) {
+      return res.status(404).json({ message: "Rental not found" });
     }
 
     const newOwns = new Owns({
-      ownerId: ownerId,
-      rentalId: rentalId,
+      ownerId: ownerObjectId,
+      rentalId: rentalObjectId,
     });
 
     await newOwns.save();
-    return res.status(201).send({
+
+    return res.status(201).json({
       message: "Ownership record created successfully!",
       data: newOwns,
     });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    console.error("Error in POST /owns:", err); // Debugging line
+    return res.status(500).json({ message: err.message });
   }
 });
 
@@ -45,8 +51,9 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const owns = await Owns.find()
-      .populate("ownerId", "name email") // Populating owner details
-      .populate("rentalId", "rentalName address"); // Populating rental details
+      .populate("ownerId", "firstName lastName email") // Use correct field names
+      .populate("rentalId", "rentalName address"); // Ensure rentalModel has these fields
+
     return res.status(200).json(owns);
   } catch (err) {
     return res.status(500).json({ message: err.message });

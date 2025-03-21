@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const ownsSchema = mongoose.Schema(
   {
     ownerId: {
-      type: Number,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Owner",
       required: true,
     },
     rentalId: {
-      type: Number,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Rental",
       required: true,
     },
@@ -16,5 +16,5 @@ const ownsSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-// ownsSchema.index({ ownerId: 1, rentalId: 1 }, { unique: true });
+ownsSchema.index({ ownerId: 1, rentalId: 1 }, { unique: true });
 export const Owns = mongoose.model("Owns", ownsSchema);

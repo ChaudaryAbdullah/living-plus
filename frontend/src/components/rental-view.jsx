@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/rental-view.css";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
 
 const RentalView = () => {
   const [rentals, setRentals] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch rentals from DB
   useEffect(() => {
     const fetchRentals = async () => {
       try {
@@ -21,47 +22,14 @@ const RentalView = () => {
 
   return (
     <div className="rental-app">
-      {/* Header */}
-      <header className="header">
-        <div className="logo-container">
-          <h1 className="logo">I-TUS</h1>
-          <h2 className="header-title">Discover Properties</h2>
-        </div>
-        <button className="start-listing-btn">Start Listing</button>
-        <div className="user-avatar">AA</div>
-      </header>
+      {/* Fixed Header */}
+      <Header />
 
-      {/* Main Content */}
-      <div className="main-content">
-        {/* Sidebar */}
-        <aside className="sidebar">
-          <nav className="nav-menu">
-            <div className="nav-item active">
-              <div className="nav-icon house-icon"></div>
-              <span>Discover</span>
-            </div>
-            <div className="nav-item">
-              <div className="nav-icon message-icon"></div>
-              <span>Messages</span>
-            </div>
-            <div className="nav-item">
-              <div className="nav-icon bookmark-icon"></div>
-              <span>Saved Listings</span>
-            </div>
-            <div className="nav-item">
-              <div className="nav-icon profile-icon"></div>
-              <span>Profile</span>
-            </div>
-            <div className="nav-item logout">
-              <div className="nav-icon logout-icon"></div>
-              <span>Logout</span>
-            </div>
-          </nav>
-        </aside>
-
-        {/* Property Listings */}
-        <main className="property-container">
-          {/* Search Bar */}
+      {/* Sidebar & Main Content */}
+      <div className="main-container">
+        <Sidebar />
+        <div className="main-content">
+          {/* Search Section */}
           <div className="search-container">
             <div className="search-bar">
               <input
@@ -70,52 +38,51 @@ const RentalView = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <button className="search-btn">
-                <span className="search-icon">⌕</span>
-              </button>
+              <button className="search-btn">⌕</button>
             </div>
-            <button className="filter-btn">
-              <span className="filter-icon">≡</span>
-              Filter
-            </button>
+            <button className="filter-btn">≡ Filter</button>
           </div>
 
-          {/* Property Grid */}
-          <div className="property-grid">
-            {rentals.length > 0 ? (
-              rentals.map((rental) => (
-                <div className="property-card" key={rental._id}>
-                  <div className="property-image">
-                    <img
-                      src={rental.image || "/placeholder.svg"}
-                      alt={rental.rentalName}
-                    />
-                  </div>
-                  <div className="property-details">
-                    <h3 className="property-title">{rental.rentalName}</h3>
-                    <p className="property-address">{rental.address}</p>
-                    <div className="property-specs">
-                      <span className="property-units">
-                        {rental.totalRooms} Total Rooms
-                      </span>
-                      <span className="property-beds">
-                        {rental.availableRooms} Available
-                      </span>
+          {/* Property Listings */}
+          <main className="property-container">
+            <div className="property-grid">
+              {rentals.length > 0 ? (
+                rentals.map((rental) => (
+                  <div className="property-card" key={rental._id}>
+                    <div className="property-image">
+                      <img
+                        src={rental.image || "/placeholder.svg"}
+                        alt={rental.rentalName}
+                      />
                     </div>
-                    <div className="property-footer">
-                      <span className="property-price">
-                        Facilities: {rental.facilities.join(", ")}
-                      </span>
+                    <div className="property-details">
+                      <h3 className="property-title">{rental.rentalName}</h3>
+                      <p className="property-address">{rental.address}</p>
+                      <div className="property-specs">
+                        <span className="property-units">
+                          {rental.totalRooms} Total Rooms
+                        </span>
+                        <span className="property-beds">
+                          {rental.availableRooms} Available
+                        </span>
+                      </div>
+                      <div className="property-footer">
+                        <span className="property-price">
+                          Facilities: {rental.facilities.join(", ")}
+                        </span>
+                      </div>
+                      <a href="/addRooms" className="view-property-btn">
+                        View Property
+                      </a>
                     </div>
-                    <button href = "/addRooms" className="view-property-btn">View Property</button>
                   </div>
-                </div>
-              ))
-            ) : (
-              <p>No properties found.</p>
-            )}
-          </div>
-        </main>
+                ))
+              ) : (
+                <p>No properties found.</p>
+              )}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
