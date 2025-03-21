@@ -6,6 +6,7 @@ import HomePage from "./components/HomePage";
 import RentalView from "./components/rental-view";
 import AddRooms from "./components/AddRooms";
 import ApplyRental from "./components/apply-rental";
+import ApplyParking from "./components/applyParking";
 import "./App.css";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/rental-view" element={<RentalView />} />
           <Route path="/addRooms" element={<AddRooms />} />
           <Route path="/apply-rental" element={<ApplyRental />} />
+          <Route path="/applyParking" element={<ApplyParking />} />
         </Routes>
       </Router>
     </div>
