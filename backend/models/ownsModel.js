@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const ownsSchema = mongoose.Schema(
   {
-    ownId: { type: Number, required: true, unique: true },
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Owner",
@@ -17,4 +16,5 @@ const ownsSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+ownsSchema.index({ ownerId: 1, rentalId: 1 }, { unique: true });
 export const Owns = mongoose.model("Owns", ownsSchema);

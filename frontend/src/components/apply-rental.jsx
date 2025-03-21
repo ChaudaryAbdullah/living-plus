@@ -1,53 +1,76 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import "./css/apply-rental.css"
-import { Home, MessageSquare, Bookmark, User, LogOut } from "lucide-react"
+import { useState, useEffect } from "react";
+import axios from "axios";
+import "./css/apply-rental.css";
+import { Home, MessageSquare, Bookmark, User, LogOut } from "lucide-react";
 
 const ApplyRental = () => {
   // State for form data
   const [formData, setFormData] = useState({
     rentalId: "",
     roomType: "single",
-  })
+  });
 
-  // Placeholder data for rentals (would be fetched from backend)
-  const [rentals, setRentals] = useState([
-    { id: "1", name: "Apartment 101" },
-    { id: "2", name: "Condo 202" },
-    { id: "3", name: "House 303" },
-  ])
+  // State for rentals and rooms fetched from backend
+  const [rentals, setRentals] = useState([]);
+  const [properties, setProperties] = useState([]);
 
-  // Placeholder for properties (would be fetched from backend)
-  const [properties, setProperties] = useState([
-    { id: "1", name: "Property A", type: "Apartment", price: "$1200/month" },
-    { id: "2", name: "Property B", type: "House", price: "$1800/month" },
-    { id: "3", name: "Property C", type: "Condo", price: "$1500/month" },
-  ])
+  // Fetch rentals from backend
+  useEffect(() => {
+    const fetchRentals = async () => {
+      try {
+        const response = await axios.get("http://localhost:5555/rentals");
+        console.log("Fetched Rentals:", response.data); // Debugging
+        setRentals(response.data);
+      } catch (error) {
+        console.error("Error fetching rentals:", error);
+      }
+    };
+
+    fetchRentals();
+  }, []);
+
+  // Fetch available rooms from backend
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await axios.get("http://localhost:5555/rooms");
+        console.log("Fetched Rooms:", response.data); // Debugging
+        setProperties(response.data);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      }
+    };
+
+    fetchProperties();
+  }, []);
 
   // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
-    })
-  }
+    });
+  };
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log("Form submitted:", formData)
-    // Here you would send the data to your backend
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Simulate fetching data from backend
-  useEffect(() => {
-    // This would be replaced with actual API calls
-    console.log("Fetching data from backend...")
-    // setRentals(fetchedRentals);
-    // setProperties(fetchedProperties);
-  }, [])
+    try {
+      const response = await axios.post(
+        "http://localhost:5555/applyRental",
+        formData
+      );
+      console.log("Application submitted:", response.data);
+      alert("Rental application submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      alert("Failed to submit application.");
+    }
+  };
 
   return (
     <div className="rental-app-container">
@@ -80,7 +103,6 @@ const ApplyRental = () => {
 
       {/* Main Content */}
       <div className="main-content">
-        {/* Header */}
         <header className="header">
           <div className="header-title">
             <h1>Apply for Rental</h1>
@@ -108,8 +130,8 @@ const ApplyRental = () => {
               >
                 <option value="">Select a rental</option>
                 {rentals.map((rental) => (
-                  <option key={rental.id} value={rental.id}>
-                    {rental.name}
+                  <option key={rental._id} value={rental._id}>
+                    {rental.rentalName || rental.name}
                   </option>
                 ))}
               </select>
@@ -134,17 +156,28 @@ const ApplyRental = () => {
             </button>
           </form>
 
-          {/* Properties Section */}
+          {/* Available Rooms Section */}
           <div className="properties-section">
             <h3>Available Properties</h3>
             <div className="properties-container">
-              {properties.map((property) => (
-                <div key={property.id} className="property-card">
-                  <h4>{property.name}</h4>
-                  <p>Type: {property.type}</p>
-                  <p>Price: {property.price}</p>
-                </div>
-              ))}
+              {properties.map((property) => {
+                // Find rental for this room
+                const rental = rentals.find(
+                  (r) => r._id.toString() === property.rentalId.toString()
+                );
+
+                return (
+                  <div key={property._id} className="property-card">
+                    <h4>{property.rtype} Room</h4>
+                    <p>
+                      Rental:{" "}
+                      {rental ? rental.rentalName || rental.name : "Unknown"}
+                    </p>
+                    <p>Status: {property.status}</p>
+                    <p>Price: ${property.price}/month</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -164,8 +197,7 @@ const ApplyRental = () => {
         </footer>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ApplyRental
-
+export default ApplyRental;
