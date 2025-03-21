@@ -13,12 +13,12 @@ const rentSchema = new mongoose.Schema(
     },
     tenantId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Tenant", // References the Tenant collection
+      ref: "tenants", // References the Tenant collection
       required: true,
     },
     rentalId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Rental", // References the Rental collection
+      ref: "rentals", // References the Rental collection
       required: true,
     },
   },
