@@ -7,7 +7,7 @@ import RentalView from "./components/rental-view";
 import AddRooms from "./components/AddRooms";
 import ApplyRental from "./components/apply-rental";
 import ApplyParking from "./components/applyParking";
-import ApproveApplicants from "./components/ApproveApplicants";
+import ApproveApplicants from "./components/approveApplicants";
 import RegisterHostel from "./components/register-hostel";
 import "./App.css";
 
@@ -25,7 +25,7 @@ function App() {
           <Route path="/addRooms" element={<AddRooms />} />
           <Route path="/apply-rental" element={<ApplyRental />} />
           <Route path="/applyParking" element={<ApplyParking />} />
-          <Route path="/ApproveApplicants" element={<ApproveApplicants />} />
+          <Route path="/approveApplicants" element={<ApproveApplicants />} />
           <Route path="/register-hostel" element={<RegisterHostel />} />
         </Routes>
       </Router>

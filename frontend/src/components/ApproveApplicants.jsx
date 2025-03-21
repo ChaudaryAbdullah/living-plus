@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Home, MessageSquare, BookmarkCheck, User, LogOut, Filter, Plus } from "lucide-react"
-import "./css/ApproveApplicants.css"
+import "./css/approveApplicants.css"
 
 const ApproveApplicants = () => {
   const [applicants, setApplicants] = useState([
