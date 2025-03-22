@@ -1,53 +1,62 @@
 import express from "express";
-import { Rent } from "../models/rentModel.js";
 import mongoose from "mongoose";
+import { Rent } from "../models/rentModel.js";
+
 const router = express.Router();
 
-// Get all rents (for admin or debugging)
 router.get("/", async (req, res) => {
   try {
-    const rents = await Rent.find();
-    res.json(rents);
+    const rents = await Rent.find()
+      .populate("rentalId")
+      .populate("tenantId")
+      .exec();
+
+    res.status(200).json(rents);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: error.message });
   }
 });
 
-// Get rentals where the user is a tenant
-router.get("/:tenantId", async (req, res) => {
-  try {
-    const { tenantId } = req.params;
+// router.get("/:tenantId", async (req, res) => {
+//   try {
+//     const { tenantId } = req.params;
+//     console.log("Received tenantId:", tenantId);
 
-    // Log tenantId received in request
-    console.log("Received tenantId:", tenantId);
+//     if (!tenantId) {
+//       return res.status(400).json({ message: "Tenant ID is required" });
+//     }
 
-    // Check if tenantId is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(tenantId)) {
-      console.log("Invalid ObjectId format");
-      return res.status(400).json({ message: "Invalid tenant ID format" });
-    }
+//     // Convert tenantId to ObjectId for MongoDB query
+//     const objectIdTenantId = new mongoose.Types.ObjectId(tenantId);
 
-    // Convert tenantId to ObjectId
-    const tenantObjectId = new mongoose.Types.ObjectId(tenantId);
+//     // Find rents where the tenant is the given user
+//     const userRents = await Rent.find({ tenantId: objectIdTenantId })
+//       .populate("rentalId") // Populating rental details
+//       .exec();
 
-    const userRents = await Rent.find({ tenantId: tenantObjectId }).populate(
-      "rentalId"
-    );
+//     console.log("Fetched user rents:", userRents);
 
-    // Log the fetched data
-    console.log("Fetched user rents:", JSON.stringify(userRents, null, 2));
+//     if (!userRents.length) {
+//       return res
+//         .status(404)
+//         .json({ message: "No rentals found for this tenant." });
+//     }
 
-    if (userRents.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No rentals found for this tenant" });
-    }
+//     // Return only the rental details
+//     res.json(userRents.map((rent) => rent.rentalId));
+//   } catch (error) {
+//     console.error("Error fetching user rents:", error);
+//     res.status(500).json({ message: "Server error", error });
+//   }
+// });
 
-    res.json(userRents.map((rent) => rent.rentalId));
-  } catch (error) {
-    console.error("Error fetching user rentals:", error);
-    res.status(500).json({ message: "Server error", error });
+router.get("/rents/:tenantId", async (req, res) => {
+  const { tenantId } = req.params;
+  const rentals = await RentalModel.find({ tenantId }); // Adjust as per your database schema
+  if (!rentals) {
+    return res.status(404).json({ error: "Rentals not found" });
   }
+  res.json(rentals);
 });
 
 export default router;

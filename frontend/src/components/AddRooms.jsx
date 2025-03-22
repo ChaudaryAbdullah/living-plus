@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import "./css/AddRooms.css";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import Footer from "./Footer";
 import axios from "axios";
 
 const AddRooms = () => {
@@ -156,6 +157,7 @@ const AddRooms = () => {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 };

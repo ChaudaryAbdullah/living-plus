@@ -1,0 +1,194 @@
+/* General styles */
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+  }
+  
+  /* Header styles */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1a1a1a;
+  }
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .start-listing-btn {
+    padding: 8px 15px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .profile-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  /* Parking content styles */
+  .parking-container {
+    width: 100%;
+    min-height: 100vh;
+  }
+  
+  .parking-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .parking-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
+  
+  .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    width: 180px;
+    text-align: right;
+    margin-right: 10px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: 200px;
+  }
+  
+  .create-btn {
+    margin-left: 10px;
+    padding: 6px 15px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  /* Table styles */
+  .table-container {
+    margin: 30px 0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  
+  .table-header {
+    background-color: #e0e0e0;
+    height: 30px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .table-content {
+    background-color: white;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .no-data {
+    color: #666;
+  }
+  
+  /* Action container styles */
+  .action-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .action-container select {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: 150px;
+  }
+  
+  .accept-btn,
+  .reject-btn {
+    padding: 6px 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .accept-btn {
+    background-color: #f0f0f0;
+  }
+  
+  .reject-btn {
+    background-color: #f0f0f0;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .form-group {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .form-group label {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 5px;
+    }
+  
+    .form-group input,
+    .form-group select {
+      width: 100%;
+    }
+  
+    .create-btn {
+      margin-left: 0;
+      margin-top: 10px;
+    }
+  
+    .action-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .action-container select {
+      width: 100%;
+    }
+  }
+  
+  

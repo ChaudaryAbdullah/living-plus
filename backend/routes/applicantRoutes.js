@@ -102,36 +102,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Find applicant by email
-    let applicant = await Applicant.findOne({ userName: email });
-
-    if (!applicant) {
-      applicant = await Applicant.findOne({ email: email });
-      if (!applicant) {
-        return res.status(404).send({ message: "Invalid credentials" });
-      }
-    }
-
-    // Check password
-    if (applicant.password !== password) {
-      return res.status(400).send({ message: "Invalid credentials" });
-    }
-
-    // Login successful
-    res.status(200).send({
-      message: "Login successful",
-      user: {
-        userName: applicant.userName,
-        email: email,
-      },
-    });
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-});
-
 export default router;
