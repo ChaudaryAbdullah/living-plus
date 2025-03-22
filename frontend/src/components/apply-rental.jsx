@@ -23,7 +23,7 @@ const ApplyRental = () => {
     const fetchRentals = async () => {
       try {
         const response = await axios.get("http://localhost:5555/rentals");
-        console.log("Fetched Rentals:", response.data); // Debugging
+        console.log("Fetched Rentals:", response.data);
         setRentals(response.data);
       } catch (error) {
         console.error("Error fetching rentals:", error);
@@ -38,7 +38,7 @@ const ApplyRental = () => {
     const fetchProperties = async () => {
       try {
         const response = await axios.get("http://localhost:5555/rooms");
-        console.log("Fetched Rooms:", response.data); // Debugging
+        console.log("Fetched Rooms:", response.data);
         setProperties(response.data);
       } catch (error) {
         console.error("Error fetching properties:", error);
@@ -76,14 +76,10 @@ const ApplyRental = () => {
 
   return (
     <div className="rental-app-container">
-      {/* Sidebar */}
       <Header />
       <div className="content-container">
         <Sidebar />
-
-        {/* Main Content */}
         <div className="main-content">
-          {/* Form Section */}
           <div className="form-section">
             <h2>Choose Rental</h2>
             <div className="form-divider"></div>
@@ -126,30 +122,33 @@ const ApplyRental = () => {
               </button>
             </form>
 
-            {/* Available Rooms Section */}
-            <div className="properties-section">
-              <h3>Available Properties</h3>
-              <div className="properties-container">
-                {properties.map((property) => {
-                  // Find rental for this room
-                  const rental = rentals.find(
-                    (r) => r._id.toString() === property.rentalId.toString()
-                  );
+            {properties.length > 0 && (
+              <div className="properties-section">
+                <h3>Available Properties</h3>
+                <div className="properties-container">
+                  {properties.map((property) => {
+                    // Find rental for this room
+                    const rental = rentals.find(
+                      (r) => r._id.toString() === property.rentalId.toString()
+                    );
 
-                  return (
-                    <div key={property._id} className="property-card">
-                      <h4>{property.rtype} Room</h4>
-                      <p>
-                        Rental:{" "}
-                        {rental ? rental.rentalName || rental.name : "Unknown"}
-                      </p>
-                      <p>Status: {property.status}</p>
-                      <p>Price: ${property.price}/month</p>
-                    </div>
-                  );
-                })}
+                    return (
+                      <div key={property._id} className="property-card">
+                        <h4>{property.rtype} Room</h4>
+                        <p>
+                          Rental:{" "}
+                          {rental
+                            ? rental.rentalName || rental.name
+                            : "Unknown"}
+                        </p>
+                        <p>Status: {property.status}</p>
+                        <p>Price: ${property.price}/month</p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

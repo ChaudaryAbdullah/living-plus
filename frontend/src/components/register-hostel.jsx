@@ -6,7 +6,7 @@ import Footer from "./Footer";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 
-const RegisterHostel = () => {
+const HostelRegistrationForm = () => {
   const [formData, setFormData] = useState({
     hostelName: "",
     address: "",
@@ -18,102 +18,94 @@ const RegisterHostel = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
+    setFormData({
+      ...formData,
       [name]: value,
-    }));
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    // Add your form submission logic here
+    // Add API call here to submit the form data
   };
 
   return (
-    <div className="hostel-registration-container">
+    <div>
       <Header />
-      <div className="content-container">
+      <div className="main-container">
         <Sidebar />
-        <div className="main-content">
-          <div className="form-container">
-            <h3 className="section-title">Hostel Details</h3>
-            <div className="divider-line"></div>
+        <div className="form-container">
+          <h2 className="form-title">Hostel Details</h2>
+          <div className="divider"></div>
 
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="hostelName">Hostel Name</label>
-                <input
-                  type="text"
-                  id="hostelName"
-                  name="hostelName"
-                  value={formData.hostelName}
-                  onChange={handleChange}
-                />
-              </div>
+          <form className="hostel-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="hostelName">Hostel Name</label>
+              <input
+                type="text"
+                id="hostelName"
+                name="hostelName"
+                value={formData.hostelName}
+                onChange={handleChange}
+                className="form-control"
+              />
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="address">Address</label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                />
-              </div>
+            <div className="form-group">
+              <label htmlFor="address">Address</label>
+              <input
+                type="text"
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                className="form-control"
+              />
+            </div>
 
-              <div className="form-group amenities-group">
-                <label htmlFor="amenities">Amenities</label>
-                <div className="amenities-inputs">
-                  <input
-                    type="text"
-                    id="amenities"
-                    name="amenities"
-                    value={formData.amenities}
-                    onChange={handleChange}
-                    className="amenities-main"
-                  />
-                  <input
-                    type="text"
-                    id="additionalAmenities"
-                    name="additionalAmenities"
-                    value={formData.additionalAmenities}
-                    onChange={handleChange}
-                    className="amenities-additional"
-                  />
-                </div>
-              </div>
+            <div className="form-group">
+              <label htmlFor="amenities">Amenities</label>
+              <input
+                type="text"
+                id="amenities"
+                name="amenities"
+                value={formData.amenities}
+                onChange={handleChange}
+                className="amenities-main"
+              />
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="capacity">Capacity</label>
-                <input
-                  type="text"
-                  id="capacity"
-                  name="capacity"
-                  value={formData.capacity}
-                  onChange={handleChange}
-                />
-              </div>
+            <div className="form-group">
+              <label htmlFor="capacity">Capacity</label>
+              <input
+                type="text"
+                id="capacity"
+                name="capacity"
+                value={formData.capacity}
+                onChange={handleChange}
+                className="form-control"
+              />
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="availableRooms">Available Rooms</label>
-                <input
-                  type="text"
-                  id="availableRooms"
-                  name="availableRooms"
-                  value={formData.availableRooms}
-                  onChange={handleChange}
-                />
-              </div>
+            <div className="form-group">
+              <label htmlFor="availableRooms">Available Rooms</label>
+              <input
+                type="text"
+                id="availableRooms"
+                name="availableRooms"
+                value={formData.availableRooms}
+                onChange={handleChange}
+                className="form-control"
+              />
+            </div>
 
-              <div className="form-actions">
-                <button type="submit" className="apply-btn">
-                  Apply
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="form-actions">
+              <button type="submit" className="apply-btn">
+                Apply
+              </button>
+            </div>
+          </form>
         </div>
       </div>
       <Footer />
@@ -121,4 +113,4 @@ const RegisterHostel = () => {
   );
 };
 
-export default RegisterHostel;
+export default HostelRegistrationForm;
