@@ -3,6 +3,7 @@ import axios from "axios";
 import "./css/rental-view.css";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import Footer from "./Footer";
 
 const RentalView = () => {
   const [rentals, setRentals] = useState([]);
@@ -22,13 +23,11 @@ const RentalView = () => {
 
   return (
     <div className="rental-app">
-      {/* Fixed Header */}
       <Header />
 
-      {/* Sidebar & Main Content */}
       <div className="main-container">
-        <Sidebar />
         <div className="main-content">
+          <Sidebar />
           {/* Search Section */}
           <div className="search-container">
             <div className="search-bar">
@@ -84,6 +83,7 @@ const RentalView = () => {
           </main>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

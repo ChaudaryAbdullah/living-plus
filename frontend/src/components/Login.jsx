@@ -16,6 +16,7 @@ const LoginForm = () => {
       const response = await fetch("http://localhost:5555/profile/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }), // Send email and password
       });
 
@@ -23,6 +24,8 @@ const LoginForm = () => {
 
       if (response.ok) {
         alert("Login Successful!");
+        console.log(data.user);
+        localStorage.setItem("data", data.user.userName);
         navigate("/rental-view"); // Navigate after login
       } else {
         alert(data.message || "Invalid login credentials");

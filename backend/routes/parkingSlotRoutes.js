@@ -5,14 +5,19 @@ const router = express.Router();
 // Create a new parking slot
 router.post("/", async (req, res) => {
   try {
-    const { isOccupied, rentalId } = req.body;
-    if (isOccupied === undefined || !rentalId) {
-      return res.status(400).send({ message: "Please fill all the required fields" });
+    const { rentalId } = req.body;
+    if (!rentalId) {
+      return res
+        .status(400)
+        .send({ message: "Please fill all the required fields" });
     }
-
+    const isOccupied = false;
     const newParkingSlot = new ParkingSlot({ isOccupied, rentalId });
     await newParkingSlot.save();
-    return res.status(201).send({ message: "New parking slot created successfully!" });
+    console.log("Parking created");
+    return res
+      .status(201)
+      .send({ message: "New parking slot created successfully!" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
@@ -46,19 +51,23 @@ router.put("/:id", async (req, res) => {
   try {
     const { isOccupied, rentalId } = req.body;
     if (isOccupied === undefined || !rentalId) {
-      return res.status(400).send({ message: "Please fill all the required fields" });
+      return res
+        .status(400)
+        .send({ message: "Please fill all the required fields" });
     }
 
     const parkingSlot = await ParkingSlot.findById(req.params.id);
     if (!parkingSlot) {
       return res.status(404).send({ message: "Parking slot not found" });
     }
-    
+
     parkingSlot.isOccupied = isOccupied;
     parkingSlot.rentalId = rentalId;
     await parkingSlot.save();
-    
-    return res.status(200).send({ message: "Parking slot updated successfully!" });
+
+    return res
+      .status(200)
+      .send({ message: "Parking slot updated successfully!" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
@@ -72,7 +81,31 @@ router.delete("/:id", async (req, res) => {
     if (!parkingSlot) {
       return res.status(404).send({ message: "Parking slot not found" });
     }
-    return res.status(200).send({ message: "Parking slot deleted successfully!" });
+    return res
+      .status(200)
+      .send({ message: "Parking slot deleted successfully!" });
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+});
+
+// Get available parking slots by rental ID
+router.get("/available/:rentalId", async (req, res) => {
+  try {
+    const { rentalId } = req.params;
+
+    const availableSlots = await ParkingSlot.find({
+      rentalId: rentalId, // Convert to ObjectId
+      // isOccupied: false,
+    });
+
+    if (!availableSlots.length) {
+      return res
+        .status(404)
+        .send({ message: "No available parking slots found for this rental" });
+    }
+
+    return res.status(200).send(availableSlots);
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }

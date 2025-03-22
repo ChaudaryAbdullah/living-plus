@@ -68,4 +68,13 @@ router.get("/", async (req, res) => {
   }
   res.json({ user: req.session.user });
 });
+
+router.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ message: "Logout failed" });
+    res.clearCookie("connect.sid"); // Default session cookie name
+    res.json({ message: "Logged out successfully" });
+  });
+});
+
 export default router;
