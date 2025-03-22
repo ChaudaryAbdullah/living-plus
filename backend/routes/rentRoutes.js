@@ -17,46 +17,43 @@ router.get("/", async (req, res) => {
   }
 });
 
-// router.get("/:tenantId", async (req, res) => {
-//   try {
-//     const { tenantId } = req.params;
-//     console.log("Received tenantId:", tenantId);
+router.get("/:tenantId", async (req, res) => {
+  try {
+    const { tenantId } = req.params;
+    console.log("Received tenantId:", tenantId);
 
-//     if (!tenantId) {
-//       return res.status(400).json({ message: "Tenant ID is required" });
-//     }
+    if (!tenantId) {
+      return res.status(400).json({ message: "Tenant ID is required" });
+    }
 
-//     // Convert tenantId to ObjectId for MongoDB query
-//     const objectIdTenantId = new mongoose.Types.ObjectId(tenantId);
+    // Find rents where the tenant is the given user
+    const userRents = await Rent.find({ tenantId: tenantId })
+      .populate("rentalId") // Populating rental details
+      .exec();
 
-//     // Find rents where the tenant is the given user
-//     const userRents = await Rent.find({ tenantId: objectIdTenantId })
-//       .populate("rentalId") // Populating rental details
-//       .exec();
+    console.log("Fetched user rents:", userRents);
 
-//     console.log("Fetched user rents:", userRents);
+    if (!userRents.length) {
+      return res
+        .status(404)
+        .json({ message: "No rentals found for this tenant." });
+    }
 
-//     if (!userRents.length) {
-//       return res
-//         .status(404)
-//         .json({ message: "No rentals found for this tenant." });
-//     }
-
-//     // Return only the rental details
-//     res.json(userRents.map((rent) => rent.rentalId));
-//   } catch (error) {
-//     console.error("Error fetching user rents:", error);
-//     res.status(500).json({ message: "Server error", error });
-//   }
-// });
-
-router.get("/rents/:tenantId", async (req, res) => {
-  const { tenantId } = req.params;
-  const rentals = await RentalModel.find({ tenantId }); // Adjust as per your database schema
-  if (!rentals) {
-    return res.status(404).json({ error: "Rentals not found" });
+    // Return only the rental details
+    res.json(userRents.map((rent) => rent.rentalId));
+  } catch (error) {
+    console.error("Error fetching user rents:", error);
+    res.status(500).json({ message: "Server error", error });
   }
-  res.json(rentals);
 });
+
+// router.get("/rents/:tenantId", async (req, res) => {
+//   const { tenantId } = req.params;
+//   const rentals = await RentalModel.find({ tenantId }); // Adjust as per your database schema
+//   if (!rentals) {
+//     return res.status(404).json({ error: "Rentals not found" });
+//   }
+//   res.json(rentals);
+// });
 
 export default router;

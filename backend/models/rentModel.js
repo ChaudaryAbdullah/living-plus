@@ -18,7 +18,7 @@ const rentSchema = new mongoose.Schema(
     },
     rentalId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "rentals", // References the Rental collection
+      ref: "Rental", // References the Rental collection
       required: true,
     },
   },

@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import { useState, useEffect } from "react";
 import SignUp from "./components/signUp";
 import Login from "./components/Login";
 import HomePage from "./components/HomePage";
@@ -12,14 +13,38 @@ import RegisterHostel from "./components/register-hostel";
 import GiveFeedback from "./components/give-feedback";
 import ApproveParking from "./components/approve-parking";
 import ViewRatings from "./components/view-ratings";
+import { AuthGuard } from "./temp.jsx";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const checkSession = () => {
+    setUser(localStorage.getItem("data"));
+    setLoading(false);
+  };
+
+  // Run session check on first load
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  // Handle logout function
+  const handleLogout = async () => {
+    await fetch("http://localhost:5555/profile/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    setUser(null);
+    window.location.href = "http://localhost:5555//login"; // Redirect to login page
+  };
+
+  if (loading) return <p>Loading...</p>; // Show loading screen while checking session
 
   return (
     <div className="app">
       <Router>
+        <AuthGuard />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<SignUp />} />

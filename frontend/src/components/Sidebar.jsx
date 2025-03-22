@@ -1,8 +1,27 @@
 import React from "react";
-
+import { useNavigate } from "react-router-dom";
 import "./css/Sidebar.css";
 
-const Sidebar = () => {
+const Sidebar = ({ onLogout }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:5555/profile/logout", {
+        method: "POST",
+        credentials: "include", // Required for session-based logout
+      });
+
+      if (response.ok) {
+        onLogout(); // Clear user state in parent component
+        navigate("/login"); // Redirect to login page
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
   return (
     <aside className="sidebar">
       <nav className="sidebar-nav">
@@ -84,7 +103,7 @@ const Sidebar = () => {
           </li>
         </ul>
         <div className="logout-container">
-          <a href="#" className="nav-link">
+          <button className="nav-link logout-btn" onClick={handleLogout}>
             <div className="nav-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +120,7 @@ const Sidebar = () => {
               </svg>
             </div>
             <span className="nav-text">Logout</span>
-          </a>
+          </button>
         </div>
       </nav>
     </aside>
