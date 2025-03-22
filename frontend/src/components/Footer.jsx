@@ -1,20 +1,24 @@
 import React from "react";
-import "./css/Header.css";
-const Header = () => {
+import "./css/footer.css";
+const Footer = () => {
   return (
     <footer className="footer">
-      <div className="footer-left">
-        <p>© 2023 I-Tus Rental Management, Nairobi Kenya</p>
+      <div className="copyright">
+        © 2023 I-Tus Rental Management, Nairobi Kenya
       </div>
-      <div className="footer-center">
-        <a href="#">Terms</a>
-        <a href="#">Privacy</a>
-      </div>
-      <div className="footer-right">
-        <a href="#">Support & Resources</a>
+      <div className="footer-links">
+        <a href="#" className="footer-link">
+          Terms
+        </a>
+        <a href="#" className="footer-link">
+          Privacy
+        </a>
+        <a href="#" className="footer-link">
+          Support & Resources
+        </a>
       </div>
     </footer>
   );
 };
 
-export default Header;
+export default Footer;
