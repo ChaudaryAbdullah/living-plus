@@ -10,6 +10,8 @@ import ApplyParking from "./components/applyParking";
 import ApproveApplicants from "./components/approveApplicants";
 import RegisterHostel from "./components/register-hostel";
 import GiveFeedback from "./components/give-feedback";
+import ApproveParking from "./components/approve-parking";
+import ViewRatings from "./components/view-ratings";
 import "./App.css";
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
           <Route path="/approveApplicants" element={<ApproveApplicants />} />
           <Route path="/register-hostel" element={<RegisterHostel />} />
           <Route path="/give-feedback" element={<GiveFeedback />} />
+          <Route path="/approve-parking" element={<ApproveParking />} />
+          <Route path="/view-ratings" element={<ViewRatings />} />
         </Routes>
       </Router>
     </div>

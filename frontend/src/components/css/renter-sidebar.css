@@ -1,0 +1,95 @@
+.owner-sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .sidebar-nav {
+    padding: 20px 0;
+    height: 100%;
+  }
+  
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .sidebar-item {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .sidebar-item:last-child {
+    margin-top: auto;
+    margin-bottom: 20px;
+  }
+  
+  .sidebar-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .sidebar-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+    color: #666;
+  }
+  
+  .sidebar-label {
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  /* Active state styling */
+  .sidebar-item.active .sidebar-icon {
+    color: #4f46e5; /* Purple/blue color for active item */
+  }
+  
+  .sidebar-item.active .sidebar-label {
+    color: #4f46e5;
+    font-weight: 600;
+  }
+  
+  /* Hover effects */
+  .sidebar-link:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .sidebar-link:hover .sidebar-icon {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+  }
+  
+  /* Media query for smaller screens */
+  @media (max-width: 768px) {
+    .owner-sidebar {
+      width: 80px;
+    }
+  
+    .sidebar-label {
+      font-size: 10px;
+    }
+  }
+  
+  
