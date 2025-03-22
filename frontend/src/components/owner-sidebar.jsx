@@ -4,9 +4,7 @@ import { useState } from "react"
 import { Home, Plus, ClipboardList, Bookmark, Settings, Mail, LogOut } from "lucide-react"
 import "./css/owner-sidebar.css"
 
-const OwnerSidebar = () => {
-  const [activeItem, setActiveItem] = useState("approve-applicants")
-
+const OwnerSidebar = ({ activeItem, setActiveItem }) => {
   const menuItems = [
     { id: "discover", icon: <Home size={24} />, label: "Discover" },
     { id: "register-hostel", icon: <Home size={24} />, label: "Register Hostel" },
@@ -20,7 +18,6 @@ const OwnerSidebar = () => {
 
   const handleItemClick = (id) => {
     setActiveItem(id)
-    // You can add navigation logic here
   }
 
   return (
@@ -44,4 +41,3 @@ const OwnerSidebar = () => {
 }
 
 export default OwnerSidebar
-

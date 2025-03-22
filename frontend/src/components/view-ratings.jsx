@@ -5,7 +5,7 @@ import OwnerSidebar from './owner-sidebar';
 const ViewRatings = () => {
   // Mock data for properties
   const [properties, setProperties] = useState([]);
-  
+  const [activeItem, setActiveItem] = useState("view-ratings")
   useEffect(() => {
     // Simulating data fetch from backend
     const fetchData = async () => {
@@ -89,7 +89,7 @@ const ViewRatings = () => {
   return (
     <div className="app-container">
       {/* Sidebar */}
-      <OwnerSidebar/>
+      <OwnerSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
       
       {/* Main Content */}
       <div className="main-content">
