@@ -1,67 +1,22 @@
 import React, { useState } from "react";
-// import './css/HomePage.css';
+import "./css/HomePage.css";
 
 const HomePage = () => {
-  // Placeholder data for properties that would be fetched from backend
-  const [properties, setProperties] = useState([
-    {
-      id: 1,
-      image: "/images/property1.jpg",
-      title: "Amali House | South C",
-      price: "Ksh 20,000",
-      period: "/month",
-      type: "Rental",
-      isFavorite: false,
-      isPopular: true,
-    },
-    {
-      id: 2,
-      image: "/images/property2.jpg",
-      title: "Amali House | Eastleigh",
-      price: "Ksh 20,000",
-      period: "/month",
-      type: "Rental",
-      isFavorite: false,
-      isPopular: true,
-    },
-    {
-      id: 3,
-      image: "/images/property3.jpg",
-      title: "Amali House | Parklands",
-      price: "Ksh 20,000",
-      period: "/month",
-      type: "Rental",
-      isFavorite: false,
-      isPopular: true,
-    },
-  ]);
-
-  // Toggle favorite status
-  const toggleFavorite = (id) => {
-    setProperties(
-      properties.map((property) =>
-        property.id === id
-          ? { ...property, isFavorite: !property.isFavorite }
-          : property
-      )
-    );
-  };
-
   // State for active tab
-  const [activeTab, setActiveTab] = useState("renters");
+  const [activeTab, setActiveTab] = useState("mission");
 
   return (
     <div className="home-page">
       {/* Navigation Bar */}
       <nav className="navbar">
-        <div className="logo">PTOS</div>
+        <div className="logo">Living+</div>
         <div className="nav-links">
           <a href="#" className="active">
             Home
           </a>
-          <a href="#">About us</a>
-          <a href="#">Manage property</a>
-          <a href="#">Dashboard</a>
+          <a href="#about">About us</a>
+          <a href="#manage">Manage property</a>
+          <a href="#dashboard">Dashboard</a>
         </div>
         <div className="auth-buttons">
           <a href="/login" className="login-btn">
@@ -78,134 +33,102 @@ const HomePage = () => {
         <div className="hero-content">
           <h1>Find Your Perfect Rental Property</h1>
           <p>
-            A Great Platform to Connect users Directly with Property Managers
-            and Discover Your Dream Home
+            Connecting users directly with property managers to discover their
+            dream home.
           </p>
-          <button className="get-started-btn">Get started</button>
-
-          <div className="search-container">
-            <h3>Search for properties</h3>
-            <div className="search-bar">
-              <div className="location-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                >
-                  <path fill="none" d="M0 0h24v24H0z" />
-                  <path
-                    fill="#4A5568"
-                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-                  />
-                </svg>
-              </div>
-              <input type="text" placeholder="Search by location..." />
-              <button className="search-btn">Search</button>
-            </div>
-          </div>
-        </div>
-        <div className="map-container">
-          {/* Map placeholder */}
-          <div className="map-placeholder"></div>
+          <button className="get-started-btn">Get Started</button>
         </div>
       </section>
 
-      {/* Feature Section */}
-      <section className="feature-section">
-        <div className="feature-image">
-          <div className="looking-badge">
-            <div className="house-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-              >
-                <path fill="none" d="M0 0h24v24H0z" />
-                <path fill="#fff" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-              </svg>
-            </div>
-            <div className="badge-text">
-              <h4>Looking for a home?</h4>
-              <p>Browse through thousands of properties</p>
-            </div>
+      {/* Featured Properties Section */}
+      <section className="featured-properties">
+        <h2>Featured Listings</h2>
+        <div className="property-list">
+          <div className="property-card">
+            <img src="/images/property1.jpg" alt="Property 1" />
+            <h3>Alice Hostel | 123 elm Street</h3>
+            <p>PKR 20,000 / month</p>
           </div>
-        </div>
-        <div className="feature-content">
-          <h2>What We Do</h2>
-          <div className="tabs">
-            <button
-              className={activeTab === "renters" ? "tab-btn active" : "tab-btn"}
-              onClick={() => setActiveTab("renters")}
-            >
-              For Renters
-            </button>
-            <button
-              className={
-                activeTab === "landlords" ? "tab-btn active" : "tab-btn"
-              }
-              onClick={() => setActiveTab("landlords")}
-            >
-              For Landlords
-            </button>
+          <div className="property-card">
+            <img src="/images/property2.jpg" alt="Property 2" />
+            <h3>Dilawar Heights | 456 Maple Ave</h3>
+            <p>PKR 50,000 / month</p>
           </div>
-          <h3>We Simplify Your Rental Home Search</h3>
-          <p>
-            Experience hassle-free rental home searching with our platform. We
-            simplify the process by linking you directly to legit property
-            managers by cutting out the middleman
-          </p>
+          <div className="property-card">
+            <img src="/images/property3.jpg" alt="Property 3" />
+            <h3>Bussiness Lawn | 14 Willow Blvd</h3>
+            <p>PKR 80,000 / month</p>
+          </div>
         </div>
       </section>
 
-      {/* Properties Section */}
-      <section className="properties-section">
-        <div className="section-header">
-          <h3 className="trending-label">Trending</h3>
-          <h2>Trending Listings</h2>
+      {/* About Us Section */}
+      <section id="about" className="about-us">
+        <h2>About Us</h2>
+        <div className="about-tabs">
+          <button
+            className={activeTab === "mission" ? "tab active" : "tab"}
+            onClick={() => setActiveTab("mission")}
+          >
+            Our Mission
+          </button>
+          <button
+            className={activeTab === "vision" ? "tab active" : "tab"}
+            onClick={() => setActiveTab("vision")}
+          >
+            Our Vision
+          </button>
+          <button
+            className={activeTab === "team" ? "tab active" : "tab"}
+            onClick={() => setActiveTab("team")}
+          >
+            Meet the Team
+          </button>
         </div>
-        <div className="properties-container">
-          {properties.map((property) => (
-            <div className="property-card" key={property.id}>
-              <div className="property-image">
-                <img
-                  src={property.image || "https://via.placeholder.com/300x200"}
-                  alt={property.title}
-                />
-                {property.isPopular && (
-                  <span className="popular-tag">Popular</span>
-                )}
-              </div>
-              <div className="property-details">
-                <h3>{property.title}</h3>
-                <div className="property-price">
-                  <span className="price">{property.price}</span>
-                  <span className="period">{property.period}</span>
-                </div>
-                <p className="property-type">{property.type}</p>
-              </div>
-              <button
-                className={`favorite-btn ${
-                  property.isFavorite ? "active" : ""
-                }`}
-                onClick={() => toggleFavorite(property.id)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                >
-                  <path
-                    fill={property.isFavorite ? "#FF5A5F" : "none"}
-                    stroke={property.isFavorite ? "#FF5A5F" : "#000"}
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                  />
-                </svg>
-              </button>
-            </div>
-          ))}
+        <div className="about-content">
+          {activeTab === "mission" && (
+            <p>
+              Our mission is to make rental property searches effortless by
+              providing a reliable platform for both renters and property
+              managers.
+            </p>
+          )}
+          {activeTab === "vision" && (
+            <p>
+              We envision a world where finding a home is seamless, transparent,
+              and accessible to everyone.
+            </p>
+          )}
+          {activeTab === "team" && (
+            <p>
+              Meet our passionate team dedicated to revolutionizing the rental
+              industry.
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* Right-Side Content Moved Below */}
+      <section className="additional-info">
+        <h2>Our Available Services</h2>
+        <div className="services">
+          <div className="service-card">Buy a Home</div>
+          <div className="service-card">Rent a Home</div>
+          <div className="service-card">Sell a Home</div>
+        </div>
+
+        <h2>Good Review By Customers</h2>
+        <div className="customer-reviews">
+          <div className="review-card">
+            <h3>Jane Cooper</h3>
+            <p>4.9 ⭐⭐⭐⭐</p>
+            <p>A great experience working with this team.</p>
+          </div>
+          <div className="review-card">
+            <h3>Brooklyn Simmons</h3>
+            <p>5.0 ⭐⭐⭐⭐⭐</p>
+            <p>Amazing services, highly recommend!</p>
+          </div>
         </div>
       </section>
     </div>
