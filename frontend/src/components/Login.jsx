@@ -37,7 +37,7 @@ const LoginForm = () => {
   };
 
   const handleClose = () => {
-    console.log("Close button clicked");
+    navigate("/"); // Redirects to home route
   };
 
   return (
