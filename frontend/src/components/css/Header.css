@@ -6,14 +6,12 @@
   border-bottom: 1px solid #e0e0e0;
   background-color: white;
   z-index: 100%;
-  width: 99%;
-  margin-left: 20px;
 }
 
-/* .header-left {
+.header-left {
   display: flex;
   align-items: center;
-} */
+}
 
 .logo {
   font-weight: bold;
@@ -27,11 +25,11 @@
   color: #0a2463;
 }
 
-/* .header-right {
+.header-right {
   display: flex;
   align-items: center;
   gap: 15px;
-} */
+}
 
 .start-listing-btn {
   background-color: white;

@@ -1,6 +1,9 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Star, Filter } from "lucide-react";
+import Footer from "./Footer";
+import Header from "./Header";
+import Sidebar from "./owner-sidebar";
 import "./css/view-ratings.css";
 
 const ViewRatings = () => {
@@ -9,7 +12,8 @@ const ViewRatings = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("high-to-low");
-
+  const [activeItem, setActiveItem] = useState("view-ratings");
+  const [activePage, setActivePage] = useState("View Ratings");
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -99,14 +103,9 @@ const ViewRatings = () => {
 
   return (
     <div className="app-container">
+      <Header title={activePage} />
       <div className="main-content">
-        <header className="header">
-          <div className="header-left">
-            <h1 className="logo">I-TUS</h1>
-            <h2 className="page-title">Ratings & Feedback</h2>
-          </div>
-        </header>
-
+        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
         {/* Filter Bar */}
         <div className="filter-bar">
           <button
@@ -121,51 +120,55 @@ const ViewRatings = () => {
             {sortOrder === "high-to-low" ? "(High to Low)" : "(Low to High)"}
           </button>
         </div>
+        <div className="main-body">
+          {/* Property Grid */}
+          <div className="property-grid">
+            {sortedProperties.length > 0 ? (
+              sortedProperties.map((property) => {
+                const avgRating = calculateAverageRating(property._id);
 
-        {/* Property Grid */}
-        <div className="property-grid">
-          {sortedProperties.length > 0 ? (
-            sortedProperties.map((property) => {
-              const avgRating = calculateAverageRating(property._id);
+                return (
+                  <div className="property-card" key={property._id}>
+                    <h3 className="property-name">{property.name}</h3>
+                    <p className="property-address">{property.address}</p>
+                    <p className="property-amenities">{property.amenities}</p>
+                    <p className="property-capacity">
+                      Capacity: {property.capacity}
+                    </p>
 
-              return (
-                <div className="property-card" key={property._id}>
-                  <h3 className="property-name">{property.name}</h3>
-                  <p className="property-address">{property.address}</p>
-                  <p className="property-amenities">{property.amenities}</p>
-                  <p className="property-capacity">
-                    Capacity: {property.capacity}
-                  </p>
-
-                  <div className="property-ratings">
-                    <p className="ratings-label">Ratings</p>
-                    <div className="stars-container">
-                      {renderStars(avgRating)}
+                    <div className="property-ratings">
+                      <p className="ratings-label">Ratings</p>
+                      <div className="stars-container">
+                        {renderStars(avgRating)}
+                      </div>
+                      <p className="average-rating">
+                        {avgRating.toFixed(1)} / 5
+                      </p>
                     </div>
-                    <p className="average-rating">{avgRating.toFixed(1)} / 5</p>
-                  </div>
 
-                  <div className="property-feedback">
-                    <h4 className="feedback-title">Feedback</h4>
-                    {feedback[property._id] &&
-                    feedback[property._id].length > 0 ? (
-                      feedback[property._id].map((fb, index) => (
-                        <div key={index} className="feedback-item">
-                          <p className="feedback-text">{fb.description}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="no-feedback">No feedback available</p>
-                    )}
+                    <div className="property-feedback">
+                      <h4 className="feedback-title">Feedback</h4>
+                      {feedback[property._id] &&
+                      feedback[property._id].length > 0 ? (
+                        feedback[property._id].map((fb, index) => (
+                          <div key={index} className="feedback-item">
+                            <p className="feedback-text">{fb.description}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="no-feedback">No feedback available</p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <p className="no-properties">No properties found</p>
-          )}
+                );
+              })
+            ) : (
+              <p className="no-properties">No properties found</p>
+            )}
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

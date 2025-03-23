@@ -87,4 +87,32 @@ router.get("/rentals/:ownerId", async (req, res) => {
   }
 });
 
+router.get("/norentals/:ownerId", async (req, res) => {
+  try {
+    const { ownerId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(ownerId)) {
+      return res.status(400).json({ message: "Invalid ownerId format" });
+    }
+
+    // Fetch all rentals that DO belong to this owner
+    const ownedRentals = await Owns.find({ ownerId }).distinct("rentalId");
+
+    // Fetch rentals that are NOT in the ownedRentals list
+    const unownedRentals = await Rental.find({ _id: { $nin: ownedRentals } });
+
+    console.log("Fetched unowned rentals:", unownedRentals);
+
+    if (!unownedRentals.length) {
+      return res
+        .status(404)
+        .json({ message: "No rentals found for this user." });
+    }
+
+    res.json(unownedRentals);
+  } catch (err) {
+    console.error("Error in GET /rentals/:ownerId:", err);
+    return res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

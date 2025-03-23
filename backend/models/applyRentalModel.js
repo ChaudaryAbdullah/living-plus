@@ -2,11 +2,6 @@ import mongoose from "mongoose";
 
 const applyRentalSchema = mongoose.Schema(
   {
-    _id: {
-      type: Number,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     rentalId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Rental",

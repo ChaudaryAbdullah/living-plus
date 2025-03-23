@@ -3,50 +3,96 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/apply-rental.css";
+import "./css/view-ratings.css";
 import Footer from "./Footer";
-import Sidebar from "./Sidebar";
+import Sidebar from "./renter-sidebar";
 import Header from "./Header";
 
 const ApplyRental = () => {
+  const [activeItem, setActiveItem] = useState("apply-hostel");
+  const [activePage, setActivePage] = useState("Apply Rental");
+
+  // State for user data
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   // State for form data
   const [formData, setFormData] = useState({
     rentalId: "",
-    roomType: "single",
+    roomId: "",
+    applicantId: "", // Include userId
   });
 
   // State for rentals and rooms fetched from backend
   const [rentals, setRentals] = useState([]);
   const [properties, setProperties] = useState([]);
 
-  // Fetch rentals from backend
+  // Fetch user profile to get user ID
   useEffect(() => {
-    const fetchRentals = async () => {
+    const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:5555/rentals");
-        console.log("Fetched Rentals:", response.data);
-        setRentals(response.data);
+        setLoading(true);
+        const response = await axios.get("http://localhost:5555/profile", {
+          withCredentials: true,
+        });
+
+        setUser(response.data);
+        setLoading(false);
+
+        if (response.data?.user?._id) {
+          setFormData((prevData) => ({
+            ...prevData,
+            userId: response.data.user._id,
+          })); // Set userId in formData
+        }
+
+        if (response.data?.user?.ownerId) {
+          fetchRentalsForUser(response.data.user.ownerId);
+        }
       } catch (error) {
-        console.error("Error fetching rentals:", error);
+        console.error("Error fetching user profile:", error);
+        setLoading(false);
       }
     };
 
-    fetchRentals();
+    fetchUser();
   }, []);
 
-  // Fetch available rooms from backend
-  useEffect(() => {
-    const fetchProperties = async () => {
-      try {
-        const response = await axios.get("http://localhost:5555/rooms");
-        console.log("Fetched Rooms:", response.data);
-        setProperties(response.data);
-      } catch (error) {
-        console.error("Error fetching properties:", error);
+  // Fetch rentals that the user does not own
+  const fetchRentalsForUser = async (ownerId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5555/owns/norentals/${ownerId}`,
+        { withCredentials: true }
+      );
+
+      setRentals(response.data);
+      console.log("Filtered Rentals:", response.data);
+    } catch (error) {
+      console.error("Error fetching rentals:", error);
+    }
+  };
+
+  // Fetch rooms based on selected rental
+  const fetchRoomsForRental = async (rentalId) => {
+    try {
+      if (!rentalId) {
+        setProperties([]); // Clear rooms if no rental is selected
+        return;
       }
-    };
 
-    fetchProperties();
-  }, []);
+      const response = await axios.get("http://localhost:5555/rooms");
+
+      const filteredRooms = response.data.filter(
+        (room) => room.rentalId.toString() === rentalId
+      );
+
+      console.log("Rooms for selected rental:", filteredRooms);
+      setProperties(filteredRooms);
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+    }
+  };
 
   // Handle input changes
   const handleChange = (e) => {
@@ -55,6 +101,11 @@ const ApplyRental = () => {
       ...formData,
       [name]: value,
     });
+
+    // Fetch rooms when a rental is selected
+    if (name === "rentalId") {
+      fetchRoomsForRental(value);
+    }
   };
 
   // Handle form submission
@@ -62,28 +113,47 @@ const ApplyRental = () => {
     e.preventDefault();
 
     try {
+      if (!user?.user?.id) {
+        alert("User not found. Please log in.");
+        return;
+      }
+
+      console.log("User ID:", user.user.id);
+
+      // Correct payload structure
+      const payload = {
+        rentalId: formData.rentalId,
+        applicantId: user.user.id, // Ensure correct key name
+        roomId: formData.roomId,
+      };
+
+      console.log("Payload:", payload);
+
       const response = await axios.post(
         "http://localhost:5555/applyRental",
-        formData
+        payload
       );
+
       console.log("Application submitted:", response.data);
       alert("Rental application submitted successfully!");
     } catch (error) {
-      console.error("Error submitting application:", error);
+      console.error(
+        "Error submitting application:",
+        error.response?.data || error.message
+      );
       alert("Failed to submit application.");
     }
   };
 
   return (
-    <div className="rental-app-container">
-      <Header />
-      <div className="content-container">
-        <Sidebar />
-        <div className="main-content">
+    <div className="app-container">
+      <Header title={activePage} />
+      <div className="main-content">
+        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+        <div className="main-body">
+          <h2>Choose Rental</h2>
+          <div className="form-divider"></div>
           <div className="form-section">
-            <h2>Choose Rental</h2>
-            <div className="form-divider"></div>
-
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="rentalSelect">Choose Rental</label>
@@ -93,6 +163,7 @@ const ApplyRental = () => {
                   value={formData.rentalId}
                   onChange={handleChange}
                   className="form-control"
+                  disabled={rentals.length === 0}
                 >
                   <option value="">Select a rental</option>
                   {rentals.map((rental) => (
@@ -104,16 +175,21 @@ const ApplyRental = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="roomType">Room Type</label>
+                <label htmlFor="roomSelect">Choose Room</label>
                 <select
-                  id="roomType"
-                  name="roomType"
-                  value={formData.roomType}
+                  id="roomSelect"
+                  name="roomId"
+                  value={formData.roomId}
                   onChange={handleChange}
                   className="form-control"
+                  disabled={properties.length === 0}
                 >
-                  <option value="single">Single</option>
-                  <option value="double">Double</option>
+                  <option value="">Select a room</option>
+                  {properties.map((property) => (
+                    <option key={property._id} value={property._id}>
+                      {property._id} - {property.rtype}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -121,35 +197,32 @@ const ApplyRental = () => {
                 Apply
               </button>
             </form>
-
-            {properties.length > 0 && (
-              <div className="properties-section">
-                <h3>Available Properties</h3>
-                <div className="properties-container">
-                  {properties.map((property) => {
-                    // Find rental for this room
-                    const rental = rentals.find(
-                      (r) => r._id.toString() === property.rentalId.toString()
-                    );
-
-                    return (
-                      <div key={property._id} className="property-card">
-                        <h4>{property.rtype} Room</h4>
-                        <p>
-                          Rental:{" "}
-                          {rental
-                            ? rental.rentalName || rental.name
-                            : "Unknown"}
-                        </p>
-                        <p>Status: {property.status}</p>
-                        <p>Price: ${property.price}/month</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
+          {properties.length > 0 && (
+            <div className="properties-section">
+              <h3>Available Properties</h3>
+              <div className="properties-container">
+                {properties.map((property) => {
+                  // Find rental for this room
+                  const rental = rentals.find(
+                    (r) => r._id.toString() === property.rentalId.toString()
+                  );
+
+                  return (
+                    <div key={property._id} className="property-card">
+                      <h4>{property.rtype} Room</h4>
+                      <p>
+                        Rental:{" "}
+                        {rental ? rental.rentalName || rental.name : "Unknown"}
+                      </p>
+                      <p>Status: {property.status}</p>
+                      <p>Price: ${property.price}/month</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <Footer />

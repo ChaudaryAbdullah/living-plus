@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import "./css/AddRooms.css";
 import Header from "./Header";
-import Sidebar from "./Sidebar";
+import Sidebar from "./owner-sidebar";
 import Footer from "./Footer";
 import axios from "axios";
+import "./css/view-ratings.css";
 
 const AddRooms = () => {
+  const [activeItem, setActiveItem] = useState("add-rooms");
+  const [activePage, setActivePage] = useState("Add Rooms");
   const [rentals, setRentals] = useState([]);
   const [formData, setFormData] = useState({
     rentalId: "",
@@ -70,10 +73,10 @@ const AddRooms = () => {
 
   return (
     <div className="app-container">
-      <Header />
-      <div className="content-container">
-        <Sidebar />
-        <main className="main-content">
+      <Header title={activePage} />
+      <div className="main-content">
+        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+        <main className="main-body">
           <div className="form-container">
             <h2 className="page-title">Add Room</h2>
             <div className="divider"></div>
