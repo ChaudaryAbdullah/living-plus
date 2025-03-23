@@ -2,15 +2,13 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Star, Filter } from "lucide-react";
 import "./css/view-ratings.css";
-import OwnerSidebar from "./owner-sidebar";
 
 const ViewRatings = () => {
   const [properties, setProperties] = useState([]);
   const [feedback, setFeedback] = useState({});
-  const [activeItem, setActiveItem] = useState("view-ratings");
-  const [userRentals, setUserRentals] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState("high-to-low");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -42,9 +40,8 @@ const ViewRatings = () => {
         { withCredentials: true }
       );
 
-      setUserRentals(response.data);
+      setProperties(response.data);
       fetchFeedbackForRentals(response.data);
-      setProperties(response.data); // Set properties dynamically
     } catch (error) {
       console.error("Error fetching rentals:", error);
     }
@@ -54,9 +51,8 @@ const ViewRatings = () => {
     try {
       const feedbackData = {};
       for (let rental of rentals) {
-        console.log(rental._id);
         const response = await axios.get(
-          `http://localhost:5555/feedback/${rental._id}`, // Assuming rental._id is the rental ID
+          `http://localhost:5555/feedback/${rental._id}`,
           { withCredentials: true }
         );
         feedbackData[rental._id] = response.data;
@@ -65,6 +61,16 @@ const ViewRatings = () => {
     } catch (error) {
       console.error("Error fetching feedback:", error);
     }
+  };
+
+  const calculateAverageRating = (rentalId) => {
+    if (!feedback[rentalId] || feedback[rentalId].length === 0) return 0;
+
+    const totalRating = feedback[rentalId].reduce(
+      (sum, fb) => sum + (fb.rating || 0),
+      0
+    );
+    return totalRating / feedback[rentalId].length;
   };
 
   const renderStars = (rating) => {
@@ -85,65 +91,76 @@ const ViewRatings = () => {
     return stars;
   };
 
+  const sortedProperties = [...properties].sort((a, b) => {
+    const ratingA = calculateAverageRating(a._id);
+    const ratingB = calculateAverageRating(b._id);
+    return sortOrder === "high-to-low" ? ratingB - ratingA : ratingA - ratingB;
+  });
+
   return (
     <div className="app-container">
-      {/* Sidebar */}
-      <OwnerSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
-
-      {/* Main Content */}
       <div className="main-content">
         <header className="header">
           <div className="header-left">
             <h1 className="logo">I-TUS</h1>
             <h2 className="page-title">Ratings & Feedback</h2>
           </div>
-          <div className="header-right">
-            <button className="start-listing-btn">Start Listing</button>
-            <div className="user-avatar">AA</div>
-          </div>
         </header>
 
         {/* Filter Bar */}
         <div className="filter-bar">
-          <button className="filter-btn">
-            <Filter size={20} />
-            Filter
+          <button
+            className="filter-btn"
+            onClick={() =>
+              setSortOrder(
+                sortOrder === "high-to-low" ? "low-to-high" : "high-to-low"
+              )
+            }
+          >
+            <Filter size={20} /> Sort{" "}
+            {sortOrder === "high-to-low" ? "(High to Low)" : "(Low to High)"}
           </button>
         </div>
 
         {/* Property Grid */}
         <div className="property-grid">
-          {properties.length > 0 ? (
-            properties.map((property) => (
-              <div className="property-card" key={property._id}>
-                <h3 className="property-name">{property.name}</h3>
-                <p className="property-address">{property.address}</p>
-                <p className="property-amenities">{property.amenities}</p>
-                <p className="property-capacity">{property.capacity}</p>
-                <div className="property-ratings">
-                  <p className="ratings-label">Ratings</p>
-                  <div className="stars-container">
-                    {renderStars(property.rating)}
+          {sortedProperties.length > 0 ? (
+            sortedProperties.map((property) => {
+              const avgRating = calculateAverageRating(property._id);
+
+              return (
+                <div className="property-card" key={property._id}>
+                  <h3 className="property-name">{property.name}</h3>
+                  <p className="property-address">{property.address}</p>
+                  <p className="property-amenities">{property.amenities}</p>
+                  <p className="property-capacity">
+                    Capacity: {property.capacity}
+                  </p>
+
+                  <div className="property-ratings">
+                    <p className="ratings-label">Ratings</p>
+                    <div className="stars-container">
+                      {renderStars(avgRating)}
+                    </div>
+                    <p className="average-rating">{avgRating.toFixed(1)} / 5</p>
+                  </div>
+
+                  <div className="property-feedback">
+                    <h4 className="feedback-title">Feedback</h4>
+                    {feedback[property._id] &&
+                    feedback[property._id].length > 0 ? (
+                      feedback[property._id].map((fb, index) => (
+                        <div key={index} className="feedback-item">
+                          <p className="feedback-text">{fb.description}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-feedback">No feedback available</p>
+                    )}
                   </div>
                 </div>
-
-                {/* Feedback Section */}
-                <div className="property-feedback">
-                  <h4 className="feedback-title">Feedback</h4>
-                  {feedback[property._id] &&
-                  feedback[property._id].length > 0 ? (
-                    feedback[property._id].map((fb, index) => (
-                      <div key={index} className="feedback-item">
-                        <p className="feedback-user">{fb.user}: </p>
-                        <p className="feedback-text">{fb.comment}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="no-feedback">No feedback available</p>
-                  )}
-                </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <p className="no-properties">No properties found</p>
           )}

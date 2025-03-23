@@ -1,74 +1,72 @@
 .sidebar {
-    width: 80px;
-    height: 100vh;
-    background-color: #ffffff;
-    position: fixed;
-    left: 0;
-    top: 0;
-    border-right: 1px solid #e0e0e0;
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  }
-  
-  .sidebar-nav {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .sidebar-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .sidebar-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 15px 0;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: #757575;
-  }
-  
-  .sidebar-item:hover {
-    background-color: #f5f5f5;
-    color: #3b82f6;
-  }
-  
-  .sidebar-item.active {
-    color: #3b82f6;
-  }
-  
-  .sidebar-icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-  
-  .sidebar-label {
-    font-size: 12px;
-    text-align: center;
-    font-weight: 500;
-  }
-  
-  /* Add some spacing between groups of menu items */
-  .sidebar-item:nth-child(3)::after,
-  .sidebar-item:nth-child(7)::after {
-    content: "";
-    display: block;
-    width: 40px;
-    height: 1px;
-    background-color: #e0e0e0;
-    margin: 15px auto 0;
-  }
-  
-  
+  width: 80px;
+  height: 100vh;
+  background-color: #ffffff;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-nav {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.sidebar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #757575;
+}
+
+.sidebar-item:hover {
+  background-color: #f5f5f5;
+  color: #3b82f6;
+}
+
+.sidebar-item.active {
+  color: #3b82f6;
+}
+
+.sidebar-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.sidebar-label {
+  font-size: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Add some spacing between groups of menu items */
+.sidebar-item:nth-child(3)::after,
+.sidebar-item:nth-child(7)::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 15px auto 0;
+}

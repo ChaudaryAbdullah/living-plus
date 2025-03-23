@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import "./css/give-feedback.css";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
@@ -6,17 +7,52 @@ import Footer from "./Footer";
 
 const GiveFeedback = () => {
   const [formData, setFormData] = useState({
-    rental: "",
+    rental: "", // Stores rental ID instead of name
     rating: "",
     description: "",
   });
 
-  const rentalOptions = [
-    "Apartment 101",
-    "House 202",
-    "Condo 303",
-    "Studio 404",
-  ];
+  const [userRentals, setUserRentals] = useState([]); // Rentals where user is a tenant
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("http://localhost:5555/profile", {
+          withCredentials: true,
+        });
+        setUser(response.data);
+        setLoading(false);
+
+        if (response.data) {
+          fetchRentalsForUser(response.data.user);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        setError("Failed to load user profile");
+        setLoading(false);
+      }
+    };
+
+    const fetchRentalsForUser = async (userData) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5555/rents/${userData.tenantId}`,
+          { withCredentials: true }
+        );
+        setUserRentals(response.data);
+      } catch (error) {
+        console.error("Error fetching user rentals:", error);
+        setError("Failed to load your rentals");
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,17 +62,47 @@ const GiveFeedback = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Feedback submitted:", formData);
-    // Here you would typically send the data to your backend
-    alert("Feedback submitted successfully!");
-    setFormData({
-      rental: "",
-      rating: "",
-      description: "",
-    });
+    setMessage(""); // Clear previous messages
+
+    if (!formData.rental || !formData.rating || !formData.description) {
+      setMessage("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      console.log(user.user.tenantId);
+      const feedbackData = {
+        rating: parseInt(formData.rating),
+        description: formData.description,
+        rentalId: formData.rental, // Now storing the rental ID
+        tenantId: user.user.tenantId,
+      };
+      console.log(feedbackData);
+
+      console.log("Submitting Feedback:", feedbackData);
+
+      const response = await axios.post(
+        "http://localhost:5555/feedback",
+        feedbackData,
+        { withCredentials: true }
+      );
+
+      if (response.status === 201) {
+        alert("Feedback submitted successfully!");
+        setFormData({ rental: "", rating: "", description: "" });
+      } else {
+        alert("Failed to submit feedback. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert("An error occurred. Please try again later.");
+    }
   };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="app-container">
@@ -46,6 +112,7 @@ const GiveFeedback = () => {
         <div className="main-content">
           <div className="feedback-container">
             <h1>Feedback</h1>
+            {message && <p className="message">{message}</p>}
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="rental">Rental</label>
@@ -59,11 +126,18 @@ const GiveFeedback = () => {
                   <option value="" disabled>
                     Select a rental
                   </option>
-                  {rentalOptions.map((option, index) => (
-                    <option key={index} value={option}>
-                      {option}
-                    </option>
-                  ))}
+                  {userRentals.length > 0 ? (
+                    userRentals.map((rental) => (
+                      <option
+                        key={rental.id || rental._id}
+                        value={rental.id || rental._id}
+                      >
+                        {rental.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No rentals found</option>
+                  )}
                 </select>
               </div>
 
