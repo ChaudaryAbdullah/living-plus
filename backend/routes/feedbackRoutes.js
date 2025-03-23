@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const { rating, description, rentalId, tenantId } = req.body;
-
+    console.log(rating, description, rentalId, tenantId);
     // Validate rating range
     if (rating < 1 || rating > 5) {
       return res
@@ -25,6 +25,7 @@ router.post("/", async (req, res) => {
     await newFeedback.save();
     res.status(201).json(newFeedback);
   } catch (error) {
+    console.log("i am an error");
     res.status(500).json({ message: error.message });
   }
 });
