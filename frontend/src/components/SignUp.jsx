@@ -1,9 +1,10 @@
 "use client";
-
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import "./css/SignUp.css";
 function SignUp() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     userName: "",
     firstName: "",
@@ -27,6 +28,10 @@ function SignUp() {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleClose = () => {
+    navigate("/"); // Redirects to home route
   };
 
   const handleSubmit = async (e) => {
@@ -68,7 +73,7 @@ function SignUp() {
       <div className="signup-modal">
         <div className="modal-header">
           <h2>Sign-up</h2>
-          <button className="close-button">✕</button>
+          <button href="/"className="close-button" onClick={handleClose}>✕</button>
         </div>
 
         <p className="description">

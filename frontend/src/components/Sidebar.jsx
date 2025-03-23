@@ -27,7 +27,7 @@ const Sidebar = ({ onLogout }) => {
       <nav className="sidebar-nav">
         <ul className="nav-list">
           <li className="nav-item">
-            <a href="#" className="nav-link">
+            <a href="/" className="nav-link">
               <div className="nav-icon">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +46,7 @@ const Sidebar = ({ onLogout }) => {
             </a>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link">
+            <a href="/messages" className="nav-link">
               <div className="nav-icon">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -65,7 +65,7 @@ const Sidebar = ({ onLogout }) => {
             </a>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link">
+            <a href="/addRooms" className="nav-link">
               <div className="nav-icon">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@ const Sidebar = ({ onLogout }) => {
             </a>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link">
+            <a href="register-hostel" className="nav-link">
               <div className="nav-icon">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -104,7 +104,7 @@ const Sidebar = ({ onLogout }) => {
         </ul>
         <div className="logout-container">
           <a className="nav-link logout-btn" onClick={handleLogout}>
-            <div className="nav-icon">
+            <div className="/">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
