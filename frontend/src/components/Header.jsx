@@ -1,11 +1,11 @@
 import React from "react";
 import "./css/Header.css";
-const Header = () => {
+const Header = ({ title }) => {
   return (
     <header className="header">
       <div className="header-left">
-        <div className="logo">I-TUS</div>
-        <div className="header-title">Register Hostel</div>
+        <div className="logo">Living+</div>
+        <div className="header-title">{title}</div>
       </div>
       <div className="header-right">
         <button className="start-listing-btn">Start Listing</button>

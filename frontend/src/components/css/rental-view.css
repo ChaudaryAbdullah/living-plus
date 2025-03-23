@@ -1,52 +1,9 @@
-/* Full Screen Layout */
-.rental-app {
-  display: flex;
-  flex-direction: column; /* Stack header first */
-  height: 100vh;
-  background-color: #f8f9fa;
-}
-
-/* Header at Top */
-.header {
-  width: 100%;
-  background-color: white;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 15px 20px;
-  top: 0;
-  left: 0;
-  /* z-index: 1000; */
-}
-
-/* Sidebar & Content Section */
-.main-container {
-  display: flex;
-  flex: 1;
-}
-
-/* Sidebar Styling */
-.sidebar {
-  width: 250px;
-  background-color: #00205b;
-  color: white;
-  padding: 20px;
-  min-height: calc(100vh - 70px);
-}
-
-/* Main Content */
-.main-content {
-  flex: 1;
-  padding: 20px;
-  /* margin-left: 50%; */
-  position: relative;
-  overflow-y: auto;
-}
-
 /* Search Bar */
 .search-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  position: absolute;
+  left: 500px;
+  padding: 20px 0;
+  margin-bottom: 10px;
 }
 
 /* Search & Filter Styling */
@@ -57,11 +14,11 @@
   border-radius: 5px;
   padding: 5px 10px;
   background: white;
-  width: 70%;
+  width: 100%;
 }
 
 .search-bar input {
-  flex: 1;
+  /* flex: 1; */
   border: none;
   outline: none;
   padding: 8px;
@@ -77,18 +34,6 @@
   border-radius: 5px;
 }
 
-.filter-btn {
-  background-color: transparent;
-  border: 2px solid #00205b;
-  color: #00205b;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.filter-btn:hover {
-  background-color: #00205b;
-  color: white;
 }
 
 /* Property Grid */
@@ -165,18 +110,6 @@
   background-color: #001440;
 }
 @media screen and (max-width: 768px) {
-  .main-container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px;
-  }
-
   .property-grid {
     grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
   }
@@ -197,11 +130,6 @@
 
 /* 📌 For Tablets & Smaller Laptops (max-width: 1024px) */
 @media screen and (max-width: 1024px) {
-  .sidebar {
-    width: 200px;
-    padding: 15px;
-  }
-
   .property-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
@@ -215,49 +143,8 @@
   }
 }
 
-/* 📌 For Mobile Phones (max-width: 768px) */
-@media screen and (max-width: 768px) {
-  .main-container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px;
-  }
-
-  .property-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-  }
-
-  .search-bar {
-    width: 100%;
-  }
-
-  .filter-btn {
-    display: none; /* Hide filter button on mobile */
-  }
-
-  .view-property-btn {
-    width: 100%;
-    padding: 10px;
-  }
-}
-
 /* 📌 For Small Mobile Screens (max-width: 480px) */
 @media screen and (max-width: 480px) {
-  .header {
-    padding: 10px;
-  }
-
-  .sidebar {
-    flex-wrap: wrap;
-    padding: 8px;
-  }
-
   .property-card {
     width: 100%;
   }

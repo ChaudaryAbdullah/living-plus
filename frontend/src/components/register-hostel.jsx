@@ -1,12 +1,15 @@
 "use client";
 import { useState } from "react";
 import "./css/register-hostel.css";
-// Import specific icons from lucide-react
+import "./css/view-ratings.css";
+// // Import specific icons from lucide-react
 import Footer from "./Footer";
-import Sidebar from "./Sidebar";
+import Sidebar from "./owner-sidebar";
 import Header from "./Header";
 
 const HostelRegistrationForm = () => {
+  const [activeItem, setActiveItem] = useState("register-hostel");
+  const [activePage, setActivePage] = useState("Register Rental");
   const [formData, setFormData] = useState({
     hostelName: "",
     address: "",
@@ -31,81 +34,83 @@ const HostelRegistrationForm = () => {
   };
 
   return (
-    <div>
-      <Header />
-      <div className="main-container">
-        <Sidebar />
-        <div className="form-container">
-          <h2 className="form-title">Hostel Details</h2>
-          <div className="divider"></div>
+    <div className="app-container">
+      <Header title={activePage} />
+      <div className="main-content">
+        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+        <div className="main-body">
+          <div className="form-container">
+            <h2 className="form-title">Hostel Details</h2>
+            <div className="divider"></div>
 
-          <form className="hostel-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="hostelName">Hostel Name</label>
-              <input
-                type="text"
-                id="hostelName"
-                name="hostelName"
-                value={formData.hostelName}
-                onChange={handleChange}
-                className="form-control"
-              />
-            </div>
+            <form className="hostel-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="hostelName">Hostel Name</label>
+                <input
+                  type="text"
+                  id="hostelName"
+                  name="hostelName"
+                  value={formData.hostelName}
+                  onChange={handleChange}
+                  className="form-control"
+                />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="address">Address</label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="form-control"
-              />
-            </div>
+              <div className="form-group">
+                <label htmlFor="address">Address</label>
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="form-control"
+                />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="amenities">Amenities</label>
-              <input
-                type="text"
-                id="amenities"
-                name="amenities"
-                value={formData.amenities}
-                onChange={handleChange}
-                className="amenities-main"
-              />
-            </div>
+              <div className="form-group">
+                <label htmlFor="amenities">Amenities</label>
+                <input
+                  type="text"
+                  id="amenities"
+                  name="amenities"
+                  value={formData.amenities}
+                  onChange={handleChange}
+                  className="amenities-main"
+                />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="capacity">Capacity</label>
-              <input
-                type="text"
-                id="capacity"
-                name="capacity"
-                value={formData.capacity}
-                onChange={handleChange}
-                className="form-control"
-              />
-            </div>
+              <div className="form-group">
+                <label htmlFor="capacity">Capacity</label>
+                <input
+                  type="text"
+                  id="capacity"
+                  name="capacity"
+                  value={formData.capacity}
+                  onChange={handleChange}
+                  className="form-control"
+                />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="availableRooms">Available Rooms</label>
-              <input
-                type="text"
-                id="availableRooms"
-                name="availableRooms"
-                value={formData.availableRooms}
-                onChange={handleChange}
-                className="form-control"
-              />
-            </div>
+              <div className="form-group">
+                <label htmlFor="availableRooms">Available Rooms</label>
+                <input
+                  type="text"
+                  id="availableRooms"
+                  name="availableRooms"
+                  value={formData.availableRooms}
+                  onChange={handleChange}
+                  className="form-control"
+                />
+              </div>
 
-            <div className="form-actions">
-              <button type="submit" className="apply-btn">
-                Apply
-              </button>
-            </div>
-          </form>
+              <div className="form-actions">
+                <button type="submit" className="apply-btn">
+                  Apply
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
       <Footer />

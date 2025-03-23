@@ -7,9 +7,11 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const { rentalId, applicantId, roomId } = req.body;
-
+    console.log(applicantId, rentalId, roomId);
     if (!rentalId || !applicantId || !roomId) {
-      return res.status(400).send({ message: "Please provide all required fields" });
+      return res
+        .status(400)
+        .send({ message: "Please provide all required fields" });
     }
 
     const newApplication = new ApplyRental({
@@ -19,8 +21,11 @@ router.post("/", async (req, res) => {
     });
 
     await newApplication.save();
-    return res.status(201).send({ message: "Application submitted successfully!" });
+    return res
+      .status(201)
+      .send({ message: "Application submitted successfully!" });
   } catch (err) {
+    console.log(err.message);
     return res.status(500).send({ message: err.message });
   }
 });
@@ -72,7 +77,9 @@ router.put("/:id", async (req, res) => {
     application.roomId = roomId || application.roomId;
 
     await application.save();
-    return res.status(200).send({ message: "Application updated successfully!" });
+    return res
+      .status(200)
+      .send({ message: "Application updated successfully!" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
@@ -87,7 +94,24 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).send({ message: "Application not found" });
     }
 
-    return res.status(200).send({ message: "Application deleted successfully!" });
+    return res
+      .status(200)
+      .send({ message: "Application deleted successfully!" });
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+});
+
+router.get("/rental/:rentalId", async (req, res) => {
+  try {
+    const { rentalId } = req.params;
+
+    const applications = await ApplyRental.find({ rentalId })
+      .populate("rentalId", "rentalName")
+      .populate("applicantId", "name email")
+      .populate("roomId", "rtype price");
+
+    return res.status(200).send(applications);
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }

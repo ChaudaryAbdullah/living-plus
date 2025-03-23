@@ -1,12 +1,15 @@
 .sidebar {
-  width: 80%;
-  background-color: white;
+  width: 80px;
+  height: 100vh;
+  background-color: #ffffff;
+
+  left: 0;
+  top: 0;
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 20px 0;
-  margin-right: 20px;
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar-top {

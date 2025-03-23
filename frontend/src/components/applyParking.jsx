@@ -5,7 +5,8 @@ import axios from "axios";
 import "./css/applyParking.css";
 import Header from "./Header";
 import Footer from "./Footer";
-import Sidebar from "./Sidebar";
+import Sidebar from "./renter-sidebar";
+import "./css/view-ratings.css";
 
 const ApplyParking = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +20,8 @@ const ApplyParking = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userObjectDump, setUserObjectDump] = useState(""); // To help debug the structure
-
+  const [activeItem, setActiveItem] = useState("request-parking");
+  const [activePage, setActivePage] = useState("Apply Parking");
   // Fetch user profile
   useEffect(() => {
     const fetchUser = async () => {
@@ -132,101 +134,79 @@ const ApplyParking = () => {
   };
 
   return (
-    <div className="parking-app-container">
-      <Header />
-      <div className="content-container">
-        <Sidebar />
-        <div className="main-content">
-          <div className="form-section">
-            <h2>Select Parking</h2>
+    <div className="app-container">
+      <Header title={activePage} />
+      <div className="main-content">
+        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
 
-            {/* Debug section - can be removed in production */}
-            <div
-              style={{
-                margin: "10px 0",
-                padding: "10px",
-                background: "#f8f9fa",
-                borderRadius: "4px",
-                fontSize: "12px",
-              }}
-            >
-              <p>
-                <strong>Debug Info:</strong>
-              </p>
-              <p>User loaded: {user ? "Yes" : "No"}</p>
-              <p>Rentals count: {userRentals.length}</p>
-              <p>Parking slots: {parkingSlots.length}</p>
-              <p>Error: {error || "None"}</p>
-              <details>
-                <summary>User Object (click to expand)</summary>
-                <pre style={{ maxHeight: "200px", overflow: "auto" }}>
-                  {userObjectDump}
-                </pre>
-              </details>
+        <div className="main-body">
+          <div className="Parking-content">
+            <div className="form-section">
+              <h2>Select Parking</h2>
+
+              {loading && !userRentals.length ? (
+                <p>Loading data...</p>
+              ) : (
+                <form onSubmit={handleSubmit}>
+                  {/* Rental Selection */}
+                  <div className="form-group">
+                    <label htmlFor="rentalSelect">Choose Rental</label>
+                    <select
+                      id="rentalSelect"
+                      name="rentalId"
+                      value={formData.rentalId}
+                      onChange={handleChange}
+                      className="form-control"
+                      disabled={userRentals.length === 0}
+                    >
+                      <option value="">Select a rental</option>
+                      {userRentals.length === 0 ? (
+                        <option disabled>No rentals available</option>
+                      ) : (
+                        userRentals.map((rental) => (
+                          <option key={rental._id} value={rental._id}>
+                            {rental.name || "Unnamed Rental"}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  </div>
+
+                  {/* Parking Slot Selection */}
+                  <div className="form-group">
+                    <label htmlFor="parkingSlot">Select Parking Slot</label>
+                    <select
+                      id="parkingSlot"
+                      name="parkingSlot"
+                      value={formData.parkingSlot}
+                      onChange={handleChange}
+                      className="form-control"
+                      disabled={parkingSlots.length === 0}
+                    >
+                      <option value="">Select a slot</option>
+                      {parkingSlots.length === 0 ? (
+                        <option disabled>No available slots</option>
+                      ) : (
+                        parkingSlots.map((slot, index) => (
+                          <option key={slot._id || index} value={slot._id}>
+                            Slot ID: {slot._id} -{" "}
+                            {slot.is_occupied ? "Occupied" : "Available"}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="apply-btn"
+                    disabled={!user || userRentals.length === 0}
+                  >
+                    Apply
+                  </button>
+                </form>
+              )}
             </div>
-
-            {loading && !userRentals.length ? (
-              <p>Loading data...</p>
-            ) : (
-              <form onSubmit={handleSubmit}>
-                {/* Rental Selection */}
-                <div className="form-group">
-                  <label htmlFor="rentalSelect">Choose Rental</label>
-                  <select
-                    id="rentalSelect"
-                    name="rentalId"
-                    value={formData.rentalId}
-                    onChange={handleChange}
-                    className="form-control"
-                    disabled={userRentals.length === 0}
-                  >
-                    <option value="">Select a rental</option>
-                    {userRentals.length === 0 ? (
-                      <option disabled>No rentals available</option>
-                    ) : (
-                      userRentals.map((rental) => (
-                        <option key={rental._id} value={rental._id}>
-                          {rental.name || "Unnamed Rental"}
-                        </option>
-                      ))
-                    )}
-                  </select>
-                </div>
-
-                {/* Parking Slot Selection */}
-                <div className="form-group">
-                  <label htmlFor="parkingSlot">Select Parking Slot</label>
-                  <select
-                    id="parkingSlot"
-                    name="parkingSlot"
-                    value={formData.parkingSlot}
-                    onChange={handleChange}
-                    className="form-control"
-                    disabled={parkingSlots.length === 0}
-                  >
-                    <option value="">Select a slot</option>
-                    {parkingSlots.length === 0 ? (
-                      <option disabled>No available slots</option>
-                    ) : (
-                      parkingSlots.map((slot, index) => (
-                        <option key={slot._id || index} value={slot._id}>
-                          Slot ID: {slot._id} -{" "}
-                          {slot.is_occupied ? "Occupied" : "Available"}
-                        </option>
-                      ))
-                    )}
-                  </select>
-                </div>
-
-                <button
-                  type="submit"
-                  className="apply-btn"
-                  disabled={!user || userRentals.length === 0}
-                >
-                  Apply
-                </button>
-              </form>
-            )}
           </div>
         </div>
       </div>

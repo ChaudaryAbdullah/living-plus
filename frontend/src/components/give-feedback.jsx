@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/give-feedback.css";
-import Sidebar from "./Sidebar";
+import "./css/view-ratings.css";
+import Sidebar from "./renter-sidebar";
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -11,7 +12,8 @@ const GiveFeedback = () => {
     rating: "",
     description: "",
   });
-
+  const [activeItem, setActiveItem] = useState("add-ratings");
+  const [activePage, setActivePage] = useState("Give FeedBack");
   const [userRentals, setUserRentals] = useState([]); // Rentals where user is a tenant
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,6 +42,7 @@ const GiveFeedback = () => {
 
     const fetchRentalsForUser = async (userData) => {
       try {
+        console.log(userData);
         const response = await axios.get(
           `http://localhost:5555/rents/${userData.tenantId}`,
           { withCredentials: true }
@@ -106,10 +109,10 @@ const GiveFeedback = () => {
 
   return (
     <div className="app-container">
-      <Header />
-      <div className="content-container">
-        <Sidebar />
-        <div className="main-content">
+      <Header title={activePage} />
+      <div className="main-content">
+        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+        <div className="main-body">
           <div className="feedback-container">
             <h1>Feedback</h1>
             {message && <p className="message">{message}</p>}

@@ -3,14 +3,18 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/approve-parking.css";
-
+import Footer from "./Footer";
+import Header from "./Header";
+import Sidebar from "./owner-sidebar";
+import "./css/view-ratings.css";
 const ApproveParking = () => {
   const [userRentals, setUserRentals] = useState([]); // Rentals owned by user
   const [allParkingRequests, setAllParkingRequests] = useState([]); // All parking requests
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const [activeItem, setActiveItem] = useState("allocate-parking");
+  const [activePage, setActivePage] = useState("Approve Parking");
   // Form state
   const [formData, setFormData] = useState({
     rentalId: "",
@@ -143,118 +147,120 @@ const ApproveParking = () => {
   };
 
   return (
-    <div className="parking-container">
-      <div className="header">
-        <div className="logo">LivingPlus</div>
-        <div className="header-actions">
-          <button className="start-listing-btn">Start Listing</button>
-          <button className="profile-btn">AA</button>
-        </div>
-      </div>
+    <div className="app-container">
+      <Header title={activePage} />
+      <div className="main-content">
+        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
 
-      <div className="parking-content">
-        <h1 className="parking-title">Parking</h1>
+        <div className="main-body">
+          <div className="parking-content">
+            <h1 className="parking-title">Parking</h1>
 
-        {loading ? (
-          <p>Loading user data...</p>
-        ) : error ? (
-          <p className="error">{error}</p>
-        ) : (
-          <>
-            <div className="form-group">
-              <label>Select Rental</label>
-              <select
-                name="rentalId"
-                value={formData.rentalId}
-                onChange={handleChange}
-                className="form-control"
-                disabled={userRentals.length === 0}
-              >
-                <option value="">Select a rental</option>
-                {userRentals.map((rental) => (
-                  <option key={rental._id} value={rental._id}>
-                    {rental.name || "Unnamed Rental"}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {loading ? (
+              <p>Loading user data...</p>
+            ) : error ? (
+              <p className="error">{error}</p>
+            ) : (
+              <>
+                <div className="form-group">
+                  <label>Select Rental</label>
+                  <select
+                    name="rentalId"
+                    value={formData.rentalId}
+                    onChange={handleChange}
+                    className="form-control"
+                    disabled={userRentals.length === 0}
+                  >
+                    <option value="">Select a rental</option>
+                    {userRentals.map((rental) => (
+                      <option key={rental._id} value={rental._id}>
+                        {rental.name || "Unnamed Rental"}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            <div className="form-group">
-              <label>Number of Parking Slots</label>
-              <input
-                type="number"
-                name="parkingSlot"
-                value={formData.parkingSlot}
-                onChange={handleChange}
-              />
-              <button className="create-btn" onClick={handleCreate}>
-                Create
-              </button>
-            </div>
+                <div className="form-group">
+                  <label>Number of Parking Slots</label>
+                  <input
+                    type="number"
+                    name="parkingSlot"
+                    value={formData.parkingSlot}
+                    onChange={handleChange}
+                  />
+                  <button className="create-btn" onClick={handleCreate}>
+                    Create
+                  </button>
+                </div>
 
-            <div className="table-container">
-              <table className="parking-table">
-                <thead>
-                  <tr>
-                    <th>Tenant Name</th>
-                    <th>Parking ID</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allParkingRequests.length === 0 ? (
-                    <tr>
-                      <td colSpan="3" className="no-data">
-                        No parking requests available
-                      </td>
-                    </tr>
-                  ) : (
-                    allParkingRequests
+                <div className="table-container">
+                  <table className="parking-table">
+                    <thead>
+                      <tr>
+                        <th>Tenant Name</th>
+                        <th>Parking ID</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allParkingRequests.length === 0 ? (
+                        <tr>
+                          <td colSpan="3" className="no-data">
+                            No parking requests available
+                          </td>
+                        </tr>
+                      ) : (
+                        allParkingRequests
+                          .filter((request) =>
+                            formData.rentalId
+                              ? request.rentalId === formData.rentalId
+                              : true
+                          )
+                          .map((request) => (
+                            <tr key={request._id}>
+                              <td>
+                                {request.tenantId?.name || "Unknown Tenant"}
+                              </td>
+                              <td>{request._id}</td>
+                              <td>{request.status || "Pending"}</td>
+                            </tr>
+                          ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="action-container">
+                  <select
+                    value={selectedParking}
+                    onChange={(e) => setSelectedParking(e.target.value)}
+                  >
+                    <option value="">Select Tenant & Parking ID</option>
+                    {allParkingRequests
                       .filter((request) =>
                         formData.rentalId
                           ? request.rentalId === formData.rentalId
                           : true
                       )
                       .map((request) => (
-                        <tr key={request._id}>
-                          <td>{request.tenantId?.name || "Unknown Tenant"}</td>
-                          <td>{request._id}</td>
-                          <td>{request.status || "Pending"}</td>
-                        </tr>
-                      ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="action-container">
-              <select
-                value={selectedParking}
-                onChange={(e) => setSelectedParking(e.target.value)}
-              >
-                <option value="">Select Tenant & Parking ID</option>
-                {allParkingRequests
-                  .filter((request) =>
-                    formData.rentalId
-                      ? request.rentalId === formData.rentalId
-                      : true
-                  )
-                  .map((request) => (
-                    <option key={request._id} value={request._id}>
-                      {request.tenantId?.name} - {request._id}
-                    </option>
-                  ))}
-              </select>
-              <button className="accept-btn" onClick={handleAccept}>
-                Accept
-              </button>
-              <button className="reject-btn" onClick={handleReject}>
-                Reject
-              </button>
-            </div>
-          </>
-        )}
+                        <option key={request._id} value={request._id}>
+                          {request.tenantId?.name} - {request._id}
+                        </option>
+                      ))}
+                  </select>
+                  <button className="accept-btn" onClick={handleAccept}>
+                    Accept
+                  </button>
+                  <button className="reject-btn" onClick={handleReject}>
+                    Reject
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };

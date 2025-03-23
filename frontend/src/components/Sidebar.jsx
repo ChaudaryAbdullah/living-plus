@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./css/Sidebar.css";
+import "./css/sidebar.css";
 
 const Sidebar = ({ onLogout }) => {
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ const Sidebar = ({ onLogout }) => {
           </li>
         </ul>
         <div className="logout-container">
-          <button className="nav-link logout-btn" onClick={handleLogout}>
+          <a className="nav-link logout-btn" onClick={handleLogout}>
             <div className="nav-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +120,7 @@ const Sidebar = ({ onLogout }) => {
               </svg>
             </div>
             <span className="nav-text">Logout</span>
-          </button>
+          </a>
         </div>
       </nav>
     </aside>
