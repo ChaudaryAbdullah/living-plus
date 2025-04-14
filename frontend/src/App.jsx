@@ -14,6 +14,7 @@ import GiveFeedback from "./components/give-feedback";
 import ApproveParking from "./components/approve-parking";
 import ViewRatings from "./components/view-ratings";
 import Chats from "./components/chats.jsx";
+import ViewNotifications from "./components/view-notifications";
 import { AuthGuard } from "./temp.jsx";
 import "./App.css";
 
@@ -60,6 +61,7 @@ function App() {
           <Route path="/approve-parking" element={<ApproveParking />} />
           <Route path="/view-ratings" element={<ViewRatings />} />
           <Route path="/chats" element={<Chats />} />
+          <Route path="/view-notifications" element={<ViewNotifications />} />
         </Routes>
       </Router>
     </div>

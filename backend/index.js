@@ -30,13 +30,13 @@ const io = new Server(server, {
 });
 
 app.use(
-  // cors()
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
-  })
+  cors()
+  // cors({
+  //   origin: "http://localhost:5173",
+  //   credentials: true,
+  //   methods: ["GET", "POST", "PUT", "DELETE"],
+  //   allowedHeaders: ["Content-Type"],
+  // })
 );
 
 app.use(express.json());
