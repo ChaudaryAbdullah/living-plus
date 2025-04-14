@@ -1,16 +1,24 @@
 import mongoose from "mongoose";
 
-const notificationSchema = mongoose.Schema(
-  {
-    _id: {
-      type: Number,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    dateTime: { type: Date, required: true },
-    description: { type: String, maxlength: 150, required: true },
-  },
-  { timestamps: true }
-);
+const notificationSchema = new mongoose.Schema({
 
-export const Notification = mongoose.model("Notification", notificationSchema);
+  tenantId: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  read: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const Notification = mongoose.model('Notification', notificationSchema);
+export { Notification };
