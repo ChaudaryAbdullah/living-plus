@@ -19,13 +19,13 @@ import profileRoutes from "./routes/profileRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 const app = express();
 app.use(
-  // cors()
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
-  })
+  cors()
+  // cors({
+  //   origin: "http://localhost:5173",
+  //   credentials: true,
+  //   methods: ["GET", "POST", "PUT", "DELETE"],
+  //   allowedHeaders: ["Content-Type"],
+  // })
 );
 
 app.use(express.json());

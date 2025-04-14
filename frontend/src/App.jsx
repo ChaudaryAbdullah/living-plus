@@ -13,6 +13,7 @@ import RegisterHostel from "./components/register-hostel";
 import GiveFeedback from "./components/give-feedback";
 import ApproveParking from "./components/approve-parking";
 import ViewRatings from "./components/view-ratings";
+import ViewNotifications from "./components/view-notifications";
 import { AuthGuard } from "./temp.jsx";
 import "./App.css";
 
@@ -58,6 +59,7 @@ function App() {
           <Route path="/give-feedback" element={<GiveFeedback />} />
           <Route path="/approve-parking" element={<ApproveParking />} />
           <Route path="/view-ratings" element={<ViewRatings />} />
+          <Route path="/view-notifications" element={<ViewNotifications />} />
         </Routes>
       </Router>
     </div>
