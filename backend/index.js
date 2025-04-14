@@ -4,6 +4,8 @@ import express from "express";
 import session from "express-session";
 import { PORT, DB_URL } from "./config.js";
 import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
 import rentalRoutes from "./routes/rentalRoutes.js";
 import parkingAllocationRoutes from "./routes/parkingAllocationRoutes.js";
 import parkingRequestRoutes from "./routes/parkingRequestRoutes.js";
@@ -17,7 +19,16 @@ import ApplyRental from "./routes/applyRentalRoutes.js";
 import rentRoutes from "./routes/rentRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
+import { chatSocketHandler } from "./routes/chatsRoute.js";
+
 const app = express();
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: { origin: "*", methods: ["GET", "POST"] },
+});
+
 app.use(
   // cors()
   cors({
@@ -31,7 +42,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Apply session middleware BEFORE routes
+// Apply session middleware BEFORE routes
 app.use(
   session({
     secret: "12345", // Replace with a strong secret key
@@ -62,10 +73,11 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Rental Management System API!");
 });
 
+chatSocketHandler(io);
 mongoose
   .connect(DB_URL)
   .then(() => {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
