@@ -26,17 +26,17 @@ const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: "*", methods: ["GET", "POST"] },
+  cors: { origin: "http://localhost:5173", methods: ["GET", "POST"] },
 });
 
 app.use(
-  cors()
-  // cors({
-  //   origin: "http://localhost:5173",
-  //   credentials: true,
-  //   methods: ["GET", "POST", "PUT", "DELETE"],
-  //   allowedHeaders: ["Content-Type"],
-  // })
+  // cors()
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  })
 );
 
 app.use(express.json());
