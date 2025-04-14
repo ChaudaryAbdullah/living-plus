@@ -19,7 +19,11 @@ import ApplyRental from "./routes/applyRentalRoutes.js";
 import rentRoutes from "./routes/rentRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
+
+import notificationRoutes from "./routes/notificationRoutes.js";
+
 import { chatSocketHandler } from "./routes/chatsRoute.js";
+
 
 const app = express();
 
@@ -30,7 +34,10 @@ const io = new Server(server, {
 });
 
 app.use(
+
+
   // cors()
+
   cors({
     origin: "http://localhost:5173",
     credentials: true,
@@ -68,6 +75,7 @@ app.use("/rooms", roomRoutes);
 app.use("/applyRental", ApplyRental);
 app.use("/profile", profileRoutes);
 app.use("/feedback", feedbackRoutes);
+app.use('/notifications', notificationRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Rental Management System API!");

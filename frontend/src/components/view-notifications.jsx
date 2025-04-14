@@ -1,63 +1,117 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import "./css/view-notifications.css"
+import { useState, useEffect } from "react";
+import axios from "axios";
+import "./css/view-notifications.css";
 import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./owner-sidebar";
 import "./css/view-ratings.css";
-// Mock database service
-const fetchNotifications = async () => {
-  // In a real app, this would be an API call to your database
-  return [
-    { id: 1, date: "2023-04-15", description: "Your rental application has been approved." },
-    { id: 2, date: "2023-04-10", description: "New message from property owner." },
-    { id: 3, date: "2023-04-05", description: "Rent payment confirmation." },
-    { id: 4, date: "2023-03-28", description: "Maintenance request completed." },
-    { id: 5, date: "2023-03-20", description: "Upcoming rent payment reminder." },
-  ]
-}
 
 const NotificationsPage = () => {
-  const [notifications, setNotifications] = useState([])
-  const [dateFilter, setDateFilter] = useState("")
-  const [descriptionFilter, setDescriptionFilter] = useState("")
-  const [sortDirection, setSortDirection] = useState("desc") // 'asc' or 'desc'
+  const [notifications, setNotifications] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [dateFilter, setDateFilter] = useState("");
+  const [descriptionFilter, setDescriptionFilter] = useState("");
+  const [sortDirection, setSortDirection] = useState("desc");
   const [activePage, setActivePage] = useState("View Notifications");
   const [activeItem, setActiveItem] = useState("apply-hostel");
+
   useEffect(() => {
-    const getNotifications = async () => {
-      const data = await fetchNotifications()
-      setNotifications(data)
-    }
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        console.log("Fetching user profile...");
+        
+        const response = await axios.get("http://localhost:5555/profile", {
+          withCredentials: true,
+        });
+        
+        console.log("User profile response:", response.data);
+        setUser(response.data);
 
-    getNotifications()
-  }, [])
+        if (response.data && response.data.user) {
+          // Try with tenantId first, then fall back to id
+          const userIdentifier = response.data.user.tenantId || response.data.user.id;
+                         
+          if (userIdentifier) {
+            console.log("Using ID for fetching notifications:", userIdentifier);
+            await fetchNotificationsForUser(userIdentifier);
+          } else {
+            console.error("No valid ID found in the user object", response.data.user);
+            setError("User ID not found. Please log in again.");
+          }
+        } else {
+          console.error("User data is incomplete:", response.data);
+          setError("User profile incomplete. Please log in again.");
+        }
+        
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        setError(`Failed to load user profile: ${error.message}`);
+        setLoading(false);
+      }
+    };
 
+    const fetchNotificationsForUser = async (id) => {
+      try {
+        console.log("Making API call to:", `http://localhost:5555/notifications/${id}`);
+        
+        const response = await axios.get(
+          `http://localhost:5555/notifications/${id}`,
+          { 
+            withCredentials: true,
+            timeout: 10000 
+          }
+        );
+        
+        console.log("Notifications response:", response.data);
+        setNotifications(response.data);
+      } catch (error) {
+        console.error("Error fetching user notifications:", error);
+        const errorMsg = error.response 
+          ? `Status: ${error.response.status}, Message: ${error.response.data.error || JSON.stringify(error.response.data)}`
+          : error.message;
+          
+        setError(`Failed to load your notifications: ${errorMsg}`);
+      }
+    };
+
+    fetchUser();
+  }, []);
+  
   const handleSort = () => {
-    const newDirection = sortDirection === "desc" ? "asc" : "desc"
-    setSortDirection(newDirection)
+    const newDirection = sortDirection === "desc" ? "asc" : "desc";
+    setSortDirection(newDirection);
 
     const sortedNotifications = [...notifications].sort((a, b) => {
-      const dateA = new Date(a.date)
-      const dateB = new Date(b.date)
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
 
-      return newDirection === "asc" ? dateA - dateB : dateB - dateA
-    })
+      return newDirection === "asc" ? dateA - dateB : dateB - dateA;
+    });
 
-    setNotifications(sortedNotifications)
-  }
+    setNotifications(sortedNotifications);
+  };
 
   const filteredNotifications = notifications.filter((notification) => {
-    const matchesDate = notification.date.includes(dateFilter)
-    const matchesDescription = notification.description.toLowerCase().includes(descriptionFilter.toLowerCase())
-    return matchesDate && matchesDescription
-  })
+    const matchesDate = notification.date.includes(dateFilter);
+    const matchesDescription = notification.description
+      .toLowerCase()
+      .includes(descriptionFilter.toLowerCase());
+    return matchesDate && matchesDescription;
+  });
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="app-container">
       <Header title={activePage} />
-
       <div className="main-content">
         <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
         <main className="main-body">
@@ -65,6 +119,12 @@ const NotificationsPage = () => {
             <h2>Notifications</h2>
             <hr />
           </div>
+
+          {error && (
+            <div className="error-message" style={{color: 'red', padding: '10px', margin: '10px 0'}}>
+              {error}
+            </div>
+          )}
 
           <div className="filters-container">
             <div className="filter-group">
@@ -96,21 +156,25 @@ const NotificationsPage = () => {
           <div className="notifications-list">
             {filteredNotifications.length > 0 ? (
               filteredNotifications.map((notification) => (
-                <div key={notification.id} className="notification-item">
+                <div key={notification._id || notification.id} className="notification-item">
                   <div className="notification-date">{notification.date}</div>
-                  <div className="notification-description">{notification.description}</div>
+                  <div className="notification-description">
+                    {notification.description}
+                  </div>
                 </div>
               ))
             ) : (
-              <div className="no-notifications">No notifications found</div>
+              <div className="no-notifications">
+                {error ? "Error loading notifications" : "No notifications found"}
+              </div>
             )}
           </div>
         </main>
       </div>
 
-      <Footer />   
+      <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default NotificationsPage
+export default NotificationsPage;
