@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import axios from "axios";
 import "./css/view-notifications.css"
 import Footer from "./Footer";
 import Header from "./Header";
@@ -18,22 +19,56 @@ const fetchNotifications = async () => {
   ]
 }
 
+
 const NotificationsPage = () => {
   const [notifications, setNotifications] = useState([])
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [dateFilter, setDateFilter] = useState("")
   const [descriptionFilter, setDescriptionFilter] = useState("")
   const [sortDirection, setSortDirection] = useState("desc") // 'asc' or 'desc'
   const [activePage, setActivePage] = useState("View Notifications");
   const [activeItem, setActiveItem] = useState("apply-hostel");
+  
+  
   useEffect(() => {
-    const getNotifications = async () => {
-      const data = await fetchNotifications()
-      setNotifications(data)
-    }
-
-    getNotifications()
-  }, [])
-
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("http://localhost:5555/profile", {
+          withCredentials: true,
+        });
+        setUser(response.data);
+        setLoading(false);
+  
+        if (response.data) {
+          fetchNotificationsForUser(response.data.user);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        setError("Failed to load user profile");
+        setLoading(false);
+      }
+    };
+  
+    const fetchNotificationsForUser = async (userData) => {
+      try {
+        console.log("Fetching notifications for:", userData);
+        const response = await axios.get(
+          `http://localhost:5555/notifications/${userData.tenantId}`,
+          { withCredentials: true }
+        );
+        setNotifications(response.data); // Assuming you have this state set up
+      } catch (error) {
+        console.error("Error fetching user notifications:", error);
+        setError("Failed to load your notifications");
+      }
+    };
+  
+    fetchUser();
+  }, []);
+  
   const handleSort = () => {
     const newDirection = sortDirection === "desc" ? "asc" : "desc"
     setSortDirection(newDirection)
