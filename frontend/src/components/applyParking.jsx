@@ -165,7 +165,7 @@ const ApplyParking = () => {
                       ) : (
                         userRentals.map((rental) => (
                           <option key={rental._id} value={rental._id}>
-                            {rental.name || "Unnamed Rental"}
+                            {rental.rentalName || "Unnamed Rental"}
                           </option>
                         ))
                       )}

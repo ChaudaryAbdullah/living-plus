@@ -4,6 +4,29 @@ import { Rent } from "../models/rentModel.js";
 
 const router = express.Router();
 
+router.post("/", async (req, res) => {
+  try {
+    const { amount, roomId, tenantId, rentalId } = req.body;
+
+    if (!amount || !roomId || !tenantId || !rentalId) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const newRent = new Rent({
+      amount,
+      roomId: new mongoose.Types.ObjectId(roomId),
+      tenantId: new mongoose.Types.ObjectId(tenantId),
+      rentalId: new mongoose.Types.ObjectId(rentalId),
+    });
+
+    const savedRent = await newRent.save();
+    res.status(201).json(savedRent);
+  } catch (error) {
+    console.error("Error creating rent:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
 router.get("/", async (req, res) => {
   try {
     const rents = await Rent.find()
@@ -28,13 +51,14 @@ router.get("/:tenantId", async (req, res) => {
 
     // Find rents where the tenant is the given user
     const userRents = await Rent.find({ tenantId: tenantId })
-      .populate("rentalId") // Populating rental details
+      .populate("rentalId")
+      .populate("roomId") // Populating rental details
       .exec();
 
     console.log("Fetched user rents:", userRents);
 
     // Return only the rental details
-    res.json(userRents.map((rent) => rent.rentalId));
+    res.json(userRents.map((rent) => rent));
   } catch (error) {
     console.error("Error fetching user rents:", error);
     res.status(500).json({ message: "Server error", error });

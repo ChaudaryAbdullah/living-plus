@@ -85,6 +85,24 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Delete a rental application by applicant
+router.delete("/applicant/:applicantId", async (req, res) => {
+  const { applicantId } = req.params;
+
+  try {
+    const deleted = await ApplyRental.findOneAndDelete({ applicantId });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    res.status(200).json({ message: "Application deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting application:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Delete a rental application by ID
 router.delete("/:id", async (req, res) => {
   try {

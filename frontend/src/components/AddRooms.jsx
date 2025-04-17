@@ -11,6 +11,8 @@ import "./css/view-ratings.css";
 const AddRooms = () => {
   const [activeItem, setActiveItem] = useState("add-rooms");
   const [activePage, setActivePage] = useState("Add Rooms");
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const [rentals, setRentals] = useState([]);
   const [formData, setFormData] = useState({
     rentalId: "",
@@ -23,18 +25,44 @@ const AddRooms = () => {
 
   // Fetch rentals from the API
   useEffect(() => {
-    const fetchRentals = async () => {
+    const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:5555/rentals");
-        console.log("Fetched Rentals:", response.data); // Debugging
-        setRentals(response.data);
+        setLoading(true);
+        const response = await axios.get("http://localhost:5555/profile", {
+          withCredentials: true,
+        });
+
+        setUser(response.data);
+        setLoading(false);
+
+        if (response.data?.user?.ownerId) {
+          fetchRentalsForUser(response.data.user.ownerId);
+        }
       } catch (error) {
-        console.error("Error fetching rentals:", error);
+        console.error("Error fetching user profile:", error);
+        setError("Failed to load user profile");
+        setLoading(false);
       }
     };
 
-    fetchRentals();
+    // Fetch user rentals
+    const fetchRentalsForUser = async (ownerId) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5555/owns/rentals/${ownerId}`,
+          { withCredentials: true }
+        );
+
+        setRentals(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching rentals:", error);
+        setError("Failed to load your rentals");
+      }
+    };
+    fetchUser();
   }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
