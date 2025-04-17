@@ -2,15 +2,6 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Home,
-  MessageSquare,
-  BookmarkCheck,
-  User,
-  LogOut,
-  Filter,
-  Plus,
-} from "lucide-react";
 import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./owner-sidebar";

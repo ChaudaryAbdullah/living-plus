@@ -5,6 +5,7 @@ import "./css/rental-view.css";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
+import { Link } from "react-router-dom";
 
 const RentalView = () => {
   const [rentals, setRentals] = useState([]);
@@ -77,9 +78,12 @@ const RentalView = () => {
                         Facilities: {rental.facilities.join(", ")}
                       </span>
                     </div>
-                    <a href="/addRooms" className="view-property-btn">
+                    <Link
+                      to={`/rental/${rental._id}`}
+                      className="view-property-btn"
+                    >
                       View Property
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ))

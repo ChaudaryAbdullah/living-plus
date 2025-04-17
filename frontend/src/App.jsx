@@ -8,13 +8,14 @@ import RentalView from "./components/rental-view";
 import AddRooms from "./components/AddRooms";
 import ApplyRental from "./components/apply-rental";
 import ApplyParking from "./components/applyParking";
-import ApproveApplicants from "./components/approveApplicants";
+import ApproveApplicants from "./components/ApproveApplicants";
 import RegisterHostel from "./components/register-hostel";
 import GiveFeedback from "./components/give-feedback";
 import ApproveParking from "./components/approve-parking";
 import ViewRatings from "./components/view-ratings";
 import Chats from "./components/chats.jsx";
 import ViewNotifications from "./components/view-notifications";
+import ViewRentalDetails from "./components/viewRentalDetails.jsx";
 import { AuthGuard } from "./temp.jsx";
 import "./App.css";
 
@@ -62,6 +63,7 @@ function App() {
           <Route path="/view-ratings" element={<ViewRatings />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/view-notifications" element={<ViewNotifications />} />
+          <Route path="/rental/:id" element={<ViewRentalDetails />} />
         </Routes>
       </Router>
     </div>

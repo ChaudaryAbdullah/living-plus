@@ -87,6 +87,31 @@ router.get("/rentals/:ownerId", async (req, res) => {
   }
 });
 
+router.get("/:rentalId", async (req, res) => {
+  try {
+    const { rentalId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(rentalId)) {
+      return res.status(400).json({ message: "Invalid rentalId format" });
+    }
+
+    const userRents = await Owns.find({ rentalId }).populate("ownerId").exec();
+
+    console.log("Fetched user owns:", userRents);
+
+    if (!userRents.length) {
+      return res
+        .status(404)
+        .json({ message: "No Owner found for this rental." });
+    }
+
+    // Return only the rental details
+    res.json(userRents.map((owns) => owns.ownerId));
+  } catch (err) {
+    console.error("Error in GET /:rentalId:", err);
+    return res.status(500).json({ message: err.message });
+  }
+});
+
 router.get("/norentals/:ownerId", async (req, res) => {
   try {
     const { ownerId } = req.params;
