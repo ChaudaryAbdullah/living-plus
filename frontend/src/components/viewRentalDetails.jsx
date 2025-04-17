@@ -81,12 +81,13 @@ const ViewRentalDetails = () => {
               </p>
               <p>
                 <strong>Facilities: </strong>
-                {rental.facilities.join(", ")}
+                {rental.amenities.join(", ")}
               </p>
             </div>
 
             {user ? (
               <div className="owner-details">
+                <h1>Owner</h1>
                 <p>
                   <strong>Name: </strong>
                   {user.firstName} {user.lastName}
@@ -95,14 +96,13 @@ const ViewRentalDetails = () => {
                   <strong>Email: </strong>
                   {user.email}
                 </p>
+                <Link to={`/chats/${rental._id}`} className="view-contact-btn">
+                  Contact Now
+                </Link>
               </div>
             ) : (
               <p>Owner information not available.</p>
             )}
-
-            <Link to={`/contacts/${rental._id}`} className="view-property-btn">
-              Contact Now
-            </Link>
           </div>
         </div>
       </div>

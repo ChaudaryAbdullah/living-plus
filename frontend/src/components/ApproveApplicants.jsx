@@ -53,7 +53,7 @@ const ApproveApplicants = () => {
       }
     } catch (error) {
       console.error("Error fetching user rentals:", error);
-      setError("Failed to load your rentals");
+      setError("No rental found!");
     }
   };
 
@@ -74,28 +74,36 @@ const ApproveApplicants = () => {
     }
   };
 
-  const handleAccept = async (applicantId) => {
+  const handleAccept = async (applicationId) => {
     try {
       // Find the applicant from the current state
-      const applicant = applicants.find(
-        (app) => app.applicantId._id === applicantId
-      );
+      const applicant = applicants.find((app) => app._id === applicationId);
       if (!applicant) {
         console.error("Applicant not found.");
         return;
       }
-
+      console.log(applicant.roomId);
       // Fetch room details if required
       const roomResponse = await axios.get(
-        `http://localhost:5555/rentals/${applicant.rentalId._id}/room`,
-        { withCredentials: true }
+        `http://localhost:5555/rooms/${applicant.roomId._id}`,
+        {
+          withCredentials: true,
+        }
       );
-      const room = roomResponse.data[0]; // Assuming the first available room
+      console.log(roomResponse.data);
+      const room = roomResponse.data; // Assuming the first available room
 
       if (!room) {
         console.error("No available room found for this rental.");
         return;
       }
+
+      const tenantResponse = await axios.get(
+        `http://localhost:5555/tenant/${applicant.applicantId.email}`,
+        {
+          withCredentials: true,
+        }
+      );
 
       // Define rent amount (Modify as per business logic)
       const rentAmount = room.price || 500; // Default to 500 if not specified
@@ -105,26 +113,22 @@ const ApproveApplicants = () => {
         `http://localhost:5555/rents`,
         {
           amount: rentAmount,
-          roomId: room._id,
-          tenantId: applicantId, // Use applicantId as tenantId
+          roomId: applicant.roomId._id,
+          tenantId: tenantResponse.data._id, // Use applicantId as tenantId
           rentalId: applicant.rentalId._id,
         },
         { withCredentials: true }
       );
 
       // Remove applicant from applyRentals using applicantId
-      await axios.delete(
-        `http://localhost:5555/applyRental/applicant/${applicantId}`,
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.delete(`http://localhost:5555/applyRental/${applicationId}`, {
+        withCredentials: true,
+      });
 
       // Update state
-      setApplicants((prev) =>
-        prev.filter((app) => app.applicantId._id !== applicantId)
-      );
-      console.log(`Accepted applicant ${applicantId} and moved to Rent.`);
+      setApplicants((prev) => prev.filter((app) => app._id !== applicationId));
+      console.log(`Accepted applicant ${applicationId} and moved to Rent.`);
+      alert("Application accepted successfully!");
     } catch (error) {
       console.error("Error accepting applicant:", error);
     }
@@ -133,17 +137,13 @@ const ApproveApplicants = () => {
   const handleReject = async (applicantId) => {
     try {
       // Remove applicant from applyRentals using applicantId
-      await axios.delete(
-        `http://localhost:5555/applyRental/applicant/${applicantId}`,
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.delete(`http://localhost:5555/applyRental/${applicantId}`, {
+        withCredentials: true,
+      });
 
       // Update state
-      setApplicants((prev) =>
-        prev.filter((app) => app.applicantId._id !== applicantId)
-      );
+      setApplicants((prev) => prev.filter((app) => app._id !== applicantId));
+      alert("Application rejected successfully!");
       console.log(`Rejected applicant ${applicantId}.`);
     } catch (error) {
       console.error("Error rejecting applicant:", error);

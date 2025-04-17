@@ -1,6 +1,13 @@
 import React from "react";
+import { data, Link } from "react-router-dom";
 import "./css/Header.css";
-const Header = ({ title }) => {
+const Header = ({ title, userName }) => {
+  const avatar = localStorage.data;
+
+  const getAvatarInitial = (avatar) => {
+    return avatar && avatar.length > 0 ? avatar[0].toUpperCase() : "";
+  };
+
   return (
     <header className="header">
       <div className="header-left">
@@ -8,8 +15,13 @@ const Header = ({ title }) => {
         <div className="header-title">{title}</div>
       </div>
       <div className="header-right">
-        <button className="start-listing-btn">Start Listing</button>
-        <div className="user-avatar">AA</div>
+        <Link to="/register-hostel" className="start-listing-btn">
+          Start Listing
+        </Link>
+
+        <Link to="/dashboard" className="user-avatar">
+          {getAvatarInitial(avatar)}
+        </Link>
       </div>
     </header>
   );

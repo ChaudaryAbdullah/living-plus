@@ -10,8 +10,8 @@ import { Link } from "react-router-dom";
 const RentalView = () => {
   const [rentals, setRentals] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeItem, setActiveItem] = useState("view-ratings");
-  const [activePage, setActivePage] = useState("View Ratings");
+  const [activeItem, setActiveItem] = useState("discover");
+  const [activePage, setActivePage] = useState("Discover");
 
   useEffect(() => {
     const fetchRentals = async () => {
@@ -66,16 +66,16 @@ const RentalView = () => {
                     <h3 className="property-title">{rental.rentalName}</h3>
                     <p className="property-address">{rental.address}</p>
                     <div className="property-specs">
-                      <span className="property-units">
-                        {rental.totalRooms} Total Rooms
-                      </span>
-                      <span className="property-beds">
-                        {rental.availableRooms} Available
-                      </span>
+                      <p className="property-units">
+                        Total Rooms: {rental.capacity}
+                      </p>
+                      <p className="property-beds">
+                        Available: {rental.availableRooms}
+                      </p>
                     </div>
                     <div className="property-footer">
                       <span className="property-price">
-                        Facilities: {rental.facilities.join(", ")}
+                        Facilities: {rental.amenities.join(", ")}
                       </span>
                     </div>
                     <Link

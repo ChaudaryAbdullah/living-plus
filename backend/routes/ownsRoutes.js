@@ -73,12 +73,6 @@ router.get("/rentals/:ownerId", async (req, res) => {
 
     console.log("Fetched user rents:", userRents);
 
-    if (!userRents.length) {
-      return res
-        .status(404)
-        .json({ message: "No rentals found for this owner." });
-    }
-
     // Return only the rental details
     res.json(userRents.map((rent) => rent.rentalId));
   } catch (err) {
