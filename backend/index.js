@@ -19,7 +19,7 @@ import ApplyRental from "./routes/applyRentalRoutes.js";
 import rentRoutes from "./routes/rentRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
-
+import paymentRoutes from "./routes/paymentRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 
 import { chatSocketHandler } from "./routes/chatsRoute.js";
