@@ -76,7 +76,7 @@ app.use("/applyRental", ApplyRental);
 app.use("/profile", profileRoutes);
 app.use("/feedback", feedbackRoutes);
 app.use('/notifications', notificationRoutes);
-
+app.use('/payment', paymentRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome to the Rental Management System API!");
 });

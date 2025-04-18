@@ -18,6 +18,8 @@ import ViewNotifications from "./components/view-notifications";
 import ViewRentalDetails from "./components/viewRentalDetails";
 import Dashboard from "./components/dashboard";
 import PaymentOwner from "./components/paymentOwner";
+import PaymentRenter from "./components/paymentRenter";
+
 import { AuthGuard } from "./temp.jsx";
 import "./App.css";
 
@@ -68,6 +70,7 @@ function App() {
           <Route path="/rental/:id" element={<ViewRentalDetails />} />
           <Route path="/dashboard/" element={<Dashboard />} />
           <Route path="/payment-owner" element={<PaymentOwner />} />
+          <Route path="/payment-renter" element={<PaymentRenter />} />
         </Routes>
       </Router>
     </div>
