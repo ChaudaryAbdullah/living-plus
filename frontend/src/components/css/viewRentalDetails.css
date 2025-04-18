@@ -1,0 +1,64 @@
+.rental-grid {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  padding: 1rem;
+}
+
+/* Left side (Rental info) */
+.rental-details {
+  flex: 0 0 70%;
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Right side (Owner info) */
+.owner-details {
+  flex: 0 0 30%;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  text-align: center;
+}
+.owner-details h1 {
+  text-align: left;
+}
+.owner-details p,
+.rental-details p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.view-contact-btn {
+  margin-top: 2rem;
+
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  display: inline-block;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.view-contact-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .rental-grid {
+    flex-direction: column;
+  }
+
+  .rental-details,
+  .owner-details {
+    flex: 0 0 100%;
+  }
+}

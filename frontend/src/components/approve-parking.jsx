@@ -55,12 +55,12 @@ const ApproveParking = () => {
         `http://localhost:5555/owns/rentals/${ownerId}`,
         { withCredentials: true }
       );
-
+      console.log(response.data);
       setUserRentals(response.data);
       fetchParkingRequestsForAll(response.data);
     } catch (error) {
       console.error("Error fetching rentals:", error);
-      setError("Failed to load your rentals");
+      setError("No rental Found");
     }
   };
 
@@ -174,7 +174,7 @@ const ApproveParking = () => {
                     <option value="">Select a rental</option>
                     {userRentals.map((rental) => (
                       <option key={rental._id} value={rental._id}>
-                        {rental.name || "Unnamed Rental"}
+                        {rental.rentalName || "Unnamed Rental"}
                       </option>
                     ))}
                   </select>

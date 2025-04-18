@@ -96,11 +96,21 @@
 }
 
 .accept-btn {
-  background-color: #f0f0f0;
+  background-color: #1a56db;
+}
+
+.accept-btn:hover {
+  color: #1a56db;
+  background-color: white;
 }
 
 .reject-btn {
-  background-color: #f0f0f0;
+  background-color: #dc2626;
+}
+
+.reject-btn:hover {
+  color: #dc2626;
+  background-color: white;
 }
 
 /* Responsive adjustments */

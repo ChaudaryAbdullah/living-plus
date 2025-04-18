@@ -42,6 +42,21 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:email", async (req, res) => {
+  try {
+    const email = req.params.email;
+    const tenant = await Tenant.findOne({ email });
+
+    if (!tenant) {
+      return res.status(404).send({ message: "Tenant not found" });
+    }
+
+    return res.status(200).send(tenant);
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+});
+
 router.get("/:id", async (req, res) => {
   try {
     const tenant = await Tenant.findById(req.params.id);

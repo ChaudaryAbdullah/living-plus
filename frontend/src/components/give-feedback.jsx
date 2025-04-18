@@ -135,7 +135,7 @@ const GiveFeedback = () => {
                         key={rental.id || rental._id}
                         value={rental.id || rental._id}
                       >
-                        {rental.name}
+                        {rental.rentalName}
                       </option>
                     ))
                   ) : (
