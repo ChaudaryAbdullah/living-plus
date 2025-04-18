@@ -1,6 +1,8 @@
 import React from "react";
-import { data, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { MdNotificationsNone } from "react-icons/md"; // Import the icon
 import "./css/Header.css";
+
 const Header = ({ title, userName }) => {
   const avatar = localStorage.data;
 
@@ -15,6 +17,10 @@ const Header = ({ title, userName }) => {
         <div className="header-title">{title}</div>
       </div>
       <div className="header-right">
+        <Link to="/view-notifications" className="notification-icon">
+          <MdNotificationsNone size={24} />
+        </Link>
+
         <Link to="/register-hostel" className="start-listing-btn">
           Start Listing
         </Link>

@@ -60,3 +60,17 @@
   color: #0066cc;
   border: 1px solid #e0e0e0;
 }
+.notification-icon {
+  color: #0066cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.notification-icon:hover {
+  color: white;
+  background-color: #0066cc;
+  border-radius: 50%;
+  padding: 5px;
+}
