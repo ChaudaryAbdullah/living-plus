@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./css/Dashboard.css"; // optional
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
+import "./css/Dashboard.css"; // optional
 
 const Dashboard = () => {
   const [activeItem, setActiveItem] = useState("dashboard");
@@ -19,11 +19,13 @@ const Dashboard = () => {
       const tenantId = userData?.tenantId;
       const ownerId = userData?.ownerId;
       console.log(tenantId, ownerId);
-      const [rentedRes, ownedRes] = await Promise.all([
+      const [userRes, rentedRes, ownedRes] = await Promise.all([
+        axios.get(`http://localhost:5555/owner/${ownerId}`),
         axios.get(`http://localhost:5555/rents/${tenantId}`),
         axios.get(`http://localhost:5555/owns/rentals/${ownerId}`),
       ]);
-      console.log(ownedRes.data);
+      console.log(userRes.data);
+      setUser(userRes.data);
       setRentedRentals(rentedRes.data);
       setOwnedRentals(ownedRes.data);
     } catch (err) {
@@ -60,6 +62,18 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
+  const calculateAge = (dob) => {
+    if (!dob) return "N/A";
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;
 
@@ -71,7 +85,22 @@ const Dashboard = () => {
         <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
         <div className="dashboard">
           <h1>User Dashboard</h1>
-
+          {user && (
+            <section className="dashboard-section user-info">
+              <h2>User Information</h2>
+              <div className="userData">
+                <p>
+                  <strong>Name:</strong> {user.firstName} {user.lastName}
+                </p>
+                <p>
+                  <strong>Email:</strong> {user.email}
+                </p>
+                <p>
+                  <strong>Age:</strong> {calculateAge(user.dob)}
+                </p>
+              </div>
+            </section>
+          )}
           <section className="dashboard-section">
             <h2>Rented Rentals</h2>
             {rentedRentals.length === 0 ? (
