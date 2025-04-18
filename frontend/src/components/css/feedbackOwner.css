@@ -1,0 +1,94 @@
+.feedbacks-header {
+    margin-bottom: 20px;
+  }
+  
+  .feedbacks-header h2 {
+    font-weight: normal;
+    margin-bottom: 10px;
+  }
+  
+  .filters-container {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: flex-end;
+    gap: 15px;
+  }
+  
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .filter-group label {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .filter-group input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+  }
+  
+  .description-filter input {
+    width: 500px;
+  }
+  
+  .sort-btn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+    color: #003366;
+    font-weight: bold;
+  }
+  
+  .sort-icon {
+    margin-right: 5px;
+  }
+  
+  .feedbacks-list {
+    margin-top: 20px;
+  }
+  
+  .feedback-item {
+    display: flex;
+    padding: 15px 0;
+    border-bottom: 1px solid #e0e0e0;
+    flex-direction: column; /* Changed to column to stack feedback details */
+    gap: 5px; /* Added some gap between feedback details */
+  }
+  
+  .feedback-rating {
+    width: 200px;
+    padding-right: 15px;
+  }
+  
+  .feedback-description {
+    flex: 1;
+  }
+  
+  .feedback-rental {
+    font-size: 0.9em;
+    color: #777;
+  }
+  
+  .feedback-tenant {
+    font-size: 0.9em;
+    color: #777;
+  }
+  
+  .feedback-date {
+    font-size: 0.8em;
+    color: #888;
+  }
+  
+  .no-feedbacks {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+  }
