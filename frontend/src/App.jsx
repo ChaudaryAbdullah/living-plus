@@ -17,7 +17,7 @@ import Chats from "./components/chats";
 import ViewNotifications from "./components/view-notifications";
 import ViewRentalDetails from "./components/viewRentalDetails";
 import Dashboard from "./components/dashboard";
-
+import PaymentOwner from "./components/paymentOwner";
 import { AuthGuard } from "./temp.jsx";
 import "./App.css";
 
@@ -67,6 +67,7 @@ function App() {
           <Route path="/view-notifications" element={<ViewNotifications />} />
           <Route path="/rental/:id" element={<ViewRentalDetails />} />
           <Route path="/dashboard/" element={<Dashboard />} />
+          <Route path="/payment-owner" element={<PaymentOwner />} />
         </Routes>
       </Router>
     </div>

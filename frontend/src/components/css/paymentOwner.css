@@ -1,0 +1,154 @@
+  
+  /* Payment section styles */
+  .payment-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    flex: 1;
+  }
+  
+  .payment-section h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .divider {
+    height: 1px;
+    background-color: #eaeaea;
+    margin-bottom: 20px;
+  }
+  
+  /* Filters styles */
+  .filters {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: flex-end;
+  }
+  
+  .filter-group {
+    margin-right: 15px;
+    flex: 1;
+  }
+  
+  .filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .filter-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .sort-btn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .sort-btn svg {
+    margin-right: 5px;
+    stroke: #666;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  
+  /* Bills table styles */
+  .bills-table {
+    margin-bottom: 30px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th,
+  td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eaeaea;
+  }
+  
+  th {
+    font-weight: normal;
+    color: #666;
+  }
+  
+  .status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .status-badge.paid {
+    background-color: #e6f7e6;
+    color: #28a745;
+  }
+  
+  .status-badge.pending {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .status-badge.overdue {
+    background-color: #f8d7da;
+    color: #dc3545;
+  }
+  
+  /* Generate invoice section styles */
+  .generate-invoice-section {
+    display: flex;
+    align-items: flex-end;
+    margin-top: 30px;
+  }
+  
+  .select-tenant,
+  .select-date {
+    margin-right: 15px;
+  }
+  
+  .select-tenant {
+    flex: 1;
+  }
+  
+  .select-tenant label,
+  .select-date label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .select-tenant select,
+  .select-date input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .generate-invoice-btn {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .generate-invoice-btn:hover {
+    background-color: #004494;
+  }
+  
