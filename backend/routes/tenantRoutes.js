@@ -1,5 +1,10 @@
 import express from "express";
+import mongoose from "mongoose";
+
 import { Tenant } from "../models/tenantModel.js";
+import { Rental } from "../models/rentalModel.js";
+import { Owns } from "../models/ownsModel.js";
+import { Rent } from "../models/rentModel.js"; // Include if needed for additional queries
 const router = express.Router();
 
 router.post("/", async (req, res) => {
@@ -39,6 +44,44 @@ router.get("/", async (req, res) => {
     return res.status(200).send(tenants);
   } catch (err) {
     return res.status(500).send({ message: err.message });
+  }
+});
+router.get("/owner/:ownerId", async (req, res) => {
+  try {
+    const { ownerId } = req.params;
+
+
+    // Step 1: Find all rentals owned by this owner
+    const ownedProperties = await Owns.find({ ownerId });
+
+    if (!ownedProperties.length) {
+      return res.status(404).json({ message: "No rentals found for this owner" });
+    }
+
+    // Step 2: Get the rental IDs from owned properties
+    const rentalIds = ownedProperties.map(property => property.rentalId);
+
+    // Step 3: Find rent records for these rentals
+    const rentRecords = await Rent.find({ rentalId: { $in: rentalIds } });
+
+    if (!rentRecords.length) {
+      return res.status(404).json({ message: "No tenants found for this owner's rentals" });
+    }
+
+    // Step 4: Extract tenant IDs from rent records
+    const tenantIds = rentRecords.map(record => record.tenantId);
+
+    // Step 5: Fetch tenant details
+    const tenants = await Tenant.find({ _id: { $in: tenantIds } });
+
+    if (!tenants.length) {
+      return res.status(404).json({ message: "No tenant details found" });
+    }
+
+    return res.status(200).json(tenants);
+  } catch (err) {
+    console.error("Error fetching tenants for owner:", err);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
