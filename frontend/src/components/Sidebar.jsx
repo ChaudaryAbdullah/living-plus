@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom";
 import {
   Home,
   MessageCircle,
-  PlusSquare,
-  Settings,
+  ShieldCheck,
+  Handshake,
   LogOut,
   LayoutDashboard,
 } from "lucide-react"; // Added LayoutDashboard icon
@@ -32,16 +32,16 @@ const Sidebar = ({ onLogout, activeItem, setActiveItem }) => {
       label: "Messages",
     },
     {
-      id: "register-rental",
-      path: "/register-hostel",
-      icon: <PlusSquare size={24} />,
-      label: "Register Rental",
+      id: "owned-rentals",
+      path: "/owned-rentals",
+      icon: <ShieldCheck size={24} />,
+      label: "Owned Rental",
     },
     {
-      id: "apply-rental",
-      path: "/apply-rental",
-      icon: <Settings size={24} />,
-      label: "Apply Rental",
+      id: "rented-rental",
+      path: "/rented-rentals",
+      icon: <Handshake size={24} />,
+      label: "Rented Rental",
     },
     {
       id: "LogOut",
