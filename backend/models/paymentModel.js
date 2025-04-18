@@ -7,7 +7,7 @@ const paymentSchema = mongoose.Schema(
       required: true,
     },
     total: {
-      type: mongoose.Schema.Types.Number, // or mongoose.Schema.Types.Long if needed
+      type: mongoose.Schema.Types.Number,
       required: true,
     },
     status: {
@@ -16,7 +16,11 @@ const paymentSchema = mongoose.Schema(
     },
     tenantId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Tenant", // References the Tenant collection
+      ref: "Tenant",
+      required: true,
+    },
+    dueDate: {
+      type: Date,
       required: true,
     },
   },
