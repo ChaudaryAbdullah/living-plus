@@ -6,6 +6,8 @@ import {
   Home,
   Plus,
   ClipboardList,
+  ShieldCheck,
+  Handshake,
   Bookmark,
   Settings,
   Mail,
@@ -20,6 +22,18 @@ const OwnerSidebar = ({ activeItem, setActiveItem }) => {
       path: "/rental-view",
       icon: <Home size={24} />,
       label: "Discover",
+    },
+    {
+      id: "owned-rentals",
+      path: "/owned-rentals",
+      icon: <ShieldCheck size={24} />,
+      label: "Owned Rental",
+    },
+    {
+      id: "rented-rental",
+      path: "/rented-rentals",
+      icon: <Handshake size={24} />,
+      label: "Rented Rental",
     },
     {
       id: "register-hostel",

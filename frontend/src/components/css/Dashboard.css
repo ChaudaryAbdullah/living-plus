@@ -50,3 +50,33 @@ h1 {
 .dashboard-table tbody tr:hover {
   background-color: #f2f2f2;
 }
+
+.dashboard-section.user-info {
+  background-color: #fdfdfd;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px 30px;
+  margin: 0 auto 30px auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 70%;
+}
+.userData {
+  align-items: center;
+}
+.dashboard-section.user-info h2 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #333;
+}
+
+.dashboard-section.user-info p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #555;
+  text-justify: center;
+  text-align: left;
+}
+
+.dashboard-section.user-info strong {
+  color: #222;
+}

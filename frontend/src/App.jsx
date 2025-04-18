@@ -21,6 +21,8 @@ import PaymentOwner from "./components/paymentOwner";
 import PaymentRenter from "./components/paymentRenter";
 import FeedbackRenter from "./components/feedbackRenter";
 import FeedbackOwner from "./components/feedbackOwner";
+import RentedRentals from "./components/rentedRentals";
+import OwnedRentals from "./components/ownedRentals";
 
 import { AuthGuard } from "./temp.jsx";
 import "./App.css";
@@ -75,6 +77,8 @@ function App() {
           <Route path="/payment-renter" element={<PaymentRenter />} />
           <Route path="/feedback-renter" element={<FeedbackRenter />} />
           <Route path="/feedback-owner" element={<FeedbackOwner />} />
+          <Route path="/owned-rentals" element={<OwnedRentals />} />
+          <Route path="/rented-rentals" element={<RentedRentals />} />
         </Routes>
       </Router>
     </div>
