@@ -1,5 +1,4 @@
 "use client";
-
 import { Link } from "react-router-dom";
 import {
   Home,
@@ -10,6 +9,7 @@ import {
   Settings,
   MessageSquare,
   LogOut,
+  CreditCard,
 } from "lucide-react";
 import "./css/renter-sidebar.css";
 
@@ -58,6 +58,12 @@ const RenterSidebar = ({ activeItem, setActiveItem }) => {
       label: "Add Ratings",
     },
     {
+      id: "billing",
+      path: "/payment-renter",
+      icon: <CreditCard size={24} />,
+      label: "Billing",
+    },
+    {
       id: "messages",
       path: "/messages",
       icon: <MessageSquare size={24} />,
@@ -65,11 +71,11 @@ const RenterSidebar = ({ activeItem, setActiveItem }) => {
     },
     { id: "logout", path: "/", icon: <LogOut size={24} />, label: "Logout" },
   ];
-
+  
   const handleItemClick = (id) => {
     setActiveItem(id);
   };
-
+  
   return (
     <div className="sidebar">
       <nav className="sidebar-nav">

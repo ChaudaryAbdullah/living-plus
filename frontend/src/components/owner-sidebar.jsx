@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -12,6 +11,7 @@ import {
   Settings,
   Mail,
   LogOut,
+  CreditCard,
 } from "lucide-react";
 import "./css/owner-sidebar.css";
 
@@ -64,6 +64,12 @@ const OwnerSidebar = ({ activeItem, setActiveItem }) => {
       path: "/view-ratings",
       icon: <Settings size={24} />,
       label: "View Ratings",
+    },
+    {
+      id: "billing",
+      path: "/payment-owner",
+      icon: <CreditCard size={24} />,
+      label: "Billing",
     },
     {
       id: "messages",
