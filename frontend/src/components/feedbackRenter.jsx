@@ -1,194 +1,205 @@
-// In your FeedbackRenter component (frontend):
-
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import './css/feedbackRenter.css';
-import "./css/view-ratings.css";
-import Header from "./Header";
-import Sidebar from "./renter-sidebar";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import "./css/feedbackOwner.css"; 
 import Footer from "./Footer";
-import axios from 'axios'; // Import axios
+import Header from "./Header";
+import Sidebar from "./owner-sidebar";
+import "./css/view-ratings.css";
 
-const FeedbackRenter = () => {
-  const [formData, setFormData] = useState({
-    rating: '',
-    description: ''
-  });
-  const [activeItem, setActiveItem] = useState("feedback");
-  const [activePage, setActivePage] = useState("Feedback");
-  const [submissionStatus, setSubmissionStatus] = useState(null); // To show success/error messages
+const ViewFeedbacksPage = () => {
+  const [feedbacks, setFeedbacks] = useState([]);
   const [user, setUser] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true);
-  const [errorUser, setErrorUser] = useState(null);
-  const [rentalId, setRentalId] = useState(null);
-  const [loadingRental, setLoadingRental] = useState(true);
-  const [errorRental, setErrorRental] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [ratingFilter, setRatingFilter] = useState("");
+  const [descriptionFilter, setDescriptionFilter] = useState("");
+  const [sortDirection, setSortDirection] = useState("desc");
+  const [activePage, setActivePage] = useState("View Feedbacks");
+  const [activeItem, setActiveItem] = useState("apply-hostel");
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserAndFeedbacks = async () => {
       try {
-        setLoadingUser(true);
+        setLoading(true);
         console.log("Fetching user profile...");
-        const response = await axios.get("http://localhost:5555/profile", {
+
+        const userResponse = await axios.get("http://localhost:5555/profile", {
           withCredentials: true,
         });
-        console.log("User profile response:", response.data);
-        setUser(response.data);
-        setLoadingUser(false);
+
+        console.log("User profile response:", userResponse.data);
+        setUser(userResponse.data);
+
+        if (userResponse.data && userResponse.data.user && userResponse.data.user.id) {
+          const userId = userResponse.data.user.id;
+          console.log("Fetching rentals for owner ID:", userId);
+          await fetchOwnerRentalsAndFeedbacks(userId);
+        } else {
+          console.error("User data incomplete or ID not found:", userResponse.data);
+          setError("User profile incomplete. Please log in again.");
+        }
+
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching user profile:", error);
-        setErrorUser(`Failed to load user profile: ${error.message}`);
-        setLoadingUser(false);
+        setError(`Failed to load user profile: ${error.message}`);
+        setLoading(false);
       }
     };
 
-    fetchUserData();
+    const fetchOwnerRentalsAndFeedbacks = async (ownerId) => {
+      try {
+        // First, fetch all rentals owned by this user
+        console.log("Making API call to:", `http://localhost:5555/owns/rentals/${ownerId}`);
+        const rentalsResponse = await axios.get(
+          `http://localhost:5555/owns/rentals/${ownerId}`,
+          {
+            withCredentials: true,
+            timeout: 10000,
+          }
+        );
+        
+        console.log("Owner rentals response:", rentalsResponse.data);
+        const rentals = rentalsResponse.data;
+        
+        if (!rentals || rentals.length === 0) {
+          console.log("No rentals found for this owner");
+          setFeedbacks([]);
+          return;
+        }
+        
+        // Collect all rental IDs
+        const rentalIds = rentals.map(rental => rental._id);
+        console.log("Rental IDs:", rentalIds);
+        
+        // Fetch feedbacks for all these rentals
+        let allFeedbacks = [];
+        for (const rentalId of rentalIds) {
+          try {
+            const feedbackResponse = await axios.get(
+              `http://localhost:5555/feedbacks/rental/${rentalId}`,
+              {
+                withCredentials: true,
+                timeout: 10000,
+              }
+            );
+            console.log(`Feedbacks for rental ${rentalId}:`, feedbackResponse.data);
+            allFeedbacks = [...allFeedbacks, ...feedbackResponse.data];
+          } catch (err) {
+            console.error(`Error fetching feedbacks for rental ${rentalId}:`, err);
+            // Continue with other rentals even if one fails
+          }
+        }
+        
+        console.log("All feedbacks collected:", allFeedbacks);
+        setFeedbacks(allFeedbacks);
+      } catch (error) {
+        console.error("Error fetching owner rentals:", error);
+        const errorMsg = error.response
+          ? `Status: ${error.response.status}, Message: ${error.response.data.error || JSON.stringify(error.response.data)}`
+          : error.message;
+        setError(`Failed to load your rentals: ${errorMsg}`);
+      }
+    };
+
+    fetchUserAndFeedbacks();
   }, []);
 
-  useEffect(() => {
-    const fetchRentalId = async () => {
-      if (user?.user?.tenantId) {
-        try {
-          setLoadingRental(true);
-          console.log("Fetching rental ID for tenant:", user.user.tenantId);
-          const response = await axios.get(`http://localhost:5555/rents/${user.user.tenantId}`, {
-            withCredentials: true,
-          });
-          console.log("Fetched user rents:", response.data);
-          if (response.data && response.data.length > 0 && response.data[0]?.rentalId?._id) {
-            setRentalId(response.data[0].rentalId._id);
-          } else {
-            setErrorRental("No active rental found for this tenant.");
-          }
-          setLoadingRental(false);
-        } catch (error) {
-          console.error("Error fetching user rents:", error);
-          setErrorRental(`Failed to load rental information: ${error.message}`);
-          setLoadingRental(false);
-        }
-      } else if (user === null && !loadingUser && !errorUser) {
-        setErrorRental("User information not available.");
-        setLoadingRental(false);
-      } else {
-        setLoadingRental(false);
-      }
-    };
+  const handleSort = () => {
+    const newDirection = sortDirection === "desc" ? "asc" : "desc";
+    setSortDirection(newDirection);
 
-    fetchRentalId();
-  }, [user]);
+    const sortedFeedbacks = [...feedbacks].sort((a, b) => {
+      const ratingA = a.rating;
+      const ratingB = b.rating;
+      return newDirection === "asc" ? ratingA - ratingB : ratingB - ratingA;
+    });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'rating' && value !== '' && !/^[1-5]*$/.test(value)) {
-      return;
-    }
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    setFeedbacks(sortedFeedbacks);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmissionStatus('submitting'); // Indicate submission in progress
+  const filteredFeedbacks = feedbacks.filter((feedback) => {
+    const matchesRating = ratingFilter === "" || feedback.rating.toString().includes(ratingFilter);
+    const matchesDescription = feedback.description
+      ? feedback.description.toLowerCase().includes(descriptionFilter.toLowerCase())
+      : true;
+    return matchesRating && matchesDescription;
+  });
 
-    if (!rentalId) {
-      setSubmissionStatus('error');
-      // Keep the existing error message in errorRental
-      setTimeout(() => setSubmissionStatus(null), 3000);
-      return;
-    }
-
-    try {
-      const tenantId = user?.user?.tenantId;
-
-      const feedbackData = {
-        rating: parseInt(formData.rating), // Ensure rating is an integer
-        description: formData.description,
-        rentalId: rentalId,
-        tenantId: tenantId,
-      };
-
-      const response = await axios.post('http://localhost:5555/feedbacks', feedbackData, {
-        withCredentials: true, // If authentication is required
-      });
-
-      console.log('Feedback submitted successfully:', response.data);
-      setSubmissionStatus('success');
-      setFormData({ rating: '', description: '' }); // Clear the form
-      setTimeout(() => setSubmissionStatus(null), 3000); // Clear status after a delay
-
-    } catch (error) {
-      console.error('Error submitting feedback:', error.response ? error.response.data : error.message);
-      setSubmissionStatus('error');
-      setTimeout(() => setSubmissionStatus(null), 3000); // Clear status after a delay
-    }
-  };
+  if (loading) {
+    return <div>Loading feedbacks...</div>;
+  }
 
   return (
     <div className="app-container">
       <Header title={activePage} />
-
       <div className="main-content">
-        <Sidebar className="renter-sidebar" activeItem={activeItem} setActiveItem={setActiveItem} />
-        <div className="main-body">
+        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+        <main className="main-body">
+          <div className="feedbacks-header">
+            <h2>Feedbacks for Your Properties</h2>
+            <hr />
+          </div>
 
-          <h2>Feedback</h2>
-          <div className="divider"></div>
-
-          {submissionStatus === 'success' && (
-            <div className="success-message">Feedback submitted successfully!</div>
-          )}
-          {submissionStatus === 'error' && (
-            <div className="error-message">Failed to submit feedback. Please try again.</div>
-          )}
-          {submissionStatus === 'submitting' && (
-            <div className="submitting-message">Submitting feedback...</div>
+          {error && (
+            <div className="error-message" style={{ color: 'red', padding: '10px', margin: '10px 0' }}>
+              {error}
+            </div>
           )}
 
-          {errorRental && (
-            <div className="error-message">{errorRental}</div>
-          )}
-
-          <form onSubmit={handleSubmit} className="feedback-form" aria-live="polite">
-            <div className="form-group">
-              <label htmlFor="rating">Rating (1-5)</label>
+          <div className="filters-container">
+            <div className="filter-group">
+              <label>Rating</label>
               <input
-                type="number"
-                id="rating"
-                name="rating"
-                value={formData.rating}
-                onChange={handleChange}
-                className="form-control"
-                min="1"
-                max="5"
-                required // Make rating required
+                type="text"
+                value={ratingFilter}
+                onChange={(e) => setRatingFilter(e.target.value)}
+                placeholder="Filter by rating"
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                className="form-control"
-                rows="8"
-              ></textarea>
+            <div className="filter-group description-filter">
+              <label>Description</label>
+              <input
+                type="text"
+                value={descriptionFilter}
+                onChange={(e) => setDescriptionFilter(e.target.value)}
+                placeholder="Filter by description"
+              />
             </div>
 
-            <div className="form-actions">
-              <button type="submit" className="submit-btn" disabled={!rentalId}>Submit</button>
-            </div>
-          </form>
+            <button className="sort-btn" onClick={handleSort}>
+              <span className="sort-icon">⇅</span>
+              Sort by Rating
+            </button>
+          </div>
 
-        </div>
+          <div className="feedbacks-list">
+            {filteredFeedbacks.length > 0 ? (
+              filteredFeedbacks.map((feedback) => (
+                <div key={feedback._id || feedback.id} className="feedback-item">
+                  <div className="feedback-rating">Rating: {feedback.rating}/5</div>
+                  <div className="feedback-description">
+                    {feedback.description || "No description provided."}
+                  </div>
+                  <div className="feedback-rental">Property: {feedback.rentalId?.name || feedback.rentalId}</div>
+                  <div className="feedback-tenant">From Tenant: {feedback.tenantId?.name || feedback.tenantId}</div>
+                  <div className="feedback-date">Date: {new Date(feedback.createdAt).toLocaleDateString()}</div>
+                </div>
+              ))
+            ) : (
+              <div className="no-feedbacks">
+                {error ? "Error loading feedbacks" : "No feedbacks found for your properties."}
+              </div>
+            )}
+          </div>
+        </main>
       </div>
       <Footer />
     </div>
   );
 };
 
-export default FeedbackRenter;
+export default ViewFeedbacksPage;
