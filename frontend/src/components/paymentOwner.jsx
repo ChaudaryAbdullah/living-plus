@@ -37,7 +37,7 @@ const PaymentOwner = () => {
         
         // Once we have the user, fetch tenants and payments
         if (response.data?.user?.ownerId) {
-          await fetchTenantsAndBills(response.data.user.ownerId);
+          await fetchOwnerData(response.data.user.ownerId);
         } else {
           console.error("Owner ID not found in user data");
           setError("Owner ID not found. Please ensure you're logged in as an owner.");
@@ -54,81 +54,104 @@ const PaymentOwner = () => {
     fetchUser();
   }, []);
 
-  const fetchTenantsAndBills = async (ownerId) => {
+  const fetchOwnerData = async (ownerId) => {
     try {
       console.log("Fetching data for owner ID:", ownerId);
-      
-      // Get tenants for this owner - adjust endpoint as needed
-      const tenantsRes = await axios.get(`${API_BASE_URL}/tenant/owner/${ownerId}`, {
+  
+      // 1. Get all rentals owned by this owner
+      const rentalsRes = await axios.get(`${API_BASE_URL}/owns/rentals/${ownerId}`, {
         withCredentials: true
       });
-      
-      console.log("Tenants response:", tenantsRes.data);
-      
-      // Get all payments - use the correct payment route
+  
+      if (!Array.isArray(rentalsRes.data)) {
+        setError("Invalid rental data format received from server");
+        return;
+      }
+  
+      const ownerRentalIds = rentalsRes.data.map(rental => rental._id);
+      console.log("Owner's rental IDs:", ownerRentalIds);
+  
+      // 2. Get all rent relationships
+      const rentsRes = await axios.get(`${API_BASE_URL}/rents`, {
+        withCredentials: true
+      });
+  
+      if (!Array.isArray(rentsRes.data)) {
+        setError("Invalid rents data format received from server");
+        return;
+      }
+  
+      // 3. Filter rents to those associated with this owner's rentals
+      const ownerRents = rentsRes.data.filter(rent => {
+        const rentalId = typeof rent.rentalId === 'object' ? rent.rentalId._id : rent.rentalId;
+        return ownerRentalIds.includes(rentalId);
+      });
+  
+      // 4. Extract unique tenants from owner-related rents
+      const tenantsMap = new Map();
+  
+      ownerRents.forEach(rent => {
+        if (rent.tenantId) {
+          const tenant = rent.tenantId;
+          const tenantId = typeof tenant === 'object' ? tenant._id : tenant;
+  
+          if (!tenantsMap.has(tenantId)) {
+            tenantsMap.set(
+              tenantId,
+              typeof tenant === 'object'
+                ? tenant
+                : { _id: tenantId, fullName: "Unknown Tenant" }
+            );
+          }
+        }
+      });
+  
+      const ownerTenants = Array.from(tenantsMap.values());
+      console.log("Owner's tenants:", ownerTenants);
+  
+      // 5. Get all payments
       const paymentsRes = await axios.get(`${API_BASE_URL}/payment`, {
         withCredentials: true
       });
-      
-      console.log("Payments response:", paymentsRes.data);
-      
-      // Check if tenant data has the expected structure
-      if (!Array.isArray(tenantsRes.data)) {
-        console.error("Tenants data is not an array:", tenantsRes.data);
-        setError("Invalid tenant data format received from server");
-        return;
-      }
-      
-      // Filter payments for tenants of this owner
-      const ownerTenantIds = tenantsRes.data.map(tenant => tenant._id);
-      
-      // Handle different possible payment data structures
-      let formattedPayments = [];
-      
+  
+      let allPayments = [];
       if (Array.isArray(paymentsRes.data)) {
-        // If paymentsRes.data is directly an array of payments
-        formattedPayments = paymentsRes.data.filter(payment => 
-          payment.tenantId && ownerTenantIds.includes(
-            typeof payment.tenantId === 'object' ? payment.tenantId._id : payment.tenantId
-          )
-        ).map(payment => ({
-          id: payment._id,
-          tenant: payment.tenantId?.fullName || 
-                 (typeof payment.tenantId === 'string' ? 
-                  tenantsRes.data.find(t => t._id === payment.tenantId)?.fullName || "Unknown" 
-                  : "Unknown"),
-          amount: payment.total,
-          dueDate: payment.dueDate,
-          status: payment.status ? "Paid" : "Pending",
-        }));
+        allPayments = paymentsRes.data;
       } else if (paymentsRes.data.payments && Array.isArray(paymentsRes.data.payments)) {
-        // If paymentsRes.data has a 'payments' property that's an array
-        formattedPayments = paymentsRes.data.payments.filter(payment => 
-          payment.tenantId && ownerTenantIds.includes(
-            typeof payment.tenantId === 'object' ? payment.tenantId._id : payment.tenantId
-          )
-        ).map(payment => ({
+        allPayments = paymentsRes.data.payments;
+      }
+  
+      // 6. Filter payments to only include those for owner's tenants
+      const ownerTenantIds = Array.from(tenantsMap.keys());
+  
+      const ownerPayments = allPayments.filter(payment => {
+        const tenantId = typeof payment.tenantId === 'object' ? payment.tenantId._id : payment.tenantId;
+        return ownerTenantIds.includes(tenantId);
+      });
+  
+      // 7. Format payments for display
+      const formattedPayments = ownerPayments.map(payment => {
+        const tenantId = typeof payment.tenantId === 'object' ? payment.tenantId._id : payment.tenantId;
+        const tenant = tenantsMap.get(tenantId);
+  
+        return {
           id: payment._id,
-          tenant: payment.tenantId?.fullName || 
-                 (typeof payment.tenantId === 'string' ? 
-                  tenantsRes.data.find(t => t._id === payment.tenantId)?.fullName || "Unknown" 
-                  : "Unknown"),
+          tenant: tenant ? tenant.fullName : "Unknown",
           amount: payment.total,
           dueDate: payment.dueDate,
-          status: payment.status ? "Paid" : "Pending",
-        }));
-      }
-      
-      console.log("Formatted payments:", formattedPayments);
-      
-      setTenants(tenantsRes.data);
+          status: payment.status ? "Paid" : "Pending"
+        };
+      });
+  
+      // 8. Update state
+      setTenants(ownerTenants);
       setBills(formattedPayments);
     } catch (error) {
-      console.error("Error fetching data:", error);
-      console.error("Error details:", error.response?.data || error.message);
-      setError("Failed to load tenants and payments. Please check the console for details.");
+      console.error("Error fetching owner data:", error);
+      setError("Failed to load data. Please check your connection or try again.");
     }
   };
+  
 
   const handleGenerateInvoice = async () => {
     if (!selectedTenant || !selectedDate || !amount) {
@@ -163,7 +186,7 @@ const PaymentOwner = () => {
       
       // Refresh the payments list
       if (user?.user?.ownerId) {
-        fetchTenantsAndBills(user.user.ownerId);
+        await fetchOwnerData(user.user.ownerId);
       }
       
       // Reset form fields
@@ -205,23 +228,7 @@ const PaymentOwner = () => {
     return <div className="loading">Loading...</div>;
   }
 
-  if (error) {
-    return (
-      <div className="app-container">
-        <Header title={activePage} />
-        <div className="main-content">
-          <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
-          <div className="payment-section">
-            <div className="error-container">
-              <h3>Error</h3>
-              <p>{error}</p>
-              <button onClick={() => window.location.reload()}>Try Again</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  
 
   return (
     <div className="app-container">
@@ -233,7 +240,13 @@ const PaymentOwner = () => {
         <div className="payment-section">
           <h2>Payment</h2>
           <div className="divider"></div>
-
+          {error && (
+            <div className="error-container" style={{ marginBottom: "1rem", background: "#ffe0e0", padding: "1rem", borderRadius: "8px" }}>
+              <h3>Error</h3>
+              <p>{error}</p>
+              <button onClick={() => setError(null)} style={{ marginTop: "0.5rem" }}>Dismiss</button>
+            </div>
+          )}
           <div className="filters">
             <div className="filter-group">
               <label>Select Tenant</label>
