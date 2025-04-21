@@ -1,132 +1,96 @@
-// src/App.js
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+// File: src/App.js
+import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
-import Sidebar from "./Sidebar";
-// import "./App.css";
+import axios from "axios";
+import "./App.css";
 
-const socket = io("http://localhost:5555");
-
-function ChatPanel({ property, messages, onSendMessage }) {
-  const [newMessage, setNewMessage] = useState("");
-
-  const handleSend = () => {
-    if (newMessage.trim()) {
-      onSendMessage(newMessage);
-      setNewMessage("");
-    }
-  };
-
-  return (
-    <div className="chat-panel">
-      {property ? (
-        <>
-          <div className="chat-header">Chatting about: {property.title}</div>
-          <div className="chat-messages">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`message ${
-                  msg.senderId === "USER_ID" ? "sent" : "received"
-                }`}
-              >
-                {msg.text}
-              </div>
-            ))}
-          </div>
-          <div className="chat-input">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
-            />
-            <button onClick={handleSend}>Send</button>
-          </div>
-        </>
-      ) : (
-        <div className="chat-placeholder">
-          Select a property to start chatting
-        </div>
-      )}
-    </div>
-  );
-}
+const socket = io("http://localhost:5555"); // Adjust if backend is deployed
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedProperty, setSelectedProperty] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [userId, setUserId] = useState("");
+  const [propertyId, setPropertyId] = useState("");
+  const [recipientId, setRecipientId] = useState("");
+  const [message, setMessage] = useState("");
+  const [chat, setChat] = useState([]);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
-          withCredentials: true,
-        });
-
-        setUser(response.data);
-        setLoading(false);
-
-        if (response.data?.user?._id) {
-          setFormData((prevData) => ({
-            ...prevData,
-            userId: response.data.user._id,
-          })); // Set userId in formData
-        }
-
-        if (response.data?.user?.ownerId) {
-          fetchRentalsForUser(response.data.user.ownerId);
-        }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-    if (selectedProperty) {
-      socket.emit("join_property", selectedProperty._id);
-    }
-  }, [selectedProperty]);
-
-  useEffect(() => {
-    socket.on("receive_message", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+    socket.on("receiveMessage", (data) => {
+      setChat((prev) => [...prev, data]);
     });
-    return () => {
-      socket.off("receive_message");
-    };
   }, []);
 
-  const sendMessage = (msg) => {
-    if (!selectedProperty) return;
-    console.log(user.user.id);
-    const messageData = {
-      //   propertyId: selectedProperty._id,
-      senderId: user.user.id, // Replace with actual user ID from auth
-      text: msg,
-    };
-    socket.emit("send_message", messageData);
-    setMessages((prevMessages) => [...prevMessages, messageData]);
+  const fetchChat = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5555/chat/${propertyId}/${userId}/${recipientId}`
+      );
+      setChat(res.data);
+    } catch (error) {
+      console.error("Error fetching chat:", error);
+    }
   };
 
-  if (user) {
-    console.log("user", user.user.id);
-  }
+  const sendMessage = async () => {
+    if (!message) return;
+
+    const newMsg = {
+      senderId: userId,
+      recipientId,
+      propertyId,
+      message,
+    };
+
+    try {
+      await axios.post("http://localhost:5555/chat", newMsg);
+      socket.emit("sendMessage", newMsg);
+      setChat((prev) => [...prev, newMsg]);
+      setMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
   return (
-    <div className="app-container">
-      <Sidebar setSelectedProperty={setSelectedProperty} />
-      <ChatPanel
-        property={selectedProperty}
-        messages={messages}
-        onSendMessage={sendMessage}
-      />
+    <div className="app">
+      <h1>Property Chat</h1>
+      <div className="form">
+        <input
+          placeholder="Your User ID"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+        />
+        <input
+          placeholder="Recipient ID"
+          value={recipientId}
+          onChange={(e) => setRecipientId(e.target.value)}
+        />
+        <input
+          placeholder="Property ID"
+          value={propertyId}
+          onChange={(e) => setPropertyId(e.target.value)}
+        />
+        <button onClick={fetchChat}>Load Chat</button>
+      </div>
+
+      <div className="chat-box">
+        {chat.map((msg, i) => (
+          <div
+            key={i}
+            className={msg.senderId === userId ? "msg sender" : "msg recipient"}
+          >
+            <p>{msg.message}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="send-box">
+        <input
+          placeholder="Type a message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button onClick={sendMessage}>Send</button>
+      </div>
     </div>
   );
 }

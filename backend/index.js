@@ -24,7 +24,6 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 
 import { chatSocketHandler } from "./routes/chatsRoute.js";
 
-
 const app = express();
 
 const server = http.createServer(app);
@@ -34,8 +33,6 @@ const io = new Server(server, {
 });
 
 app.use(
-
-
   // cors()
 
   cors({
@@ -75,13 +72,29 @@ app.use("/rooms", roomRoutes);
 app.use("/applyRental", ApplyRental);
 app.use("/profile", profileRoutes);
 app.use("/feedback", feedbackRoutes);
-app.use('/notifications', notificationRoutes);
-app.use('/payment', paymentRoutes);
+app.use("/notifications", notificationRoutes);
+app.use("/payment", paymentRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome to the Rental Management System API!");
 });
 
-chatSocketHandler(io);
+io.on("connection", (socket) => {
+  console.log("User connected");
+
+  socket.on("join", (chatToken) => {
+    socket.join(chatToken);
+    console.log(`User joined chat: ${chatToken}`);
+  });
+
+  socket.on("sendMessage", ({ chatToken, message }) => {
+    socket.to(chatToken).emit("receiveMessage", message);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
+
 mongoose
   .connect(DB_URL)
   .then(() => {
