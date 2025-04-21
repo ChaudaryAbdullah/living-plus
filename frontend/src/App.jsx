@@ -22,7 +22,7 @@ import FeedbackRenter from "./components/feedbackRenter";
 import FeedbackOwner from "./components/feedbackOwner";
 import RentedRentals from "./components/rentedRentals";
 import OwnedRentals from "./components/ownedRentals";
-// import ApproveApplicants from "./components/approveApplicants.jsx";
+import ApproveApplicants from "./components/approveApplicants.jsx";
 
 import { AuthGuard } from "./temp.jsx";
 import "./App.css";
