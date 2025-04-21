@@ -13,7 +13,7 @@ const LoginForm = () => {
     console.log("Login attempt with:", { email, password });
 
     try {
-      const response = await fetch("http://localhost:5555/profile/login", {
+      const response = await fetch("http://localhost:5556/profile/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

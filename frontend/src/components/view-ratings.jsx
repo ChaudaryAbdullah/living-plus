@@ -18,7 +18,7 @@ const ViewRatings = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const response = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
 
@@ -40,7 +40,7 @@ const ViewRatings = () => {
   const fetchRentalsForUser = async (ownerId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5555/owns/rentals/${ownerId}`,
+        `http://localhost:5556/owns/rentals/${ownerId}`,
         { withCredentials: true }
       );
 
@@ -56,7 +56,7 @@ const ViewRatings = () => {
       const feedbackData = {};
       for (let rental of rentals) {
         const response = await axios.get(
-          `http://localhost:5555/feedback/${rental._id}`,
+          `http://localhost:5556/feedback/${rental._id}`,
           { withCredentials: true }
         );
         feedbackData[rental._id] = response.data;

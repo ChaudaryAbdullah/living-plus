@@ -16,7 +16,6 @@ const chatSchema = new mongoose.Schema({
     ref: "Owner",
     required: true,
   },
-  chatToken: { type: String, unique: true, required: true },
 });
 
-module.exports = mongoose.model("Chat", chatSchema);
+export const Chat = mongoose.model("Chat", chatSchema);

@@ -28,7 +28,7 @@ const ApproveParking = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const response = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
 
@@ -52,7 +52,7 @@ const ApproveParking = () => {
   const fetchRentalsForUser = async (ownerId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5555/owns/rentals/${ownerId}`,
+        `http://localhost:5556/owns/rentals/${ownerId}`,
         { withCredentials: true }
       );
       console.log(response.data);
@@ -68,7 +68,7 @@ const ApproveParking = () => {
   const fetchParkingRequestsForAll = async (rentals) => {
     try {
       const requests = rentals.map((rental) =>
-        axios.get(`http://localhost:5555/parkingRequest/rental/${rental._id}`, {
+        axios.get(`http://localhost:5556/parkingRequest/rental/${rental._id}`, {
           withCredentials: true,
         })
       );
@@ -99,7 +99,7 @@ const ApproveParking = () => {
         { length: Number(formData.parkingSlot) },
         () =>
           axios.post(
-            "http://localhost:5555/parkingSlot",
+            "http://localhost:5556/parkingSlot",
             { rentalId: formData.rentalId },
             { withCredentials: true }
           )
@@ -120,7 +120,7 @@ const ApproveParking = () => {
 
     try {
       await axios.post(
-        "http://localhost:5555/parkingRequest/accept",
+        "http://localhost:5556/parkingRequest/accept",
         { slotId: selectedParking },
         { withCredentials: true }
       );
@@ -136,7 +136,7 @@ const ApproveParking = () => {
 
     try {
       await axios.delete(
-        "http://localhost:5555/parkingRequest",
+        "http://localhost:5556/parkingRequest",
         { slotId: selectedParking },
         { withCredentials: true }
       );

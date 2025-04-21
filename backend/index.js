@@ -6,6 +6,7 @@ import { PORT, DB_URL } from "./config.js";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
+
 import rentalRoutes from "./routes/rentalRoutes.js";
 import parkingAllocationRoutes from "./routes/parkingAllocationRoutes.js";
 import parkingRequestRoutes from "./routes/parkingRequestRoutes.js";
@@ -22,10 +23,7 @@ import feedbackRoutes from "./routes/feedbackRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 
-import { chatSocketHandler } from "./routes/chatsRoute.js";
-
 const app = express();
-
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -33,8 +31,6 @@ const io = new Server(server, {
 });
 
 app.use(
-  // cors()
-
   cors({
     origin: "http://localhost:5173",
     credentials: true,
@@ -46,19 +42,19 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Apply session middleware BEFORE routes
 app.use(
   session({
-    secret: "12345", // Replace with a strong secret key
+    secret: "12345",
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: "mongodb://localhost:27017/session-db",
-    }), // Change DB URL
-    cookie: { secure: false, httpOnly: true, maxAge: 3600000, sameSite: "lax" }, // 1 hour
+    }),
+    cookie: { secure: false, httpOnly: true, maxAge: 3600000, sameSite: "lax" },
   })
 );
 
+// Routes
 app.use("/rentals", rentalRoutes);
 app.use("/parkingAllocation", parkingAllocationRoutes);
 app.use("/parkingRequest", parkingRequestRoutes);
@@ -78,6 +74,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Rental Management System API!");
 });
 
+// Socket.IO
 io.on("connection", (socket) => {
   console.log("User connected");
 
@@ -95,13 +92,42 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose
-  .connect(DB_URL)
-  .then(() => {
-    server.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
-    });
+// Start server with port fallback
+
+server
+  .listen(PORT)
+  .on("listening", () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+
+    mongoose
+      .connect(DB_URL)
+      .then(() => {
+        console.log("Connected to MongoDB");
+      })
+      .catch((error) => {
+        console.error(`Error connecting to MongoDB: ${error.message}`);
+      });
   })
-  .catch((error) => {
-    console.error(`Error connecting to MongoDB: ${error.message}`);
+  .on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+      const fallbackPort = PORT + 1;
+      console.warn(`Port ${PORT} is already in use. Trying ${fallbackPort}...`);
+
+      server.listen(fallbackPort).on("listening", () => {
+        console.log(
+          `Fallback: Server is running on http://localhost:${fallbackPort}`
+        );
+
+        mongoose
+          .connect(DB_URL)
+          .then(() => {
+            console.log("Connected to MongoDB");
+          })
+          .catch((error) => {
+            console.error(`Error connecting to MongoDB: ${error.message}`);
+          });
+      });
+    } else {
+      throw err;
+    }
   });

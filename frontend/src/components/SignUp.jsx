@@ -46,9 +46,9 @@ function SignUp() {
 
     try {
       const endpoints = [
-        axios.post("http://localhost:5555/applicant", formData),
-        axios.post("http://localhost:5555/tenant", formData),
-        axios.post("http://localhost:5555/owner", formData),
+        axios.post("http://localhost:5556/applicant", formData),
+        axios.post("http://localhost:5556/tenant", formData),
+        axios.post("http://localhost:5556/owner", formData),
       ];
 
       await Promise.all(endpoints);

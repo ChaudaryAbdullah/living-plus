@@ -1,49 +1,139 @@
-import { Router } from "express";
-const router = Router();
-import { findOne, create } from "../models/chatModel";
-import { find, create as _create } from "../models/messageModel";
-import { v4 as uuidv4 } from "uuid";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import io from "socket.io-client";
+import { useParams, useHistory } from "react-router-dom";
+import "./css/chats.css";
 
-// Create or get a chat
-router.post("/initiate", async (req, res) => {
-  const { propertyId, applicantId, ownerId } = req.body;
-  try {
-    let chat = await findOne({ propertyId, applicantId, ownerId });
-    if (!chat) {
-      chat = await create({
-        propertyId,
-        applicantId,
-        ownerId,
-        chatToken: uuidv4(),
-      });
+const socket = io("http://localhost:5556"); // Make sure to adjust this to your backend's URL
+
+function ChatRoom() {
+  const { chatId } = useParams(); // Get chatId from URL
+  const [userId, setUserId] = useState(""); // This should be dynamically set, e.g., via context or props
+  const [chat, setChat] = useState([]);
+  const [message, setMessage] = useState("");
+  const [chatsList, setChatsList] = useState([]);
+  const history = useHistory();
+
+  useEffect(() => {
+    // Fetch all chats for the user (either owner or applicant)
+    const fetchChats = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5556/chat/allChats/${userId}`
+        );
+        setChatsList(res.data);
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      }
+    };
+
+    fetchChats();
+
+    // Fetch existing chat messages when component mounts
+    const fetchChatMessages = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5556/chat/messages/${chatId}`
+        );
+        setChat(res.data);
+      } catch (error) {
+        console.error("Error fetching chat messages:", error);
+      }
+    };
+
+    fetchChatMessages();
+
+    // Listen for incoming messages from the socket
+    socket.on("receiveMessage", (newMessage) => {
+      setChat((prevChat) => [...prevChat, newMessage]);
+    });
+
+    return () => {
+      socket.off("receiveMessage"); // Cleanup on unmount
+    };
+  }, [chatId, userId]);
+
+  const sendMessage = async () => {
+    if (!message) return; // Don't send empty messages
+
+    const newMsg = {
+      chatId,
+      senderId: userId,
+      message,
+    };
+
+    try {
+      // Post message to backend
+      const res = await axios.post(
+        "http://localhost:5556/chat/message",
+        newMsg
+      );
+
+      // Emit the new message through socket to all connected clients
+      socket.emit("sendMessage", res.data);
+
+      // Add message to chat view
+      setChat((prevChat) => [...prevChat, res.data]);
+      setMessage(""); // Clear message input
+    } catch (error) {
+      console.error("Error sending message:", error);
     }
-    res.json(chat);
-  } catch (err) {
-    res.status(500).json({ message: "Error creating chat", err });
-  }
-});
+  };
 
-// Get messages for a chat
-router.get("/messages/:chatToken", async (req, res) => {
-  try {
-    const messages = await find({
-      chatToken: req.params.chatToken,
-    }).sort({ timestamp: 1 });
-    res.json(messages);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch messages", err });
-  }
-});
+  const handleChatSelect = (selectedChatId) => {
+    // Navigate to the selected chat's page
+    history.push(`/chat/${selectedChatId}`);
+  };
 
-// Send a message
-router.post("/message", async (req, res) => {
-  const { chatToken, senderId, message } = req.body;
-  try {
-    const msg = await _create({ chatToken, senderId, message });
-    res.json(msg);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to send message", err });
-  }
-});
+  return (
+    <div className="chat-container">
+      <div className="chat-sidebar">
+        <h2>Chats</h2>
+        <ul>
+          {chatsList.map((chatItem) => (
+            <li
+              key={chatItem._id}
+              onClick={() => handleChatSelect(chatItem._id)}
+            >
+              <div>
+                <strong>{chatItem.propertyId.name}</strong>
+                <p>Applicant: {chatItem.applicantId.name}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-export default router;
+      <div className="chat-room">
+        <h1>Chat with Property Owner</h1>
+
+        {/* Chat Box */}
+        <div className="chat-box">
+          {chat.map((msg, index) => (
+            <div
+              key={index}
+              className={
+                msg.senderId === userId ? "msg sender" : "msg recipient"
+              }
+            >
+              <p>{msg.message}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Message Input Box */}
+        <div className="send-box">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button onClick={sendMessage}>Send</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default ChatRoom;

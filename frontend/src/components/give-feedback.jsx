@@ -24,7 +24,7 @@ const GiveFeedback = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const response = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
         setUser(response.data);
@@ -44,7 +44,7 @@ const GiveFeedback = () => {
       try {
         console.log(userData);
         const response = await axios.get(
-          `http://localhost:5555/rents/${userData.tenantId}`,
+          `http://localhost:5556/rents/${userData.tenantId}`,
           { withCredentials: true }
         );
         setUserRentals(response.data);
@@ -87,7 +87,7 @@ const GiveFeedback = () => {
       console.log("Submitting Feedback:", feedbackData);
 
       const response = await axios.post(
-        "http://localhost:5555/feedback",
+        "http://localhost:5556/feedback",
         feedbackData,
         { withCredentials: true }
       );

@@ -28,7 +28,7 @@ const AddRooms = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const response = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
 
@@ -49,7 +49,7 @@ const AddRooms = () => {
     const fetchRentalsForUser = async (ownerId) => {
       try {
         const response = await axios.get(
-          `http://localhost:5555/owns/rentals/${ownerId}`,
+          `http://localhost:5556/owns/rentals/${ownerId}`,
           { withCredentials: true }
         );
 
@@ -74,7 +74,7 @@ const AddRooms = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5555/rooms", {
+      const response = await fetch("http://localhost:5556/rooms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

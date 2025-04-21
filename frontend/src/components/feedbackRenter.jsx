@@ -25,7 +25,7 @@ const ViewFeedbacksPage = () => {
         setLoading(true);
         console.log("Fetching user profile...");
 
-        const userResponse = await axios.get("http://localhost:5555/profile", {
+        const userResponse = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
 
@@ -52,9 +52,9 @@ const ViewFeedbacksPage = () => {
     const fetchOwnerRentalsAndFeedbacks = async (ownerId) => {
       try {
         // First, fetch all rentals owned by this user
-        console.log("Making API call to:", `http://localhost:5555/owns/rentals/${ownerId}`);
+        console.log("Making API call to:", `http://localhost:5556/owns/rentals/${ownerId}`);
         const rentalsResponse = await axios.get(
-          `http://localhost:5555/owns/rentals/${ownerId}`,
+          `http://localhost:5556/owns/rentals/${ownerId}`,
           {
             withCredentials: true,
             timeout: 10000,
@@ -79,7 +79,7 @@ const ViewFeedbacksPage = () => {
         for (const rentalId of rentalIds) {
           try {
             const feedbackResponse = await axios.get(
-              `http://localhost:5555/feedbacks/rental/${rentalId}`,
+              `http://localhost:5556/feedbacks/rental/${rentalId}`,
               {
                 withCredentials: true,
                 timeout: 10000,

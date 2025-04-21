@@ -21,7 +21,7 @@ const ApproveApplicants = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const response = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
 
@@ -43,7 +43,7 @@ const ApproveApplicants = () => {
   const fetchRentalsForUser = async (ownerId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5555/owns/rentals/${ownerId}`,
+        `http://localhost:5556/owns/rentals/${ownerId}`,
         { withCredentials: true }
       );
 
@@ -60,7 +60,7 @@ const ApproveApplicants = () => {
   const fetchApplicantsForUser = async (rentalIds) => {
     try {
       const promises = rentalIds.map((rentalId) =>
-        axios.get(`http://localhost:5555/applyRental/rental/${rentalId}`, {
+        axios.get(`http://localhost:5556/applyRental/rental/${rentalId}`, {
           withCredentials: true,
         })
       );
@@ -85,7 +85,7 @@ const ApproveApplicants = () => {
       console.log(applicant.roomId);
       // Fetch room details if required
       const roomResponse = await axios.get(
-        `http://localhost:5555/rooms/${applicant.roomId._id}`,
+        `http://localhost:5556/rooms/${applicant.roomId._id}`,
         {
           withCredentials: true,
         }
@@ -99,7 +99,7 @@ const ApproveApplicants = () => {
       }
 
       const tenantResponse = await axios.get(
-        `http://localhost:5555/tenant/${applicant.applicantId.email}`,
+        `http://localhost:5556/tenant/${applicant.applicantId.email}`,
         {
           withCredentials: true,
         }
@@ -110,7 +110,7 @@ const ApproveApplicants = () => {
 
       // Add the applicant to the Rent collection
       await axios.post(
-        `http://localhost:5555/rents`,
+        `http://localhost:5556/rents`,
         {
           amount: rentAmount,
           roomId: applicant.roomId._id,
@@ -121,7 +121,7 @@ const ApproveApplicants = () => {
       );
 
       // Remove applicant from applyRentals using applicantId
-      await axios.delete(`http://localhost:5555/applyRental/${applicationId}`, {
+      await axios.delete(`http://localhost:5556/applyRental/${applicationId}`, {
         withCredentials: true,
       });
 
@@ -137,7 +137,7 @@ const ApproveApplicants = () => {
   const handleReject = async (applicantId) => {
     try {
       // Remove applicant from applyRentals using applicantId
-      await axios.delete(`http://localhost:5555/applyRental/${applicantId}`, {
+      await axios.delete(`http://localhost:5556/applyRental/${applicantId}`, {
         withCredentials: true,
       });
 

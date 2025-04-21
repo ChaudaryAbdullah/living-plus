@@ -42,12 +42,12 @@ function App() {
 
   // Handle logout function
   const handleLogout = async () => {
-    await fetch("http://localhost:5555/profile/logout", {
+    await fetch("http://localhost:5556/profile/logout", {
       method: "POST",
       credentials: "include",
     });
     setUser(null);
-    window.location.href = "http://localhost:5555//login"; // Redirect to login page
+    window.location.href = "http://localhost:5556//login"; // Redirect to login page
   };
 
   if (loading) return <p>Loading...</p>; // Show loading screen while checking session

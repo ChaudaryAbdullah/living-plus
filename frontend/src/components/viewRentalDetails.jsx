@@ -20,7 +20,7 @@ const ViewRentalDetails = () => {
     const fetchRental = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:5555/rentals/${id}`);
+        const res = await axios.get(`http://localhost:5556/rentals/${id}`);
         setRental(res.data);
         if (res.data) {
           fetchUser(res.data._id);
@@ -35,7 +35,7 @@ const ViewRentalDetails = () => {
     const fetchUser = async (rentalId) => {
       try {
         const response = await axios.get(
-          `http://localhost:5555/owns/${rentalId}`
+          `http://localhost:5556/owns/${rentalId}`
         );
         setUser(response.data[0]);
       } catch (error) {
