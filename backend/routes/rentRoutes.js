@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
     const rents = await Rent.find()
       .populate("rentalId")
       .populate("tenantId")
-      .exec();
+      //.exec();
 
     res.status(200).json(rents);
   } catch (error) {
