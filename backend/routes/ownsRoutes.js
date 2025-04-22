@@ -69,7 +69,7 @@ router.get("/rentals/:ownerId", async (req, res) => {
     }
     const userRents = await Owns.find({ ownerId: new mongoose.Types.ObjectId(ownerId) })
       .populate("rentalId") // Populating rental details
-      // .exec();
+      .exec();
 
     console.log("Fetched user rents:", userRents);
 

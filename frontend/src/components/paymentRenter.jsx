@@ -1,25 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './css/paymentRenter.css'; // Import specific CSS
 import "./css/view-ratings.css"; // Import general CSS (if needed for other elements)
 import Header from "./Header"; // Assuming these are in the same directory
 import Sidebar from "./renter-sidebar";  // Assuming these are in the same directory
-import Footer from "./Footer"; // Assuming these are in the same directory
+import axios from 'axios';
 import { jsPDF } from 'jspdf';
 
-const PaymentRenter = () => {
-    // Sample data - in a real app, this would come from an API or props
-    const [bills, setBills] = useState([
-        { id: 1, description: 'Rent - January', amount: 1200, dueDate: '2025-01-15', status: 'Unpaid' },
-        { id: 2, description: 'Utilities - January', amount: 150, dueDate: '2025-01-20', status: 'Unpaid' },
-        { id: 3, description: 'Maintenance Fee', amount: 75, dueDate: '2025-01-25', status: 'Unpaid' },
-    ]);
+const API_BASE_URL = "http://localhost:5555"
 
+const PaymentRenter = () => {
+    // States
+    const [bills, setBills] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [user, setUser] = useState(null);
+    
     // Filter states
     const [dueDateFilter, setDueDateFilter] = useState('');
     const [amountFilter, setAmountFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
-     const [activeItem, setActiveItem] = useState("payment");
+    const [activeItem, setActiveItem] = useState("payment");
     const [activePage, setActivePage] = useState("Payment");
+
+    // Fetch user profile to get tenant ID
+    const fetchUser = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get(`${API_BASE_URL}/profile`, {
+                withCredentials: true,
+            });
+            setUser(response.data);
+            
+            console.log("User data:", response.data);
+            
+            // Once we have the user data, fetch bills
+            if (response.data?.user?.tenantId) {
+                await fetchBills(response.data.user.tenantId);
+            } else {
+                console.error("Tenant ID not found in user data");
+                setError("Tenant ID not found. Please ensure you're logged in as a tenant.");
+            }
+            
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching user profile:", error);
+            setError("Failed to load user profile. Please try refreshing the page.");
+            setLoading(false);
+        }
+    };
+
+    // Fetch bills from the API
+    const fetchBills = async (tenantId) => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/payment/tenant/${tenantId}`, {
+                withCredentials: true,
+            });
+            
+            // Transform the data to match our component's structure
+            const formattedBills = response.data.map(bill => ({
+                id: bill._id,
+                description: bill.description,
+                amount: bill.total,
+                dueDate: new Date(bill.dueDate).toISOString().split('T')[0],
+                status: bill.paid ? 'Paid' : 'Unpaid'
+            }));
+            
+            setBills(formattedBills);
+        } catch (error) {
+            console.error("Error fetching bills:", error);
+            setError("Failed to load bills. Please try refreshing the page.");
+        }
+    };
+
+    // Call fetchUser on component mount
+    useEffect(() => {
+        fetchUser();
+    }, []);
 
     const handlePrintBill = (id) => {
         const billToPrint = bills.find(bill => bill.id === id);
@@ -44,7 +100,7 @@ const PaymentRenter = () => {
             pdf.setFontSize(12);
     
             // --- User Information ---
-            const userName = 'John Doe'; // Replace with actual user name
+            const userName = user?.user?.name || 'Tenant'; // Use actual user name from state
             pdf.text(15, 40, `Tenant: ${userName}`);
     
             // --- Bill Details ---
@@ -66,22 +122,46 @@ const PaymentRenter = () => {
     
             // Open in a new browser tab
             window.open(pdf.output('bloburl'), '_blank');
-    
-            // If you still want to offer a download option as well, you can keep the pdf.save()
-            // pdf.save(`invoice_${billToPrint.id}.pdf`);
         } else {
             console.error(`Bill with ID ${id} not found.`);
         }
     };
 
-    const handlePayBill = (id) => {
-        console.log(`Paying bill ${id}`);
-        // In a real app, you would call an API to process payment
-        // For demo, we'll just update the status
-        setBills(bills.map(bill =>
-            bill.id === id ? { ...bill, status: 'Paid' } : bill
-        ));
-    };
+    const handlePayBill = async (paymentId) => {
+        try {
+          // First, fetch the current payment details
+          const { data: existingPayment } = await axios.get(`${API_BASE_URL}/payment/${paymentId}`, {
+            withCredentials: true,
+          });
+      
+          // Prepare the updated payment data with status set to "paid"
+          const updatedPayment = {
+            method: existingPayment.method,
+            total: existingPayment.total,
+            status: "true", // only this field changes
+            tenantId: existingPayment.tenantId._id || existingPayment.tenantId, // handle populated or raw ID
+            dueDate: existingPayment.dueDate,
+          };
+      
+          // Send the update request
+          await axios.put(`${API_BASE_URL}/payment/${paymentId}`, updatedPayment, {
+            withCredentials: true,
+          });
+      
+          // Update UI
+          setBills(prevBills =>
+            prevBills.map(bill =>
+              bill._id === paymentId ? { ...bill, status: "paid" } : bill
+            )
+          );
+      
+          alert("Payment marked as paid successfully!");
+        } catch (error) {
+          console.error(`Error marking payment ${paymentId} as paid:`, error);
+          setError("Failed to mark payment as paid. Please try again.");
+        }
+      };
+      
 
     // Filter bills based on filter inputs
     const filteredBills = bills.filter(bill => {
@@ -93,7 +173,7 @@ const PaymentRenter = () => {
         );
     });
 
-      const handleSort = () => {
+    const handleSort = () => {
         // Sort by due date
         const sortedBills = [...bills].sort((a, b) =>
             new Date(a.dueDate) - new Date(b.dueDate)
@@ -101,18 +181,31 @@ const PaymentRenter = () => {
         setBills(sortedBills);
     };
 
+    if (loading) {
+        return <div className="loading">Loading bills...</div>;
+    }
+
+
     return (
         <div className="app-container">
-             <Header title={activePage} />
+            <Header title={activePage} />
             <div className="main-content">
                 <Sidebar activeItem={activeItem} setActiveItem={setActiveItem}/>
                 <div className="main-body">
+                {error && (
+                        <div className="error-container" style={{ marginBottom: "1rem", background: "#ffe0e0", padding: "1rem", borderRadius: "8px" }}>
+                        <h3>Error</h3>
+                        <p>{error}</p>
+                        <button onClick={() => setError(null)} style={{ marginTop: "0.5rem" }}>Dismiss</button>
+                        </div>
+                    )}
                     <div className="payment-header">
                         <h1>Payment</h1>
-                         <button className="sort-button" onClick={handleSort}>
+                        <button className="sort-button" onClick={handleSort}>
                             <span className="sort-icon">⇅</span> Sort
                         </button>
                     </div>
+
 
                     <div className="filters">
                         <div className="filter-group">
