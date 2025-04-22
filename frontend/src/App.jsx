@@ -69,7 +69,7 @@ function App() {
           <Route path="/give-feedback" element={<GiveFeedback />} />
           <Route path="/approve-parking" element={<ApproveParking />} />
           <Route path="/view-ratings" element={<ViewRatings />} />
-          <Route path="/chats/:id" element={<Chats />} />
+          <Route path="/chats" element={<Chats />} />
           <Route path="/view-notifications" element={<ViewNotifications />} />
           <Route path="/rental/:id" element={<ViewRentalDetails />} />
           <Route path="/dashboard/" element={<Dashboard />} />

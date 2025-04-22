@@ -22,7 +22,7 @@ import profileRoutes from "./routes/profileRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
-
+import chatsRoute from "./routes/chatsRoute.js";
 const app = express();
 const server = http.createServer(app);
 
@@ -70,6 +70,8 @@ app.use("/profile", profileRoutes);
 app.use("/feedback", feedbackRoutes);
 app.use("/notifications", notificationRoutes);
 app.use("/payment", paymentRoutes);
+app.use("/chat", chatsRoute);
+
 app.get("/", (req, res) => {
   res.send("Welcome to the Rental Management System API!");
 });
