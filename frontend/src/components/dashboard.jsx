@@ -20,9 +20,9 @@ const Dashboard = () => {
       const ownerId = userData?.ownerId;
       console.log(tenantId, ownerId);
       const [userRes, rentedRes, ownedRes] = await Promise.all([
-        axios.get(`http://localhost:5555/owner/${ownerId}`),
-        axios.get(`http://localhost:5555/rents/${tenantId}`),
-        axios.get(`http://localhost:5555/owns/rentals/${ownerId}`),
+        axios.get(`http://localhost:5556/owner/${ownerId}`),
+        axios.get(`http://localhost:5556/rents/${tenantId}`),
+        axios.get(`http://localhost:5556/owns/rentals/${ownerId}`),
       ]);
       console.log(userRes.data);
       setUser(userRes.data);
@@ -40,7 +40,7 @@ const Dashboard = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const response = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
 

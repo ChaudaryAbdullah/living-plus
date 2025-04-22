@@ -1,88 +1,63 @@
-// src/App.js
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
-import Sidebar from "./Sidebar";
-// import "./App.css";
+import { useSearchParams } from "react-router-dom";
+import "./css/chats.css";
 
-const socket = io("http://localhost:5555");
+const socket = io("http://localhost:5556");
 
-function ChatPanel({ property, messages, onSendMessage }) {
-  const [newMessage, setNewMessage] = useState("");
+function ChatRoomLayout() {
+  const [searchParams] = useSearchParams();
+  const chatId = searchParams.get("chatId");
 
-  const handleSend = () => {
-    if (newMessage.trim()) {
-      onSendMessage(newMessage);
-      setNewMessage("");
-    }
-  };
-
-  return (
-    <div className="chat-panel">
-      {property ? (
-        <>
-          <div className="chat-header">Chatting about: {property.title}</div>
-          <div className="chat-messages">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`message ${
-                  msg.senderId === "USER_ID" ? "sent" : "received"
-                }`}
-              >
-                {msg.text}
-              </div>
-            ))}
-          </div>
-          <div className="chat-input">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
-            />
-            <button onClick={handleSend}>Send</button>
-          </div>
-        </>
-      ) : (
-        <div className="chat-placeholder">
-          Select a property to start chatting
-        </div>
-      )}
-    </div>
-  );
-}
-
-function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [chats, setChats] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
+  const [selectedChatId, setSelectedChatId] = useState(chatId || null);
+
+  // Update selectedChatId if chatId changes in URL
+  useEffect(() => {
+    if (chatId) {
+      setSelectedChatId(chatId);
+    }
+  }, [chatId]);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const res = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
-
-        setUser(response.data);
+        const currentUser = res.data.user;
+        setUser(currentUser);
+        fetchChats(currentUser);
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      } finally {
         setLoading(false);
+      }
+    };
 
-        if (response.data?.user?._id) {
-          setFormData((prevData) => ({
-            ...prevData,
-            userId: response.data.user._id,
-          })); // Set userId in formData
+    const fetchChats = async (currentUser) => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5556/chat/${currentUser.id}/chats`
+        );
+        let ownerChats = [];
+        if (currentUser.ownerId) {
+          const res1 = await axios.get(
+            `http://localhost:5556/chat/${currentUser.ownerId}/chats`
+          );
+          ownerChats = res1.data;
         }
-
-        if (response.data?.user?.ownerId) {
-          fetchRentalsForUser(response.data.user.ownerId);
+        setChats([...res.data, ...ownerChats]);
+        if (!selectedChatId && res.data.length > 0) {
+          setSelectedChatId(res.data[0]._id);
         }
       } catch (error) {
-        console.error("Error fetching user profile:", error);
-        setLoading(false);
+        console.error("Failed to fetch chats:", error);
       }
     };
 
@@ -90,45 +65,135 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (selectedProperty) {
-      socket.emit("join_property", selectedProperty._id);
-    }
-  }, [selectedProperty]);
+    if (!selectedChatId) return;
+
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5556/chat/messages/${selectedChatId}`
+        );
+        setMessages(res.data);
+      } catch (error) {
+        console.error("Failed to fetch messages:", error);
+      }
+    };
+
+    fetchMessages();
+  }, [selectedChatId]);
 
   useEffect(() => {
-    socket.on("receive_message", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+    // Listen for incoming messages via socket
+    socket.on("receiveMessage", (msg) => {
+      // If the received message belongs to the selected chat, update messages
+      if (msg.chatId === selectedChatId) {
+        setMessages((prev) => [...prev, msg]);
+        updateChatWithLatestMessage(msg); // Update the chat preview as well
+      }
     });
-    return () => {
-      socket.off("receive_message");
-    };
-  }, []);
 
-  const sendMessage = (msg) => {
-    if (!selectedProperty) return;
-    console.log(user.user.id);
-    const messageData = {
-      //   propertyId: selectedProperty._id,
-      senderId: user.user.id, // Replace with actual user ID from auth
-      text: msg,
-    };
-    socket.emit("send_message", messageData);
-    setMessages((prevMessages) => [...prevMessages, messageData]);
+    return () => socket.off("receiveMessage"); // Clean up the listener on unmount
+  }, [selectedChatId]);
+
+  // Update the chat preview in the sidebar with the latest message
+  const updateChatWithLatestMessage = (msg) => {
+    setChats((prevChats) => {
+      return prevChats.map((chat) => {
+        if (chat._id === msg.chatId) {
+          return {
+            ...chat,
+            lastMessage: msg.message,
+            updatedAt: new Date(),
+          };
+        }
+        return chat;
+      });
+    });
   };
 
-  if (user) {
-    console.log("user", user.user.id);
+  const sendMessage = async () => {
+    if (!message || !selectedChatId || !user?.id) return;
+    try {
+      const sender = isOwner ? user.ownerId : user.id;
+      const typeSender = isOwner ? "Owner" : "Applicant";
+      const res = await axios.post("http://localhost:5556/chat/message", {
+        chatId: selectedChatId,
+        senderId: sender,
+        senderType: typeSender,
+        message,
+      });
+      socket.emit("sendMessage", res.data);
+      setMessages((prev) => [...prev, res.data]); // Update messages immediately on send
+      setMessage("");
+      updateChatWithLatestMessage(res.data); // Also update the chat preview in the sidebar
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
+  };
+
+  const selectedChat = chats.find((chat) => chat._id === selectedChatId);
+  let isOwner = false;
+  if (selectedChat && user?.ownerId) {
+    isOwner = selectedChat.ownerId?._id === user.ownerId;
   }
+
+  if (loading) return <div>Loading...</div>;
+
   return (
-    <div className="app-container">
-      <Sidebar setSelectedProperty={setSelectedProperty} />
-      <ChatPanel
-        property={selectedProperty}
-        messages={messages}
-        onSendMessage={sendMessage}
-      />
+    <div className="chat-layout">
+      <div className="sidebar">
+        <h2>Chats</h2>
+        {chats.map((chat) => (
+          <div
+            key={chat._id}
+            className={`chat-preview ${
+              selectedChatId === chat._id ? "active" : ""
+            }`}
+            onClick={() => setSelectedChatId(chat._id)}
+          >
+            <p>
+              Property: <b>{chat.propertyId?.name || "N/A"}</b>
+            </p>
+            <p>
+              {chat.applicantId && chat.ownerId && isOwner
+                ? `Applicant: ${chat.applicantId.name || "N/A"}`
+                : `Owner: ${chat.ownerId.name || "N/A"}`}
+            </p>
+            {/* Show the latest message in the preview */}
+            {chat.lastMessage && (
+              <p>
+                <b>Last message: </b>
+                {chat.lastMessage}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="chat-box">
+        <div className="messages">
+          {messages.map((msg) => (
+            <div
+              key={msg._id}
+              className={
+                msg.senderId === user?.id ? "msg sender" : "msg recipient"
+              }
+            >
+              {msg.message}
+            </div>
+          ))}
+        </div>
+        <div className="send-box">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button onClick={sendMessage}>Send</button>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default ChatRoomLayout;

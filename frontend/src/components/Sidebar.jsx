@@ -27,7 +27,7 @@ const Sidebar = ({ onLogout, activeItem, setActiveItem }) => {
     },
     {
       id: "messages",
-      path: "/messages",
+      path: "/chats",
       icon: <MessageCircle size={24} />,
       label: "Messages",
     },

@@ -32,7 +32,7 @@ const ApplyRental = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const response = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
 
@@ -62,7 +62,7 @@ const ApplyRental = () => {
   const fetchRentalsForUser = async (ownerId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5555/owns/norentals/${ownerId}`,
+        `http://localhost:5556/owns/norentals/${ownerId}`,
         { withCredentials: true }
       );
 
@@ -81,7 +81,7 @@ const ApplyRental = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:5555/rooms");
+      const response = await axios.get("http://localhost:5556/rooms");
 
       const filteredRooms = response.data.filter(
         (room) => room.rentalId.toString() === rentalId
@@ -130,7 +130,7 @@ const ApplyRental = () => {
       console.log("Payload:", payload);
 
       const response = await axios.post(
-        "http://localhost:5555/applyRental",
+        "http://localhost:5556/applyRental",
         payload
       );
 

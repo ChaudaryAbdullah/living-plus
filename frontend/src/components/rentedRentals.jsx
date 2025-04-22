@@ -20,7 +20,7 @@ const rentedRentals = () => {
       const ownerId = userData?.ownerId;
       console.log(tenantId, ownerId);
       const rentedRes = await axios.get(
-        `http://localhost:5555/rents/${tenantId}`
+        `http://localhost:5556/rents/${tenantId}`
       );
 
       setRentedRentals(rentedRes.data);
@@ -36,7 +36,7 @@ const rentedRentals = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const response = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
 

@@ -25,7 +25,7 @@ const ViewFeedbacksPage = () => {
         setLoading(true);
         console.log("Fetching user profile...");
 
-        const userResponse = await axios.get("http://localhost:5555/profile", {
+        const userResponse = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
 
@@ -50,9 +50,9 @@ const ViewFeedbacksPage = () => {
 
     const fetchFeedbacksForUser = async (ownerId) => {
       try {
-        console.log("Making API call to:", `http://localhost:5555/feedbacks/owner/${ownerId}`);
+        console.log("Making API call to:", `http://localhost:5556/feedbacks/owner/${ownerId}`);
         const response = await axios.get(
-          `http://localhost:5555/feedbacks/owner/${ownerId}`,
+          `http://localhost:5556/feedbacks/owner/${ownerId}`,
           {
             withCredentials: true,
             timeout: 10000,

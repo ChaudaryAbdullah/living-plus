@@ -16,7 +16,7 @@ const RentalView = () => {
   useEffect(() => {
     const fetchRentals = async () => {
       try {
-        const response = await axios.get("http://localhost:5555/rentals");
+        const response = await axios.get("http://localhost:5556/rentals");
         setRentals(response.data);
       } catch (error) {
         console.error("Error fetching rentals:", error);

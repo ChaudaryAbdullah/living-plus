@@ -27,7 +27,7 @@ const ApplyParking = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5555/profile", {
+        const response = await axios.get("http://localhost:5556/profile", {
           withCredentials: true,
         });
         console.log("Fetched user profile:", response.data);
@@ -55,7 +55,7 @@ const ApplyParking = () => {
         let tenantId = userData.tenantId;
 
         const response = await axios.get(
-          `http://localhost:5555/rents/${tenantId}`,
+          `http://localhost:5556/rents/${tenantId}`,
           { withCredentials: true }
         );
         console.log("Fetched rentals for user:", response.data);
@@ -73,7 +73,7 @@ const ApplyParking = () => {
   const fetchParkingSlots = async (rentalId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5555/parkingSlot/available/${rentalId}`,
+        `http://localhost:5556/parkingSlot/available/${rentalId}`,
         { withCredentials: true }
       );
       setParkingSlots(response.data);
@@ -112,7 +112,7 @@ const ApplyParking = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5555/parkingRequest",
+        "http://localhost:5556/parkingRequest",
         formData,
         { withCredentials: true }
       );

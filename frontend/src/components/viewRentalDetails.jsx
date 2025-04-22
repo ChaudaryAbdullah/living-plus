@@ -10,6 +10,7 @@ import Footer from "./Footer";
 const ViewRentalDetails = () => {
   const { id } = useParams(); // URL param from /rental/:id
   const [rental, setRental] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,10 +18,27 @@ const ViewRentalDetails = () => {
   const [activePage, setActivePage] = useState("View Rental Details");
 
   useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await axios.get("http://localhost:5556/profile", {
+          withCredentials: true,
+        });
+        const currentuser = res.data.user;
+        console.log(currentuser);
+        setCurrentUser(currentuser);
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCurrentUser();
+  }, []);
+  useEffect(() => {
     const fetchRental = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:5555/rentals/${id}`);
+        const res = await axios.get(`http://localhost:5556/rentals/${id}`);
         setRental(res.data);
         if (res.data) {
           fetchUser(res.data._id);
@@ -35,12 +53,12 @@ const ViewRentalDetails = () => {
     const fetchUser = async (rentalId) => {
       try {
         const response = await axios.get(
-          `http://localhost:5555/owns/${rentalId}`
+          `http://localhost:5556/owns/${rentalId}`
         );
         setUser(response.data[0]);
       } catch (error) {
-        console.error("Error fetching user details:", error);
-        setError("Failed to load user details");
+        console.error("Error fetching rental user details:", error);
+        setError("Failed to load rental user details");
       } finally {
         setLoading(false);
       }
@@ -96,9 +114,43 @@ const ViewRentalDetails = () => {
                   <strong>Email: </strong>
                   {user.email}
                 </p>
-                <Link to={`/chats/${rental._id}`} className="view-contact-btn">
-                  Contact Now
-                </Link>
+                {currentUser && currentUser.ownerId === user._id ? (
+                  <p className="same-user-message">
+                    You are the owner of this rental.
+                  </p>
+                ) : (
+                  <button
+                    className="view-contact-btn"
+                    onClick={async () => {
+                      try {
+                        const profileRes = await axios.get(
+                          "http://localhost:5556/profile",
+                          {
+                            withCredentials: true,
+                          }
+                        );
+                        const applicantId = currentUser.id;
+                        const ownerId = user._id;
+                        const propertyId = rental._id;
+
+                        const chatRes = await axios.get(
+                          "http://localhost:5556/chat/findOrCreate",
+                          {
+                            params: { applicantId, ownerId, propertyId },
+                          }
+                        );
+
+                        const chatId = chatRes.data._id;
+                        window.location.href = `/chats?chatId=${chatId}`;
+                      } catch (err) {
+                        console.error("Error finding or creating chat:", err);
+                        alert("Could not initiate chat. Please try again.");
+                      }
+                    }}
+                  >
+                    Contact Now
+                  </button>
+                )}
               </div>
             ) : (
               <p>Owner information not available.</p>
