@@ -67,9 +67,10 @@ const PaymentOwner = () => {
         setError("Invalid rental data format received from server");
         return;
       }
+
   
       const ownerRentalIds = rentalsRes.data.map(rental => rental._id);
-      console.log("Owner's rental IDs:", ownerRentalIds);
+      console.log("Owner's rental IDs:", rentalsRes);
   
       // 2. Get all rent relationships
       const rentsRes = await axios.get(`${API_BASE_URL}/rents`, {

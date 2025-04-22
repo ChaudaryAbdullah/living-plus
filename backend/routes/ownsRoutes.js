@@ -63,13 +63,13 @@ router.get("/", async (req, res) => {
 router.get("/rentals/:ownerId", async (req, res) => {
   try {
     const { ownerId } = req.params;
+    console.log("Owner id ", ownerId)
     if (!mongoose.Types.ObjectId.isValid(ownerId)) {
       return res.status(400).json({ message: "Invalid ownerId format" });
     }
-
-    const userRents = await Owns.find({ ownerId })
+    const userRents = await Owns.find({ ownerId: new mongoose.Types.ObjectId(ownerId) })
       .populate("rentalId") // Populating rental details
-      .exec();
+      // .exec();
 
     console.log("Fetched user rents:", userRents);
 
