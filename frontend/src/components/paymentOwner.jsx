@@ -83,25 +83,40 @@ const PaymentOwner = () => {
   
       // 3. Filter rents to those associated with this owner's rentals
       const ownerRents = rentsRes.data.filter(rent => {
+        // Handle both populated and non-populated rental references
         const rentalId = typeof rent.rentalId === 'object' ? rent.rentalId._id : rent.rentalId;
         return ownerRentalIds.includes(rentalId);
       });
+      
+      console.log("Filtered rents for owner's properties:", ownerRents);
   
       // 4. Extract unique tenants from owner-related rents
       const tenantsMap = new Map();
-  
+      
       ownerRents.forEach(rent => {
         if (rent.tenantId) {
+          // Make sure we handle both populated and unpopulated tenant references
           const tenant = rent.tenantId;
           const tenantId = typeof tenant === 'object' ? tenant._id : tenant;
-  
+          
           if (!tenantsMap.has(tenantId)) {
-            tenantsMap.set(
-              tenantId,
-              typeof tenant === 'object'
-                ? tenant
-                : { _id: tenantId, fullName: "Unknown Tenant" }
-            );
+            if (typeof tenant === 'object') {
+              // If tenant is populated, use the full object
+              tenantsMap.set(tenantId, {
+                _id: tenantId,
+                fullName: `${tenant.firstName} ${tenant.lastName}`,
+                firstName: tenant.firstName,
+                lastName: tenant.lastName,
+                email: tenant.email,
+                userName: tenant.userName
+              });
+            } else {
+              // If it's just an ID, create a minimal tenant object
+              tenantsMap.set(tenantId, {
+                _id: tenantId,
+                fullName: "Unknown Tenant"
+              });
+            }
           }
         }
       });
@@ -143,7 +158,7 @@ const PaymentOwner = () => {
         };
       });
   
-      // 8. Update state
+      // 8. Update state with the tenant data
       setTenants(ownerTenants);
       setBills(formattedPayments);
     } catch (error) {
@@ -172,12 +187,12 @@ const PaymentOwner = () => {
       const paymentData = {
         method: "Invoice",
         total: parseFloat(amount),
-        status: false, // Set to pending by default
+        status: false, // This correctly sets status to unpaid (false)
         tenantId: tenant._id,
         dueDate: selectedDate
       };
       
-      // Use the correct payment endpoint
+      // Send the payment data to the backend
       await axios.post(`${API_BASE_URL}/payment`, paymentData, {
         withCredentials: true
       });
@@ -313,17 +328,17 @@ const PaymentOwner = () => {
           </div>
 
           <div className="generate-invoice-section">
-            <div className="select-tenant">
-              <label>Select Tenant</label>
-              <select value={selectedTenant} onChange={(e) => setSelectedTenant(e.target.value)}>
-                <option value="">Select Tenant</option>
-                {tenants.map((tenant) => (
-                  <option key={tenant._id} value={tenant.fullName}>
-                    {tenant.fullName}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="select-tenant">
+            <label>Select Tenant</label>
+            <select value={selectedTenant} onChange={(e) => setSelectedTenant(e.target.value)}>
+              <option value="">Select Tenant</option>
+              {tenants.map((tenant) => (
+                <option key={tenant._id} value={tenant.fullName}>
+                  {tenant.fullName}
+                </option>
+              ))}
+            </select>
+          </div>
 
             <div className="select-date">
               <label>Due Date</label>

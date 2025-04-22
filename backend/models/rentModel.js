@@ -13,7 +13,7 @@ const rentSchema = new mongoose.Schema(
     },
     tenantId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "tenants", // References the Tenant collection
+      ref: "Tenant", // References the Tenant collection
       required: true,
     },
     rentalId: {

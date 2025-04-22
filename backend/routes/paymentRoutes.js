@@ -88,7 +88,7 @@ router.delete("/:id", async (req, res) => {
 // Get payments by tenant ID
 router.get("/tenant/:tenantId", async (req, res) => {
   try {
-    const payments = await Payment.find({ tenantId: req.params.tenantId });
+    const payments = await Payment.find({ tenantId: req.params.tenantId , status: false,});
     if (!payments.length) {
       return res.status(404).send({ message: "No payments found for this tenant" });
     }
