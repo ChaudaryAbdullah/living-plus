@@ -120,6 +120,17 @@ const ApproveApplicants = () => {
         { withCredentials: true }
       );
 
+      console.log("TenantID", tenantResponse.data._id)
+      const notificationData = {
+              tenantId: tenantResponse.data._id,
+              date: new Date().toISOString(),
+              description: `Your Application has been accepted.`
+            };
+      console.log("Notification data:", notificationData);  
+      await axios.post(`http://localhost:5556/notifications`, notificationData, {
+        withCredentials: true
+      });
+
       // Remove applicant from applyRentals using applicantId
       await axios.delete(`http://localhost:5556/applyRental/${applicationId}`, {
         withCredentials: true,
