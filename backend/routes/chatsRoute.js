@@ -37,9 +37,11 @@ router.get("/messages/:chatToken", async (req, res) => {
 router.get("/:user/chats", async (req, res) => {
   try {
     console.log(req.params.user);
-    const messages = await Message.find({
+    const messages = await Chat.find({
       $or: [{ applicantId: req.params.user }, { ownerId: req.params.user }],
-    }).sort({ timestamp: 1 });
+    })
+      .populate("propertyId")
+      .sort({ timestamp: 1 });
     res.json(messages);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch messages", err });
