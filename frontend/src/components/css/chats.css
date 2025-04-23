@@ -3,7 +3,7 @@
   height: 90vh;
 }
 
-.sidebar {
+.chat-sidebar {
   width: 300px;
   border-right: 1px solid #ccc;
   overflow-y: auto;

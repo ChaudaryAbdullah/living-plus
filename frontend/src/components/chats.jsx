@@ -140,7 +140,7 @@ function ChatRoomLayout() {
 
   return (
     <div className="chat-layout">
-      <div className="sidebar">
+      <div className="chat-sidebar">
         <h2>Chats</h2>
         {chats.map((chat) => (
           <div
