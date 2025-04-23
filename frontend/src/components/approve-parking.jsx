@@ -124,6 +124,16 @@ const ApproveParking = () => {
         { slotId: selectedParking },
         { withCredentials: true }
       );
+      // console.log("OwnerId", tenantResponse.data._id)
+      // const notificationData = {
+      //         tenantId: tenantResponse.data._id,
+      //         date: new Date().toISOString(),
+      //         description: `Your Application has been accepted.`
+      //       };
+      // console.log("Notification data:", notificationData);  
+      // await axios.post(`http://localhost:5556/notifications`, notificationData, {
+      //   withCredentials: true
+      // });
       fetchParkingRequestsForAll(userRentals);
     } catch (error) {
       console.error("Error accepting request:", error);
