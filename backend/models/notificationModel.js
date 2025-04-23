@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const notificationSchema = new mongoose.Schema({
 
   tenantId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   date: {

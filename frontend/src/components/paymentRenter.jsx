@@ -6,7 +6,7 @@ import Sidebar from "./renter-sidebar";  // Assuming these are in the same direc
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
 
-const API_BASE_URL = "http://localhost:5555"
+const API_BASE_URL = "http://localhost:5556"
 
 const PaymentRenter = () => {
     // States
