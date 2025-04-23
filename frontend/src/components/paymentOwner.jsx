@@ -22,7 +22,7 @@ const PaymentOwner = () => {
   const [error, setError] = useState(null);
   
   // Use the correct base URL and endpoints
-  const API_BASE_URL = "http://localhost:5555";
+  const API_BASE_URL = "http://localhost:5556";
   
   useEffect(() => {
     const fetchUser = async () => {
@@ -141,8 +141,9 @@ const PaymentOwner = () => {
   
       const ownerPayments = allPayments.filter(payment => {
         const tenantId = typeof payment.tenantId === 'object' ? payment.tenantId._id : payment.tenantId;
-        return ownerTenantIds.includes(tenantId);
+        return ownerTenantIds.includes(tenantId) && payment.status === false;
       });
+      
   
       // 7. Format payments for display
       const formattedPayments = ownerPayments.map(payment => {
@@ -194,6 +195,16 @@ const PaymentOwner = () => {
       
       // Send the payment data to the backend
       await axios.post(`${API_BASE_URL}/payment`, paymentData, {
+        withCredentials: true
+      });
+
+      const notificationData = {
+        tenantId: tenant._id,
+        date: new Date().toISOString(),
+        description: `New invoice of $${amount} due on ${selectedDate}.`
+      };
+      console.log("Notification data:", notificationData);
+      await axios.post(`${API_BASE_URL}/notifications`, notificationData, {
         withCredentials: true
       });
       
