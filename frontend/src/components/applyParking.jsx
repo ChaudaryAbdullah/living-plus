@@ -100,6 +100,28 @@ const ApplyParking = () => {
     }
   };
 
+  const getOwnerIdByRentalId = async (rentalId) => {
+        try {
+          const res = await axios.get(`http://localhost:5556/owns/${rentalId}`, {
+            withCredentials: true
+          });
+      
+          const rentalArray = res.data;
+      
+          if (!Array.isArray(rentalArray) || rentalArray.length === 0) {
+            console.warn("No rental data found");
+            return null;
+          }
+      
+          const rental = rentalArray[0];
+          const ownerId = rental._id; // Assuming this is the owner's ID
+      
+          return ownerId;
+        } catch (error) {
+          console.error("Failed to fetch owner by rentalId:", error);
+          return null;
+        }
+      };
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,6 +138,17 @@ const ApplyParking = () => {
         formData,
         { withCredentials: true }
       );
+      const ownerId = await getOwnerIdByRentalId(formData.rentalId);
+                  console.log("OwnerId", ownerId)
+                  const notificationData = {
+                          tenantId: ownerId,
+                          date: new Date().toISOString(),
+                          description: `New Parking Application.`
+                        };
+                  console.log("Notification data:", notificationData);  
+                  await axios.post(`http://localhost:5556/notifications`, notificationData, {
+                    withCredentials: true
+                  });
       console.log("Parking application submitted:", response.data);
       alert("Parking slot applied successfully!");
 

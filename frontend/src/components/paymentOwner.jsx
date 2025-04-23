@@ -155,7 +155,7 @@ const PaymentOwner = () => {
           typeof payment.tenantId === "object"
             ? payment.tenantId._id
             : payment.tenantId;
-        return ownerTenantIds.includes(tenantId);
+        return ownerTenantIds.includes(tenantId) && payment.status === false;
       });
 
       // 7. Format payments for display
@@ -212,6 +212,16 @@ const PaymentOwner = () => {
 
       // Send the payment data to the backend
       await axios.post(`${API_BASE_URL}/payment`, paymentData, {
+        withCredentials: true,
+      });
+
+      const notificationData = {
+        tenantId: tenant._id,
+        date: new Date().toISOString(),
+        description: `New invoice of $${amount} due on ${selectedDate}.`,
+      };
+      console.log("Notification data:", notificationData);
+      await axios.post(`${API_BASE_URL}/notifications`, notificationData, {
         withCredentials: true,
       });
 

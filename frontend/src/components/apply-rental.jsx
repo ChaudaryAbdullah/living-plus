@@ -72,7 +72,30 @@ const ApplyRental = () => {
       console.error("Error fetching rentals:", error);
     }
   };
-
+  const getOwnerIdByRentalId = async (rentalId) => {
+    try {
+      const res = await axios.get(`http://localhost:5556/owns/${rentalId}`, {
+        withCredentials: true
+      });
+  
+      const rentalArray = res.data;
+  
+      if (!Array.isArray(rentalArray) || rentalArray.length === 0) {
+        console.warn("No rental data found");
+        return null;
+      }
+  
+      const rental = rentalArray[0];
+      const ownerId = rental._id; // Assuming this is the owner's ID
+  
+      return ownerId;
+    } catch (error) {
+      console.error("Failed to fetch owner by rentalId:", error);
+      return null;
+    }
+  };
+  
+  
   // Fetch rooms based on selected rental
   const fetchRoomsForRental = async (rentalId) => {
     try {
@@ -133,6 +156,18 @@ const ApplyRental = () => {
         "http://localhost:5556/applyRental",
         payload
       );
+      console.log("Response:", payload.rentalId);
+      const ownerId = await getOwnerIdByRentalId(payload.rentalId);
+      console.log("OwnerId", ownerId)
+      const notificationData = {
+              tenantId: ownerId,
+              date: new Date().toISOString(),
+              description: `New Applicant has applied.`
+            };
+      console.log("Notification data:", notificationData);  
+      await axios.post(`http://localhost:5556/notifications`, notificationData, {
+        withCredentials: true
+      });
 
       console.log("Application submitted:", response.data);
       alert("Rental application submitted successfully!");

@@ -2,6 +2,30 @@ import express from "express";
 import { Notification } from "../models/notificationModel.js";
 const router = express.Router();
 
+
+router.post('/', async (req, res) => {
+  try {
+    const { tenantId, date, description } = req.body;
+
+    if (!tenantId || !date || !description) {
+      return res.status(400).json({ error: 'tenantId, date, and description are required.' });
+    }
+
+    const newNotification = new Notification({
+      tenantId,
+      date,
+      description,
+      read: false, // Default to unread
+    });
+
+    const savedNotification = await newNotification.save();
+    res.status(201).json(savedNotification);
+  } catch (error) {
+    console.error("Error creating notification:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Get all notifications for a user - handle both userId and tenantId
 router.get('/:id', async (req, res) => {
   try {
