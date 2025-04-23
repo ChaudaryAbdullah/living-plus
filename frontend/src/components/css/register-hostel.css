@@ -1,66 +1,90 @@
 .form-container {
-  padding: 20px 40px;
-  max-width: 800px;
-  margin: 0 auto;
+  padding: 30px 40px;
+  width: 70%;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e6e6e6;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .form-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .divider {
   height: 1px;
-  background-color: #e0e0e0;
+  background-color: #ddd;
   margin-bottom: 30px;
 }
 
 .hostel-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
 }
 
-label {
-  font-size: 14px;
-  color: #555;
+.register-form-label {
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
 }
 
 .form-control {
-  padding: 10px;
+  padding: 12px 14px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  width: 90%; /* wider input */
+  /* max-width: 600px; limits too-wide screens */
+  background-color: #fdfdfd;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #4a90e2;
+  outline: none;
 }
 
 textarea.form-control {
-  min-height: 80px;
+  min-height: 100px;
   resize: vertical;
 }
 
 .form-actions {
-  margin-top: 10px;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .apply-btn {
-  background-color: #1a4b8c;
+  background: linear-gradient(135deg, #1a4b8c, #305fba);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  font-size: 14px;
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
 .apply-btn:hover {
-  background-color: #0d3a6e;
+  background: linear-gradient(135deg, #0d3a6e, #274e91);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }

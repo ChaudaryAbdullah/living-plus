@@ -1,9 +1,10 @@
 /* Search Bar */
 .search-container {
   position: absolute;
-  left: 500px;
+  left: 400px;
   padding: 20px 0;
-  margin-bottom: 10px;
+  margin-bottom: 50px;
+  width: 50%;
 }
 
 /* Search & Filter Styling */
@@ -36,6 +37,7 @@
 
 /* Property Grid */
 .property-container {
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
 }

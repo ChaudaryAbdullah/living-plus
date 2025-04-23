@@ -8,14 +8,30 @@ router.post("/", async (req, res) => {
   try {
     const { method, total, status, tenantId, dueDate } = req.body;
 
-    if (!method || total === undefined || status === undefined || !tenantId || !dueDate) {
-      return res.status(400).send({ message: "Please fill all the required fields" });
+    if (
+      !method ||
+      total === undefined ||
+      status === undefined ||
+      !tenantId ||
+      !dueDate
+    ) {
+      return res
+        .status(400)
+        .send({ message: "Please fill all the required fields" });
     }
 
-    const newPayment = new Payment({ method, total, status, tenantId, dueDate });
+    const newPayment = new Payment({
+      method,
+      total,
+      status,
+      tenantId,
+      dueDate,
+    });
     await newPayment.save();
 
-    return res.status(201).send({ message: "New payment created successfully!" });
+    return res
+      .status(201)
+      .send({ message: "New payment created successfully!" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
@@ -49,8 +65,16 @@ router.put("/:id", async (req, res) => {
   try {
     const { method, total, status, tenantId, dueDate } = req.body;
 
-    if (!method || total === undefined || status === undefined || !tenantId || !dueDate) {
-      return res.status(400).send({ message: "Please fill all the required fields" });
+    if (
+      !method ||
+      total === undefined ||
+      status === undefined ||
+      !tenantId ||
+      !dueDate
+    ) {
+      return res
+        .status(400)
+        .send({ message: "Please fill all the required fields" });
     }
 
     const payment = await Payment.findById(req.params.id);
@@ -88,10 +112,13 @@ router.delete("/:id", async (req, res) => {
 // Get payments by tenant ID
 router.get("/tenant/:tenantId", async (req, res) => {
   try {
-    const payments = await Payment.find({ tenantId: req.params.tenantId , status: false,});
-    if (!payments.length) {
-      return res.status(404).send({ message: "No payments found for this tenant" });
-    }
+    const payments = await Payment.find({
+      tenantId: req.params.tenantId,
+      status: false,
+    });
+    // if (!payments.length) {
+    //   return res.status(404).send({ message: "No payments found for this tenant" });
+    // }
     return res.status(200).send(payments);
   } catch (err) {
     return res.status(500).send({ message: err.message });

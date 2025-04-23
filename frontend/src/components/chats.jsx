@@ -3,6 +3,9 @@ import axios from "axios";
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import "./css/chats.css";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
+import Footer from "./Footer";
 
 const socket = io("http://localhost:5556");
 
@@ -16,7 +19,8 @@ function ChatRoomLayout() {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedChatId, setSelectedChatId] = useState(chatId || null);
-
+  const [activeItem, setActiveItem] = useState("chats");
+  const [activePage, setActivePage] = useState("Chats");
   // Update selectedChatId if chatId changes in URL
   useEffect(() => {
     if (chatId) {
@@ -45,14 +49,14 @@ function ChatRoomLayout() {
         const res = await axios.get(
           `http://localhost:5556/chat/${currentUser.id}/chats`
         );
-        let ownerChats = [];
-        if (currentUser.ownerId) {
-          const res1 = await axios.get(
-            `http://localhost:5556/chat/${currentUser.ownerId}/chats`
-          );
-          ownerChats = res1.data;
-        }
-        setChats([...res.data, ...ownerChats]);
+
+        console.log(res.data);
+        const res1 = await axios.get(
+          `http://localhost:5556/chat/${currentUser.ownerId}/chats`
+        );
+        console.log(res1.data);
+
+        setChats([...res.data, ...res1.data]);
         if (!selectedChatId && res.data.length > 0) {
           setSelectedChatId(res.data[0]._id);
         }
@@ -139,59 +143,65 @@ function ChatRoomLayout() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="chat-layout">
-      <div className="sidebar">
-        <h2>Chats</h2>
-        {chats.map((chat) => (
-          <div
-            key={chat._id}
-            className={`chat-preview ${
-              selectedChatId === chat._id ? "active" : ""
-            }`}
-            onClick={() => setSelectedChatId(chat._id)}
-          >
-            <p>
-              Property: <b>{chat.propertyId?.name || "N/A"}</b>
-            </p>
-            <p>
-              {chat.applicantId && chat.ownerId && isOwner
-                ? `Applicant: ${chat.applicantId.name || "N/A"}`
-                : `Owner: ${chat.ownerId.name || "N/A"}`}
-            </p>
-            {/* Show the latest message in the preview */}
-            {chat.lastMessage && (
-              <p>
-                <b>Last message: </b>
-                {chat.lastMessage}
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
+    <div className="app-container">
+      <Header title={activePage} />
 
-      <div className="chat-box">
-        <div className="messages">
-          {messages.map((msg) => (
-            <div
-              key={msg._id}
-              className={
-                msg.senderId === user?.id ? "msg sender" : "msg recipient"
-              }
-            >
-              {msg.message}
+      <div className="main-content">
+        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+        <div className="chat-layout">
+          <div className="chat-sidebar">
+            <h2>Chats</h2>
+            {chats.map((chat) => (
+              <div
+                key={chat._id}
+                className={`chat-preview ${
+                  selectedChatId === chat._id ? "active" : ""
+                }`}
+                onClick={() => setSelectedChatId(chat._id)}
+              >
+                <p>
+                  Property: <b>{chat.propertyId?.rentalName || "N/A"}</b>
+                </p>
+                <p>
+                  Address: <b>{chat.propertyId?.address || "N/A"}</b>
+                </p>
+                {/* Show the latest message in the preview */}
+                {chat.lastMessage && (
+                  <p>
+                    <b>Last message: </b>
+                    {chat.lastMessage}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="chat-box">
+            <div className="messages">
+              {messages.map((msg) => (
+                <div
+                  key={msg._id}
+                  className={
+                    msg.senderId === user?.id ? "msg sender" : "msg recipient"
+                  }
+                >
+                  {msg.message}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="send-box">
-          <input
-            type="text"
-            placeholder="Type a message..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button onClick={sendMessage}>Send</button>
+            <div className="send-box">
+              <input
+                type="text"
+                placeholder="Type a message..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+              <button onClick={sendMessage}>Send</button>
+            </div>
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
