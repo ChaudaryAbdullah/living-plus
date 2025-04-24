@@ -1,5 +1,5 @@
 "use client";
-
+import { ToastContainer, toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import "./css/paymentOwner.css";
 import "./css/view-ratings.css";
@@ -188,7 +188,15 @@ const PaymentOwner = () => {
 
   const handleGenerateInvoice = async () => {
     if (!selectedTenant || !selectedDate || !amount) {
-      alert("Please fill all required fields");
+      
+       toast.error("Please fill all required fields!", {
+                // variants: success | info | warning | error | default
+                position: "top-right",
+                autoClose: 30000,
+                hideProgressBar: false,
+                draggable: true,
+                theme: "colored",
+              });
       return;
     }
 
@@ -197,7 +205,15 @@ const PaymentOwner = () => {
       const tenant = tenants.find((t) => t.fullName === selectedTenant);
 
       if (!tenant) {
-        alert("Tenant not found");
+        
+       toast.error("Tenant not found!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 30000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
         return;
       }
 
@@ -225,7 +241,15 @@ const PaymentOwner = () => {
         withCredentials: true,
       });
 
-      alert(`Invoice generated for ${selectedTenant} due on ${selectedDate}`);
+      
+      toast.success(`Invoice generated for ${selectedTenant} due on ${selectedDate}`, {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 30000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
 
       // Refresh the payments list
       if (user?.user?.ownerId) {
@@ -238,7 +262,16 @@ const PaymentOwner = () => {
       setSelectedTenant("");
     } catch (error) {
       console.error("Error generating invoice:", error);
-      alert("Failed to generate invoice. Please try again.");
+      
+      toast.error('Failed to generate invoice. Please try again.', {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 30000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
+
     }
   };
 
@@ -434,6 +467,7 @@ const PaymentOwner = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };

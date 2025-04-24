@@ -67,7 +67,7 @@ const RentalView = () => {
                     <p className="property-address">{rental.address}</p>
                     <div className="property-specs">
                       <p className="property-units">
-                        Total Rooms: {rental.capacity}
+                        Total Rooms: {rental.totalRooms}
                       </p>
                       <p className="property-beds">
                         Available: {rental.availableRooms}
@@ -75,7 +75,7 @@ const RentalView = () => {
                     </div>
                     <div className="property-footer">
                       <span className="property-price">
-                        Facilities: {rental.amenities.join(", ")}
+                        Facilities: {rental.facilities.join(", ")}
                       </span>
                     </div>
                     <Link

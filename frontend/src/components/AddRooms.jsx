@@ -1,5 +1,5 @@
 "use client";
-
+import { ToastContainer, toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import "./css/AddRooms.css";
 import Header from "./Header";
@@ -82,7 +82,14 @@ const AddRooms = () => {
 
       const result = await response.json();
       if (response.ok) {
-        alert(result.message);
+        toast.success("Room added Successful!", {
+          // variants: success | info | warning | error | default
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        });
         setFormData({
           rentalId: "",
           rtype: "",
@@ -92,7 +99,14 @@ const AddRooms = () => {
           picture: "",
         });
       } else {
-        alert(result.message);
+        toast.error("Some fields are missing!", {
+          // variants: success | info | warning | error | default
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        });
       }
     } catch (error) {
       console.error("Error adding room:", error);
@@ -189,6 +203,7 @@ const AddRooms = () => {
         </main>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };

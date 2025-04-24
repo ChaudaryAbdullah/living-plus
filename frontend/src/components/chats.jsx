@@ -185,7 +185,7 @@ function ChatRoomLayout() {
                     msg.senderId === user?.id ? "msg sender" : "msg recipient"
                   }
                 >
-                  {msg.message}
+                  <div>{msg.message}</div>
                 </div>
               ))}
             </div>

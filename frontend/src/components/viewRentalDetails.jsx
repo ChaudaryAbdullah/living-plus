@@ -1,3 +1,4 @@
+import { ToastContainer, toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -144,7 +145,17 @@ const ViewRentalDetails = () => {
                         window.location.href = `/chats?chatId=${chatId}`;
                       } catch (err) {
                         console.error("Error finding or creating chat:", err);
-                        alert("Could not initiate chat. Please try again.");
+                        toast.error(
+                          "Could not initiate chat. Please try again",
+                          {
+                            // variants: success | info | warning | error | default
+                            position: "top-right",
+                            autoClose: 30000,
+                            hideProgressBar: false,
+                            draggable: true,
+                            theme: "colored",
+                          }
+                        );
                       }
                     }}
                   >
@@ -158,8 +169,8 @@ const ViewRentalDetails = () => {
           </div>
         </div>
       </div>
-
       <Footer />
+      <ToastContainer />
     </div>
   );
 };

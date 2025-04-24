@@ -1,4 +1,6 @@
 "use client";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 import { useState } from "react";
 import "./css/view-ratings.css";
 import "./css/register-hostel.css";
@@ -11,11 +13,10 @@ const HostelRegistrationForm = () => {
   const [activeItem, setActiveItem] = useState("register-hostel");
   const [activePage, setActivePage] = useState("Register Rental");
   const [formData, setFormData] = useState({
-    hostelName: "",
+    rentalName: "",
     address: "",
-    amenities: "",
-    additionalAmenities: "",
-    capacity: "",
+    facilities: "",
+    totalRooms: "",
     availableRooms: "",
   });
 
@@ -27,9 +28,58 @@ const HostelRegistrationForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5556/rentals",
+        formData,
+        { withCredentials: true }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        toast.success("Rental registerd successfully!", {
+          // variants: success | info | warning | error | default
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        });
+        setFormData({
+          rentalName: "",
+          address: "",
+          facilities: "",
+          totalRooms: "",
+          availableRooms: "",
+        });
+      } else {
+        toast.error("Failed to register rental. Please try again!", {
+          // variants: success | info | warning | error | default
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        });
+      }
+    } catch (error) {
+      console.error("Error registering hostel:", error);
+
+      toast.error(
+        "An error occurred while registering hostel. Please try again!",
+        {
+          // variants: success | info | warning | error | default
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        }
+      );
+    }
+
     // Add API call here to submit the form data
   };
 
@@ -46,14 +96,18 @@ const HostelRegistrationForm = () => {
 
             <form className="hostel-form" onSubmit={handleSubmit}>
               {[
-                { id: "hostelName", label: "Hostel Name" },
+                { id: "rentalName", label: "Hostel Name" },
                 { id: "address", label: "Address" },
-                { id: "amenities", label: "Amenities" },
-                { id: "capacity", label: "Capacity" },
+                { id: "facilities", label: "Amenities" },
+                { id: "totalRooms", label: "Capacity" },
                 { id: "availableRooms", label: "Available Rooms" },
               ].map(({ id, label }) => (
                 <div className="form-group" key={id}>
-                  <label className="register-form-label" htmlFor={id}>
+                  <label
+                    className="register-form-label"
+                    style={{ textAlign: "left" }}
+                    htmlFor={id}
+                  >
                     {label}
                   </label>
                   <input
@@ -77,6 +131,7 @@ const HostelRegistrationForm = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };

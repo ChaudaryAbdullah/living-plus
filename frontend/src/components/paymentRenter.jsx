@@ -1,3 +1,4 @@
+import { ToastContainer, toast } from "react-toastify";
 import React, { useState, useEffect } from "react";
 import "./css/paymentRenter.css"; // Import specific CSS
 import "./css/view-ratings.css"; // Import general CSS (if needed for other elements)
@@ -167,8 +168,14 @@ const PaymentRenter = () => {
           bill._id === paymentId ? { ...bill, status: "paid" } : bill
         )
       );
-
-      alert("Payment marked as paid successfully!");
+      toast.error("Payment marked as paid successfully!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 30000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
     } catch (error) {
       console.error(`Error marking payment ${paymentId} as paid:`, error);
       setError("Failed to mark payment as paid. Please try again.");
@@ -295,6 +302,7 @@ const PaymentRenter = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };

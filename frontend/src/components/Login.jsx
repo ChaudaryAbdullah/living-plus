@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/Login.css";
-
+import { ToastContainer, toast } from "react-toastify";
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,16 +23,38 @@ const LoginForm = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Login Successful!");
         console.log(data.user);
         localStorage.setItem("data", data.user.userName);
+        toast.success("Login Successful!", {
+          // variants: success | info | warning | error | default
+          position: "top-right",
+          autoClose: 30000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        });
         navigate("/rental-view"); // Navigate after login
       } else {
-        alert(data.message || "Invalid login credentials");
+        toast.error(`${data.message || "Invalid login credentials."}`, {
+          // variants: success | info | warning | error | default
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        });
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("Something went wrong. Please try again.");
+
+      toast.error("Something went wrong. Please try again!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
     }
   };
 
@@ -100,6 +122,7 @@ const LoginForm = () => {
           <a href="#">Forgot Password</a>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

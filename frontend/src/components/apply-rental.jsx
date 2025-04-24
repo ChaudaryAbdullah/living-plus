@@ -1,5 +1,5 @@
 "use client";
-
+import { ToastContainer, toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/apply-rental.css";
@@ -75,27 +75,26 @@ const ApplyRental = () => {
   const getOwnerIdByRentalId = async (rentalId) => {
     try {
       const res = await axios.get(`http://localhost:5556/owns/${rentalId}`, {
-        withCredentials: true
+        withCredentials: true,
       });
-  
+
       const rentalArray = res.data;
-  
+
       if (!Array.isArray(rentalArray) || rentalArray.length === 0) {
         console.warn("No rental data found");
         return null;
       }
-  
+
       const rental = rentalArray[0];
       const ownerId = rental._id; // Assuming this is the owner's ID
-  
+
       return ownerId;
     } catch (error) {
       console.error("Failed to fetch owner by rentalId:", error);
       return null;
     }
   };
-  
-  
+
   // Fetch rooms based on selected rental
   const fetchRoomsForRental = async (rentalId) => {
     try {
@@ -137,7 +136,14 @@ const ApplyRental = () => {
 
     try {
       if (!user?.user?.id) {
-        alert("User not found. Please log in.");
+        toast.error("User not found. Please login!", {
+          // variants: success | info | warning | error | default
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        });
         return;
       }
 
@@ -158,25 +164,43 @@ const ApplyRental = () => {
       );
       console.log("Response:", payload.rentalId);
       const ownerId = await getOwnerIdByRentalId(payload.rentalId);
-      console.log("OwnerId", ownerId)
+      console.log("OwnerId", ownerId);
       const notificationData = {
-              tenantId: ownerId,
-              date: new Date().toISOString(),
-              description: `New Applicant has applied.`
-            };
-      console.log("Notification data:", notificationData);  
-      await axios.post(`http://localhost:5556/notifications`, notificationData, {
-        withCredentials: true
-      });
+        tenantId: ownerId,
+        date: new Date().toISOString(),
+        description: `New Applicant has applied.`,
+      };
+      console.log("Notification data:", notificationData);
+      await axios.post(
+        `http://localhost:5556/notifications`,
+        notificationData,
+        {
+          withCredentials: true,
+        }
+      );
 
       console.log("Application submitted:", response.data);
-      alert("Rental application submitted successfully!");
+      toast.success("Rental application submitted successfully!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
     } catch (error) {
       console.error(
         "Error submitting application:",
         error.response?.data || error.message
       );
-      alert("Failed to submit application.");
+      toast.error("Failed to submit application!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
     }
   };
 
@@ -228,7 +252,7 @@ const ApplyRental = () => {
                 </select>
               </div>
 
-              <button type="submit" className="apply-btn">
+              <button type="submit" className="rental-apply-btn">
                 Apply
               </button>
             </form>
@@ -261,6 +285,7 @@ const ApplyRental = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };
