@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import React from "react";
 import "./css/view-ratings.css";
 import "./css/register-hostel.css";
 // // Import specific icons from lucide-react
