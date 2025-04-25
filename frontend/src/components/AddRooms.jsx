@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React,{ useState, useEffect } from "react";
 import "./css/AddRooms.css";
 import Header from "./Header";
 import Sidebar from "./owner-sidebar";
@@ -13,6 +13,7 @@ const AddRooms = () => {
   const [activePage, setActivePage] = useState("Add Rooms");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
   const [rentals, setRentals] = useState([]);
   const [formData, setFormData] = useState({
     rentalId: "",
