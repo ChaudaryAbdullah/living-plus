@@ -1,11 +1,7 @@
 "use client";
-<<<<<<< HEAD
-import { ToastContainer, toast } from "react-toastify";
-import { useState, useEffect } from "react";
-=======
 
-import React,{ useState, useEffect } from "react";
->>>>>>> 6b747bec6f1b5a504f73ee0219a42d71b2d1fbd5
+import { ToastContainer, toast } from "react-toastify";
+import React, { useState, useEffect } from "react";
 import "./css/AddRooms.css";
 import Header from "./Header";
 import Sidebar from "./owner-sidebar";
@@ -27,6 +23,8 @@ const AddRooms = () => {
     price: "",
     status: "available",
     picture: "",
+    availableRooms: "",
+    totalRooms: "",
   });
 
   // Fetch rentals from the API
@@ -74,6 +72,8 @@ const AddRooms = () => {
     setFormData({
       ...formData,
       [name]: value,
+      availableRooms: rentals.availableRooms,
+      TotalRooms: rentals.totalRooms,
     });
   };
 
@@ -103,6 +103,8 @@ const AddRooms = () => {
           price: "",
           status: "available",
           picture: "",
+          availableRooms: "",
+          totalRooms: "",
         });
       } else {
         toast.error("Some fields are missing!", {
