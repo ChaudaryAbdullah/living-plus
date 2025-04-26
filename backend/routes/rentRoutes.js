@@ -1,6 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import { Rent } from "../models/rentModel.js";
+import { Room } from "../models/roomModel.js";
+import { Rental } from "../models/rentalModel.js";
 
 const router = express.Router();
 
@@ -12,6 +14,21 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // 1. Update Rental
+    const rental = await Rental.findById(rentalId);
+    if (!rental) {
+      return res.status(404).send({ message: "Rental not found" });
+    }
+    rental.availableRooms -= 1;
+
+    // 2. Update Room
+    const room = await Room.findById(roomId); // << Correct model
+    if (!room) {
+      return res.status(404).send({ message: "Room not found" });
+    }
+    room.status = false; // << Correct assignment
+
+    // 3. Create Rent record
     const newRent = new Rent({
       amount,
       roomId: new mongoose.Types.ObjectId(roomId),
@@ -20,6 +37,8 @@ router.post("/", async (req, res) => {
     });
 
     const savedRent = await newRent.save();
+    await room.save();
+    await rental.save();
     res.status(201).json(savedRent);
   } catch (error) {
     console.error("Error creating rent:", error);
@@ -29,10 +48,8 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const rents = await Rent.find()
-      .populate("rentalId")
-      .populate("tenantId")
-      //.exec();
+    const rents = await Rent.find().populate("rentalId").populate("tenantId");
+    //.exec();
 
     res.status(200).json(rents);
   } catch (error) {

@@ -190,10 +190,10 @@ const GiveFeedback = () => {
                   {userRentals.length > 0 ? (
                     userRentals.map((rental) => (
                       <option
-                        key={rental.id || rental._id}
-                        value={rental.id || rental._id}
+                        key={rental.rentalId._id || rental._id}
+                        value={rental.rentalId._id || rental._id}
                       >
-                        {rental.rentalName}
+                        {rental.rentalId.rentalName}
                       </option>
                     ))
                   ) : (

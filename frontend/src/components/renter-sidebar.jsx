@@ -1,7 +1,7 @@
 "use client";
 import { Link } from "react-router-dom";
 
-import React from 'react';
+import React from "react";
 import {
   Home,
   Plus,
@@ -67,17 +67,17 @@ const RenterSidebar = ({ activeItem, setActiveItem }) => {
     },
     {
       id: "messages",
-      path: "/messages",
+      path: "/chats",
       icon: <MessageSquare size={24} />,
       label: "Messages",
     },
     { id: "logout", path: "/", icon: <LogOut size={24} />, label: "Logout" },
   ];
-  
+
   const handleItemClick = (id) => {
     setActiveItem(id);
   };
-  
+
   return (
     <div className="sidebar">
       <nav className="sidebar-nav">

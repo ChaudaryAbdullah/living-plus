@@ -22,7 +22,7 @@ const ApproveParking = () => {
     selectedAction: "",
   });
 
-  const [selectedParking, setSelectedParking] = useState(""); // Selected parking ID
+  const [selectedParking, setSelectedParking] = useState(null); // Selected parking ID
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -55,7 +55,7 @@ const ApproveParking = () => {
         `http://localhost:5556/owns/rentals/${ownerId}`,
         { withCredentials: true }
       );
-      console.log(response.data);
+      // console.log(response.data);
       setUserRentals(response.data);
       fetchParkingRequestsForAll(response.data);
     } catch (error) {
@@ -75,7 +75,7 @@ const ApproveParking = () => {
 
       const results = await Promise.all(requests);
       const allRequests = results.flatMap((res) => res.data);
-
+      console.log(allRequests);
       setAllParkingRequests(allRequests);
     } catch (error) {
       console.error("Error fetching parking requests:", error);
@@ -124,59 +124,58 @@ const ApproveParking = () => {
 
   // Approve action
   const handleAccept = async () => {
-    if (!selectedParking)
+    if (!selectedParking) {
       return toast.error("Select a parking request to accept!", {
-        // variants: success | info | warning | error | default
         position: "top-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        draggable: true,
-        theme: "colored",
       });
+    }
 
     try {
       await axios.post(
-        "http://localhost:5556/parkingRequest/accept",
-        { slotId: selectedParking },
+        `http://localhost:5556/parkingRequest/accept/${selectedParking._id}`,
+        {},
         { withCredentials: true }
       );
-      // console.log("OwnerId", tenantResponse.data._id)
-      // const notificationData = {
-      //         tenantId: tenantResponse.data._id,
-      //         date: new Date().toISOString(),
-      //         description: `Your Application has been accepted.`
-      //       };
-      // console.log("Notification data:", notificationData);
-      // await axios.post(`http://localhost:5556/notifications`, notificationData, {
-      //   withCredentials: true
-      // });
+      toast.success("Request accepted successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       fetchParkingRequestsForAll(userRentals);
     } catch (error) {
       console.error("Error accepting request:", error);
+      toast.error("Failed to accept request!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
   // Reject action
   const handleReject = async () => {
-    if (!selectedParking)
+    if (!selectedParking) {
       return toast.error("Select a parking request to reject!", {
-        // variants: success | info | warning | error | default
         position: "top-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        draggable: true,
-        theme: "colored",
       });
+    }
 
     try {
       await axios.delete(
-        "http://localhost:5556/parkingRequest",
-        { slotId: selectedParking },
+        `http://localhost:5556/parkingRequest/reject/${selectedParking._id}`,
         { withCredentials: true }
       );
+      toast.success("Request rejected successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       fetchParkingRequestsForAll(userRentals);
     } catch (error) {
       console.error("Error rejecting request:", error);
+      toast.error("Failed to reject request!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -197,7 +196,7 @@ const ApproveParking = () => {
             ) : (
               <>
                 <div className="form-group">
-                  <label>Select Rental</label>
+                  <label style={{ textAlign: "left" }}>Select Rental</label>
                   <select
                     name="rentalId"
                     value={formData.rentalId}
@@ -215,14 +214,20 @@ const ApproveParking = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Number of Parking Slots</label>
+                  <label style={{ textAlign: "left" }}>
+                    Number of Parking Slots
+                  </label>
                   <input
                     type="number"
                     name="parkingSlot"
                     value={formData.parkingSlot}
                     onChange={handleChange}
                   />
-                  <button className="create-btn" onClick={handleCreate}>
+                  <button
+                    style={{ marginTop: 20 }}
+                    className="create-btn"
+                    onClick={handleCreate}
+                  >
                     Create
                   </button>
                 </div>
@@ -253,7 +258,10 @@ const ApproveParking = () => {
                           .map((request) => (
                             <tr key={request._id}>
                               <td>
-                                {request.tenantId?.name || "Unknown Tenant"}
+                                {request.tenantId?.firstName +
+                                  " " +
+                                  request.tenantId?.lastName ||
+                                  "Unknown Tenant"}
                               </td>
                               <td>{request._id}</td>
                               <td>{request.status || "Pending"}</td>
@@ -266,8 +274,13 @@ const ApproveParking = () => {
 
                 <div className="action-container">
                   <select
-                    value={selectedParking}
-                    onChange={(e) => setSelectedParking(e.target.value)}
+                    value={selectedParking?._id || ""}
+                    onChange={(e) => {
+                      const request = allParkingRequests.find(
+                        (req) => req._id === e.target.value
+                      );
+                      setSelectedParking(request);
+                    }}
                   >
                     <option value="">Select Tenant & Parking ID</option>
                     {allParkingRequests
@@ -278,7 +291,10 @@ const ApproveParking = () => {
                       )
                       .map((request) => (
                         <option key={request._id} value={request._id}>
-                          {request.tenantId?.name} - {request._id}
+                          {(request.tenantId?.firstName || "") +
+                            " " +
+                            (request.tenantId?.lastName || "")}{" "}
+                          - {request._id}
                         </option>
                       ))}
                   </select>

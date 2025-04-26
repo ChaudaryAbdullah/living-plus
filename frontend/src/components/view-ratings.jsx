@@ -129,7 +129,7 @@ const ViewRatings = () => {
 
                 return (
                   <div className="property-card" key={property._id}>
-                    <h3 className="property-name">{property.name}</h3>
+                    <h3 className="property-name">{property.rentalName}</h3>
                     <p className="property-address">{property.address}</p>
                     <p className="property-amenities">{property.amenities}</p>
                     <p className="property-capacity">
