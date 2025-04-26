@@ -19,8 +19,8 @@ function ChatRoomLayout() {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedChatId, setSelectedChatId] = useState(chatId || null);
-  const [activeItem, setActiveItem] = useState("chats");
-  const [activePage, setActivePage] = useState("Chats");
+  const [activeItem, setActiveItem] = useState("messages");
+  const [activePage, setActivePage] = useState("Messages");
   // Update selectedChatId if chatId changes in URL
   useEffect(() => {
     if (chatId) {

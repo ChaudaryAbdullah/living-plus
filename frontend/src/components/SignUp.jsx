@@ -35,6 +35,12 @@ function SignUp() {
     navigate("/"); // Redirects to home route
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      handleClose();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -91,7 +97,12 @@ function SignUp() {
       <div className="signup-modal">
         <div className="modal-header">
           <h2>Sign-up</h2>
-          <button href="/" className="close-button" onClick={handleClose}>
+          <button
+            href="/"
+            className="close-button"
+            onClick={handleClose}
+            onKeyDown={handleKeyDown}
+          >
             ✕
           </button>
         </div>
@@ -151,7 +162,9 @@ function SignUp() {
           </div>
 
           <div className="form-group">
-            <label className="date-label">Date of Birth</label>
+            <label style={{ textAlign: "left" }} className="date-label">
+              Date of Birth
+            </label>
             <input
               type="date"
               name="dob"

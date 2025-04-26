@@ -5,7 +5,7 @@ import axios from "axios";
 import "./css/view-notifications.css";
 import Footer from "./Footer";
 import Header from "./Header";
-import Sidebar from "./owner-sidebar";
+import Sidebar from "./Sidebar";
 import "./css/view-ratings.css";
 
 const NotificationsPage = () => {

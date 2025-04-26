@@ -76,6 +76,9 @@ const ApplyParking = () => {
         `http://localhost:5556/parkingSlot/available/${rentalId}`,
         { withCredentials: true }
       );
+      response.data = response.data.filter(
+        (slot) => slot.is_occupied === false
+      );
       setParkingSlots(response.data);
 
       console.log("Fetched available parking slots:", response.data);
@@ -212,7 +215,9 @@ const ApplyParking = () => {
                 <form onSubmit={handleSubmit}>
                   {/* Rental Selection */}
                   <div className="form-group">
-                    <label htmlFor="rentalSelect">Choose Rental</label>
+                    <label style={{ textAlign: "left" }} htmlFor="rentalSelect">
+                      Choose Rental
+                    </label>
                     <select
                       id="rentalSelect"
                       name="rentalId"
@@ -239,7 +244,9 @@ const ApplyParking = () => {
 
                   {/* Parking Slot Selection */}
                   <div className="form-group">
-                    <label htmlFor="parkingSlot">Select Parking Slot</label>
+                    <label style={{ textAlign: "left" }} htmlFor="parkingSlot">
+                      Select Parking Slot
+                    </label>
                     <select
                       id="parkingSlot"
                       name="parkingSlot"
