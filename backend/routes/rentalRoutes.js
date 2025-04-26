@@ -1,20 +1,41 @@
+import multer from "multer";
 import express from "express";
 import { Rental } from "../models/rentalModel.js";
+import { uploadImage } from "../cloudinary.js";
 const router = express.Router();
 
-// Create a new rental
-router.post("/", async (req, res) => {
+const storage = multer.memoryStorage(); // store in memory first
+const upload = multer({ storage: storage });
+
+router.post("/", upload.array("images", 10), async (req, res) => {
   try {
     const { rentalName, address, facilities, totalRooms, availableRooms } =
       req.body;
+    const files = req.files; // access uploaded files
+    console.log("Files received:", files);
+
     if (
       !rentalName ||
       !address ||
       !facilities ||
       !totalRooms ||
-      !availableRooms
+      !availableRooms ||
+      !files ||
+      files.length === 0
     ) {
       return res.status(400).send({ message: "Please fill all the fields" });
+    }
+
+    const uploadedImageUrls = [];
+
+    for (const file of files) {
+      const buffer = file.buffer.toString("base64"); // convert buffer to base64
+      const imageUrl = await uploadImage(
+        `data:${file.mimetype};base64,${buffer}`
+      );
+      if (imageUrl) {
+        uploadedImageUrls.push(imageUrl);
+      }
     }
 
     const newRental = new Rental({
@@ -23,12 +44,16 @@ router.post("/", async (req, res) => {
       facilities,
       totalRooms,
       availableRooms,
+      images: uploadedImageUrls, // array of Cloudinary URLs
     });
+
     await newRental.save();
+
     return res
       .status(201)
       .send({ message: "New rental created successfully!" });
   } catch (err) {
+    console.error(err);
     return res.status(500).send({ message: err.message });
   }
 });
