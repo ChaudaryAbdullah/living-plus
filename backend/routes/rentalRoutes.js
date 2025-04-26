@@ -2,6 +2,8 @@ import multer from "multer";
 import express from "express";
 import { Rental } from "../models/rentalModel.js";
 import { uploadImage } from "../cloudinary.js";
+import { Owns } from "../models/ownsModel.js";
+
 const router = express.Router();
 
 const storage = multer.memoryStorage(); // store in memory first
@@ -48,6 +50,17 @@ router.post("/", upload.array("images", 10), async (req, res) => {
     });
 
     await newRental.save();
+    console.log("rental made");
+    const ownsData = {
+      rentalId: newRental._id,
+      ownerId: req.body.ownerId,
+    };
+
+    console.log("Creating owns relationship:", ownsData);
+
+    // Here you can call another controller, service, or simply save it
+    const newOwns = new Owns(ownsData); // Assuming you have an "Owns" model
+    await newOwns.save();
 
     return res
       .status(201)
