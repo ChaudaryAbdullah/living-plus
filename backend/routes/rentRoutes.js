@@ -20,13 +20,14 @@ router.post("/", async (req, res) => {
       return res.status(404).send({ message: "Rental not found" });
     }
     rental.availableRooms -= 1;
+    rental.status;
 
     // 2. Update Room
-    const room = await Room.findById(roomId); // << Correct model
+    const room = await Room.findById(roomId);
     if (!room) {
       return res.status(404).send({ message: "Room not found" });
     }
-    room.status = false; // << Correct assignment
+    room.status = "true";
 
     // 3. Create Rent record
     const newRent = new Rent({

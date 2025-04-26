@@ -106,7 +106,8 @@ const ApplyRental = () => {
       const response = await axios.get("http://localhost:5556/rooms");
 
       const filteredRooms = response.data.filter(
-        (room) => room.rentalId.toString() === rentalId
+        (room) =>
+          room.rentalId.toString() === rentalId && room.status == "available"
       );
 
       console.log("Rooms for selected rental:", filteredRooms);
@@ -215,7 +216,9 @@ const ApplyRental = () => {
           <div className="form-section">
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label htmlFor="rentalSelect">Choose Rental</label>
+                <label style={{ textAlign: "left" }} htmlFor="rentalSelect">
+                  Choose Rental
+                </label>
                 <select
                   id="rentalSelect"
                   name="rentalId"
@@ -234,7 +237,9 @@ const ApplyRental = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="roomSelect">Choose Room</label>
+                <label style={{ textAlign: "left" }} htmlFor="roomSelect">
+                  Choose Room
+                </label>
                 <select
                   id="roomSelect"
                   name="roomId"

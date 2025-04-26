@@ -176,7 +176,9 @@ const GiveFeedback = () => {
             {message && <p className="message">{message}</p>}
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label htmlFor="rental">Rental</label>
+                <label style={{ textAlign: "center" }} htmlFor="rental">
+                  Rental
+                </label>
                 <select
                   id="rental"
                   name="rental"
@@ -203,7 +205,9 @@ const GiveFeedback = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="rating">Rating</label>
+                <label style={{ textAlign: "center" }} htmlFor="rating">
+                  Rating
+                </label>
                 <input
                   type="number"
                   id="rating"
@@ -218,7 +222,9 @@ const GiveFeedback = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="description">Description</label>
+                <label style={{ textAlign: "center" }} htmlFor="description">
+                  Description
+                </label>
                 <textarea
                   id="description"
                   name="description"

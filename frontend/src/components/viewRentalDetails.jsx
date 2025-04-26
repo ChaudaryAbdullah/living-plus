@@ -132,7 +132,7 @@ const ViewRentalDetails = () => {
               </p>
               <p>
                 <strong>Total Rooms: </strong>
-                {rental.capacity}
+                {rental.totalRooms}
               </p>
               <p>
                 <strong>Available Rooms: </strong>

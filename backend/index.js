@@ -50,7 +50,12 @@ app.use(
     store: MongoStore.create({
       mongoUrl: "mongodb://localhost:27017/session-db",
     }),
-    cookie: { secure: false, httpOnly: true, maxAge: 3600000, sameSite: "lax" },
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      maxAge: 360000000,
+      sameSite: "lax",
+    },
   })
 );
 
@@ -133,4 +138,3 @@ server
       throw err;
     }
   });
-

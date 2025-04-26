@@ -16,7 +16,7 @@ const HomePage = () => {
           </a>
           <a href="#about">About us</a>
           <a href="#manage">Manage property</a>
-          <a href="#dashboard">Dashboard</a>
+          <a href="http://localhost:5173/dashboard">Dashboard</a>
         </div>
         <div className="auth-buttons">
           <a href="/login" className="login-btn">
@@ -45,17 +45,26 @@ const HomePage = () => {
         <h2>Featured Listings</h2>
         <div className="property-list">
           <div className="property-card">
-            <img src="/images/property1.jpg" alt="Property 1" />
+            <img
+              src="https://res.cloudinary.com/dsqfx4uwn/image/upload/v1745668151/rentals/qmyvagtzp6rlqmliughz.webp"
+              alt="Property 1"
+            />
             <h3>Alice Hostel | 123 elm Street</h3>
             <p>PKR 20,000 / month</p>
           </div>
           <div className="property-card">
-            <img src="/images/property2.jpg" alt="Property 2" />
+            <img
+              src="https://res.cloudinary.com/dsqfx4uwn/image/upload/v1745676282/rentals/wa333qd3c7wvjrvfekzj.jpg"
+              alt="Property 2"
+            />
             <h3>Dilawar Heights | 456 Maple Ave</h3>
             <p>PKR 50,000 / month</p>
           </div>
           <div className="property-card">
-            <img src="/images/property3.jpg" alt="Property 3" />
+            <img
+              src="https://res.cloudinary.com/dsqfx4uwn/image/upload/v1745668151/rentals/qmyvagtzp6rlqmliughz.webp"
+              alt="Property 3"
+            />
             <h3>Bussiness Lawn | 14 Willow Blvd</h3>
             <p>PKR 80,000 / month</p>
           </div>

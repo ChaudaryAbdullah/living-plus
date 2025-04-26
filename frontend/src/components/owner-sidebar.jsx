@@ -81,8 +81,38 @@ const OwnerSidebar = ({ activeItem, setActiveItem }) => {
     { id: "logout", path: "/", icon: <LogOut size={24} />, label: "Logout" },
   ];
 
-  const handleItemClick = (id) => {
-    setActiveItem(id);
+  const handleItemClick = async (id, path) => {
+    if (id === "LogOut") {
+      try {
+        // Execute logout fetch operation
+        await fetch("http://localhost:5556/profile/logout", {
+          method: "POST",
+          credentials: "include",
+        });
+
+        // Clear local storage
+        localStorage.clear();
+
+        // Clear user state if setUser is available
+        if (typeof setUser === "function") {
+          setUser(null);
+        }
+
+        // Call onLogout function if provided
+        if (typeof onLogout === "function") {
+          onLogout();
+        }
+
+        // Redirect to login page
+        window.location.href = "http://localhost:5173/login";
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    } else {
+      // Normal navigation for other menu items
+      setActiveItem(id);
+      navigate(path);
+    }
   };
 
   return (
