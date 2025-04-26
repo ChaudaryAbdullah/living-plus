@@ -92,11 +92,11 @@ const ApplyParking = () => {
       ...formData,
       [name]: value,
     });
-
+    console.log(value);
     // Fetch parking slots when a rental is selected
     if (name === "rentalId" && value) {
       setParkingSlots([]); // Reset parking slots before fetching new ones
-      await fetchParkingSlots(value);
+      fetchParkingSlots(value);
     }
   };
 
@@ -125,7 +125,7 @@ const ApplyParking = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(formData.rentalId);
     if (!formData.rentalId || !formData.parkingSlot) {
       toast.error("Please select both a rental and a parking slot!", {
         // variants: success | info | warning | error | default
@@ -140,9 +140,13 @@ const ApplyParking = () => {
 
     try {
       setLoading(true);
+      console.log(formData);
       const response = await axios.post(
         "http://localhost:5556/parkingRequest",
-        formData,
+        {
+          slotId: formData.parkingSlot,
+          tenantId: user.user.tenantId,
+        },
         { withCredentials: true }
       );
       const ownerId = await getOwnerIdByRentalId(formData.rentalId);
@@ -222,8 +226,11 @@ const ApplyParking = () => {
                         <option disabled>No rentals available</option>
                       ) : (
                         userRentals.map((rental) => (
-                          <option key={rental._id} value={rental._id}>
-                            {rental.rentalName || "Unnamed Rental"}
+                          <option
+                            key={rental.rentalId._id}
+                            value={rental.rentalId._id}
+                          >
+                            {rental.rentalId.rentalName || "Unnamed Rental"}
                           </option>
                         ))
                       )}

@@ -18,7 +18,7 @@ const HostelRegistrationForm = () => {
     address: "",
     facilities: "",
     totalRooms: "",
-    availableRooms: "",
+    availableRooms: "0",
     images: [], // make images an array, not a string!
     ownerId: "",
   });
@@ -93,7 +93,7 @@ const HostelRegistrationForm = () => {
           address: "",
           facilities: "",
           totalRooms: "",
-          availableRooms: "",
+          availableRooms: "0",
           images: [],
         });
       } else {
@@ -135,7 +135,6 @@ const HostelRegistrationForm = () => {
                 { id: "address", label: "Address" },
                 { id: "facilities", label: "Amenities" },
                 { id: "totalRooms", label: "Capacity" },
-                { id: "availableRooms", label: "Available Rooms" },
               ].map(({ id, label }) => (
                 <div className="form-group" key={id}>
                   <label

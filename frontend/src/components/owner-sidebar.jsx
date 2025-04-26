@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -74,7 +74,7 @@ const OwnerSidebar = ({ activeItem, setActiveItem }) => {
     },
     {
       id: "messages",
-      path: "/messages",
+      path: "/chats",
       icon: <Mail size={24} />,
       label: "Messages",
     },

@@ -132,7 +132,9 @@ const AddRooms = () => {
             <div className="divider"></div>
             <form className="add-room-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <label htmlFor="rentalId">Select Rental</label>
+                <label style={{ textAlign: "left" }} htmlFor="rentalId">
+                  Select Rental
+                </label>
 
                 <select
                   id="rentalSelect"
@@ -151,7 +153,9 @@ const AddRooms = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="rtype">Room Type</label>
+                <label style={{ textAlign: "left" }} htmlFor="rtype">
+                  Room Type
+                </label>
                 <select
                   id="rtype"
                   name="rtype"
@@ -166,7 +170,9 @@ const AddRooms = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="description">Description</label>
+                <label style={{ textAlign: "left" }} htmlFor="description">
+                  Description
+                </label>
                 <textarea
                   id="description"
                   name="description"
@@ -178,24 +184,14 @@ const AddRooms = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="price">Price</label>
+                <label style={{ textAlign: "left" }} htmlFor="price">
+                  Price
+                </label>
                 <input
                   type="text"
                   id="price"
                   name="price"
                   value={formData.price}
-                  onChange={handleChange}
-                  className="form-control"
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="picture">Room Picture (URL)</label>
-                <input
-                  type="text"
-                  id="picture"
-                  name="picture"
-                  value={formData.picture}
                   onChange={handleChange}
                   className="form-control"
                 />

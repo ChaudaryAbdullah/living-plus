@@ -1,13 +1,17 @@
 import { ParkingRequest } from "../models/parkingRequestModel.js";
 import { ParkingAllocation } from "../models/parkingAllocationModel.js";
 import express from "express";
+import { log } from "console";
+import { console } from "inspector";
 const router = express.Router();
 
 // Create a new parking request
 router.post("/", async (req, res) => {
   try {
     const { slotId, tenantId } = req.body;
-
+    console.log(slotId, tenantId);
+    if (!slotId || !tenantId)
+      return res.status(404).json({ message: "Something went wrong" });
     const newRequest = new ParkingRequest({ slotId, tenantId });
     await newRequest.save();
 
@@ -73,51 +77,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Update a parking request
-router.put("/:id", async (req, res) => {
+router.post("/accept/:parkingRequestId", async (req, res) => {
   try {
-    const { slotId, tenantId } = req.body;
-    const updatedRequest = await ParkingRequest.findByIdAndUpdate(
-      req.params.id,
-      { slotId, tenantId },
-      { new: true }
-    );
+    const { parkingRequestId } = req.params;
 
-    if (!updatedRequest) {
-      return res.status(404).json({ message: "Parking request not found" });
-    }
-
-    res.status(200).json(updatedRequest);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Delete a parking request
-router.delete("/:id", async (req, res) => {
-  try {
-    const deletedRequest = await ParkingRequest.findOneAndDelete({ slotId });
-
-    if (!deletedRequest) {
-      return res.status(404).json({ message: "Parking request not found" });
-    }
-
-    res.status(200).json({ message: "Parking request deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-router.post("/accept/:slotId", async (req, res) => {
-  try {
-    const { slotId } = req.params;
-
-    // Find the parking request by slotId
-    const request = await ParkingRequest.findOne({ slotId });
+    // Find the parking request by its ID
+    const request = await ParkingRequest.findById(parkingRequestId);
+    console.log(request);
     if (!request) {
-      return res
-        .status(404)
-        .json({ message: "Parking request not found for this slot" });
+      return res.status(404).json({ message: "Parking request not found" });
+    }
+
+    // Check if slot already allocated
+    const existingAllocation = await ParkingAllocation.findOne({
+      slotId: request.slotId,
+    });
+    if (existingAllocation) {
+      return res.status(400).json({ message: "Slot is already allocated" });
     }
 
     // Move request to ParkingAllocation
@@ -128,9 +104,34 @@ router.post("/accept/:slotId", async (req, res) => {
     await newAllocation.save();
 
     // Delete the accepted request
-    await ParkingRequest.findOneAndDelete({ slotId });
+    await ParkingRequest.findByIdAndDelete(request._id);
 
-    res.status(200).json({ message: "Parking request accepted and allocated" });
+    res.status(200).json({
+      message: "Parking request accepted and allocated",
+      allocation: newAllocation,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.delete("/reject/:parkingRequestId", async (req, res) => {
+  try {
+    const { parkingRequestId } = req.params;
+
+    // Find the parking request by its ID
+    const request = await ParkingRequest.findById(parkingRequestId);
+    console.log(request);
+    if (!request) {
+      return res.status(404).json({ message: "Parking request not found" });
+    }
+
+    // Delete the accepted request
+    await ParkingRequest.findByIdAndDelete(request._id);
+
+    res.status(200).json({
+      message: "Parking request rejected",
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

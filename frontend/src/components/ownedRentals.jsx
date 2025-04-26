@@ -89,7 +89,7 @@ const ownedRentals = () => {
                       <td>{rental.rentalName}</td>
                       <td>{rental.address}</td>
                       <td>{rental.availableRooms}</td>
-                      <td>{rental.capacity}</td>
+                      <td>{rental.totalRooms}</td>
                     </tr>
                   ))}
                 </tbody>
