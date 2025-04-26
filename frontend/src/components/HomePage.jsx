@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./css/HomePage.css";
+import { href } from "react-router-dom";
 
 const HomePage = () => {
   // State for active tab
@@ -36,7 +37,14 @@ const HomePage = () => {
             Connecting users directly with property managers to discover their
             dream home.
           </p>
-          <button className="get-started-btn">Get Started</button>
+          <button
+            className="get-started-btn"
+            onClick={() => {
+              window.location.href = "http://localhost:5173/login";
+            }}
+          >
+            Get Started
+          </button>
         </div>
       </section>
 

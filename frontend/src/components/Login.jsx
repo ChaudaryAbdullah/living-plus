@@ -58,6 +58,12 @@ const LoginForm = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      handleClose();
+    }
+  };
+
   const handleClose = () => {
     navigate("/"); // Redirects to home route
   };
@@ -67,7 +73,11 @@ const LoginForm = () => {
       <div className="login-form">
         <div className="login-header">
           <h2>Login</h2>
-          <button className="close-button" onClick={handleClose}>
+          <button
+            className="close-button"
+            onKeyDown={handleKeyDown}
+            onClick={handleClose}
+          >
             ✕
           </button>
         </div>

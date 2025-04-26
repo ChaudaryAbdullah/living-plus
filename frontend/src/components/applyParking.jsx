@@ -76,6 +76,9 @@ const ApplyParking = () => {
         `http://localhost:5556/parkingSlot/available/${rentalId}`,
         { withCredentials: true }
       );
+      response.data = response.data.filter(
+        (slot) => slot.is_occupied === false
+      );
       setParkingSlots(response.data);
 
       console.log("Fetched available parking slots:", response.data);

@@ -21,8 +21,8 @@ const PaymentRenter = () => {
   const [dueDateFilter, setDueDateFilter] = useState("");
   const [amountFilter, setAmountFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [activeItem, setActiveItem] = useState("payment");
-  const [activePage, setActivePage] = useState("Payment");
+  const [activeItem, setActiveItem] = useState("billing");
+  const [activePage, setActivePage] = useState("Billing");
 
   // Fetch user profile to get tenant ID
   const fetchUser = async () => {

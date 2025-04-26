@@ -13,8 +13,8 @@ const PaymentOwner = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState("");
-  const [activeItem, setActiveItem] = useState("payment");
-  const [activePage, setActivePage] = useState("Payment");
+  const [activeItem, setActiveItem] = useState("billing");
+  const [activePage, setActivePage] = useState("Billing");
   const [tenants, setTenants] = useState([]);
   const [bills, setBills] = useState([]);
   const [user, setUser] = useState(null);
