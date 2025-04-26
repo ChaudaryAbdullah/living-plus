@@ -17,6 +17,7 @@
     "@cloudinary/react": "^1.14.1",
     "@cloudinary/url-gen": "^1.21.0",
     "axios": "^1.8.4",
+    "axios-mock-adapter": "^2.1.0",
     "jspdf": "^3.0.1",
     "lucide-react": "^0.483.0",
     "ngx-toastr": "^19.0.0",

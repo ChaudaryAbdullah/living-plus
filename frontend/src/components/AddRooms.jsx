@@ -1,6 +1,11 @@
 "use client";
+<<<<<<< HEAD
 import { ToastContainer, toast } from "react-toastify";
 import { useState, useEffect } from "react";
+=======
+
+import React,{ useState, useEffect } from "react";
+>>>>>>> 6b747bec6f1b5a504f73ee0219a42d71b2d1fbd5
 import "./css/AddRooms.css";
 import Header from "./Header";
 import Sidebar from "./owner-sidebar";
@@ -13,6 +18,7 @@ const AddRooms = () => {
   const [activePage, setActivePage] = useState("Add Rooms");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
   const [rentals, setRentals] = useState([]);
   const [formData, setFormData] = useState({
     rentalId: "",
