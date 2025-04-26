@@ -1,5 +1,5 @@
 "use client";
-
+import { ToastContainer, toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/applyParking.css";
@@ -101,33 +101,40 @@ const ApplyParking = () => {
   };
 
   const getOwnerIdByRentalId = async (rentalId) => {
-        try {
-          const res = await axios.get(`http://localhost:5556/owns/${rentalId}`, {
-            withCredentials: true
-          });
-      
-          const rentalArray = res.data;
-      
-          if (!Array.isArray(rentalArray) || rentalArray.length === 0) {
-            console.warn("No rental data found");
-            return null;
-          }
-      
-          const rental = rentalArray[0];
-          const ownerId = rental._id; // Assuming this is the owner's ID
-      
-          return ownerId;
-        } catch (error) {
-          console.error("Failed to fetch owner by rentalId:", error);
-          return null;
-        }
-      };
+    try {
+      const res = await axios.get(`http://localhost:5556/owns/${rentalId}`, {
+        withCredentials: true,
+      });
+
+      const rentalArray = res.data;
+
+      if (!Array.isArray(rentalArray) || rentalArray.length === 0) {
+        console.warn("No rental data found");
+        return null;
+      }
+
+      const rental = rentalArray[0];
+      const ownerId = rental._id; // Assuming this is the owner's ID
+
+      return ownerId;
+    } catch (error) {
+      console.error("Failed to fetch owner by rentalId:", error);
+      return null;
+    }
+  };
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.rentalId || !formData.parkingSlot) {
-      alert("Please select both a rental and a parking slot.");
+      toast.error("Please select both a rental and a parking slot!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
       return;
     }
 
@@ -139,18 +146,29 @@ const ApplyParking = () => {
         { withCredentials: true }
       );
       const ownerId = await getOwnerIdByRentalId(formData.rentalId);
-                  console.log("OwnerId", ownerId)
-                  const notificationData = {
-                          tenantId: ownerId,
-                          date: new Date().toISOString(),
-                          description: `New Parking Application.`
-                        };
-                  console.log("Notification data:", notificationData);  
-                  await axios.post(`http://localhost:5556/notifications`, notificationData, {
-                    withCredentials: true
-                  });
+      console.log("OwnerId", ownerId);
+      const notificationData = {
+        tenantId: ownerId,
+        date: new Date().toISOString(),
+        description: `New Parking Application.`,
+      };
+      console.log("Notification data:", notificationData);
+      await axios.post(
+        `http://localhost:5556/notifications`,
+        notificationData,
+        {
+          withCredentials: true,
+        }
+      );
       console.log("Parking application submitted:", response.data);
-      alert("Parking slot applied successfully!");
+      toast.success("Parking slot applied successfully!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
 
       // Reset form after successful submission
       setFormData({
@@ -160,7 +178,14 @@ const ApplyParking = () => {
       setParkingSlots([]); // Clear parking slots when form resets
     } catch (error) {
       console.error("Error submitting parking application:", error);
-      alert("Failed to apply for parking.");
+      toast.error("Failed to apply for parking!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
     } finally {
       setLoading(false);
     }
@@ -244,6 +269,7 @@ const ApplyParking = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };

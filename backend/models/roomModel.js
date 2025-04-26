@@ -26,7 +26,7 @@ const roomSchema = new mongoose.Schema(
       required: true,
     },
     picture: {
-      type: String, // Storing image URL or file path
+      type: [String], // Storing image URL or file path
       maxlength: 256,
     },
   },

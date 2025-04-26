@@ -1,5 +1,5 @@
 "use client";
-
+import { ToastContainer, toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/approve-parking.css";
@@ -106,7 +106,15 @@ const ApproveParking = () => {
       );
 
       await Promise.all(requests);
-      alert("Parking created Successfully!");
+
+      toast.success("Parking created Successfully!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
       console.log("Parking created Successfully!");
       fetchParkingRequestsForAll(userRentals);
     } catch (error) {
@@ -116,7 +124,15 @@ const ApproveParking = () => {
 
   // Approve action
   const handleAccept = async () => {
-    if (!selectedParking) return alert("Select a parking request to accept.");
+    if (!selectedParking)
+      return toast.error("Select a parking request to accept!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
 
     try {
       await axios.post(
@@ -130,7 +146,7 @@ const ApproveParking = () => {
       //         date: new Date().toISOString(),
       //         description: `Your Application has been accepted.`
       //       };
-      // console.log("Notification data:", notificationData);  
+      // console.log("Notification data:", notificationData);
       // await axios.post(`http://localhost:5556/notifications`, notificationData, {
       //   withCredentials: true
       // });
@@ -142,7 +158,15 @@ const ApproveParking = () => {
 
   // Reject action
   const handleReject = async () => {
-    if (!selectedParking) return alert("Select a parking request to reject.");
+    if (!selectedParking)
+      return toast.error("Select a parking request to reject!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
 
     try {
       await axios.delete(
@@ -271,6 +295,7 @@ const ApproveParking = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };

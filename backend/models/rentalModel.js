@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const rentalSchema = new mongoose.Schema(
   {
@@ -20,6 +21,10 @@ const rentalSchema = new mongoose.Schema(
     },
     availableRooms: {
       type: Number,
+      required: true,
+    },
+    images: {
+      type: [String],
       required: true,
     },
   },

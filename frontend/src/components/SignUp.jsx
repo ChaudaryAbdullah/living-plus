@@ -1,4 +1,5 @@
 "use client";
+import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import axios from "axios";
@@ -53,6 +54,15 @@ function SignUp() {
 
       await Promise.all(endpoints);
       setSuccessMessage("Account created successfully!");
+
+      toast.success("Account created successfully!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 30000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
       setFormData({
         userName: "",
         firstName: "",
@@ -65,6 +75,14 @@ function SignUp() {
       });
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong.");
+      toast.error(`${err.response?.data?.message || "Something went wrong."}`, {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 30000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
     }
   };
 
@@ -73,7 +91,9 @@ function SignUp() {
       <div className="signup-modal">
         <div className="modal-header">
           <h2>Sign-up</h2>
-          <button href="/"className="close-button" onClick={handleClose}>✕</button>
+          <button href="/" className="close-button" onClick={handleClose}>
+            ✕
+          </button>
         </div>
 
         <p className="description">
@@ -179,6 +199,7 @@ function SignUp() {
           </button>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 }

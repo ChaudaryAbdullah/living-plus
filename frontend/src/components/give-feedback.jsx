@@ -1,3 +1,4 @@
+import { ToastContainer, toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/give-feedback.css";
@@ -65,27 +66,27 @@ const GiveFeedback = () => {
     }));
   };
   const getOwnerIdByRentalId = async (rentalId) => {
-      try {
-        const res = await axios.get(`http://localhost:5556/owns/${rentalId}`, {
-          withCredentials: true
-        });
-    
-        const rentalArray = res.data;
-    
-        if (!Array.isArray(rentalArray) || rentalArray.length === 0) {
-          console.warn("No rental data found");
-          return null;
-        }
-    
-        const rental = rentalArray[0];
-        const ownerId = rental._id; // Assuming this is the owner's ID
-    
-        return ownerId;
-      } catch (error) {
-        console.error("Failed to fetch owner by rentalId:", error);
+    try {
+      const res = await axios.get(`http://localhost:5556/owns/${rentalId}`, {
+        withCredentials: true,
+      });
+
+      const rentalArray = res.data;
+
+      if (!Array.isArray(rentalArray) || rentalArray.length === 0) {
+        console.warn("No rental data found");
         return null;
       }
-    };
+
+      const rental = rentalArray[0];
+      const ownerId = rental._id; // Assuming this is the owner's ID
+
+      return ownerId;
+    } catch (error) {
+      console.error("Failed to fetch owner by rentalId:", error);
+      return null;
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(""); // Clear previous messages
@@ -113,25 +114,51 @@ const GiveFeedback = () => {
         { withCredentials: true }
       );
       const ownerId = await getOwnerIdByRentalId(formData.rental);
-            console.log("OwnerId", ownerId)
-            const notificationData = {
-                    tenantId: ownerId,
-                    date: new Date().toISOString(),
-                    description: `New Feedback has been sent.`
-                  };
-            console.log("Notification data:", notificationData);  
-            await axios.post(`http://localhost:5556/notifications`, notificationData, {
-              withCredentials: true
-            });
+      console.log("OwnerId", ownerId);
+      const notificationData = {
+        tenantId: ownerId,
+        date: new Date().toISOString(),
+        description: `New Feedback has been sent.`,
+      };
+      console.log("Notification data:", notificationData);
+      await axios.post(
+        `http://localhost:5556/notifications`,
+        notificationData,
+        {
+          withCredentials: true,
+        }
+      );
       if (response.status === 201) {
-        alert("Feedback submitted successfully!");
+        toast.success("Feedback submitted successfully!", {
+          // variants: success | info | warning | error | default
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        });
         setFormData({ rental: "", rating: "", description: "" });
       } else {
-        alert("Failed to submit feedback. Please try again.");
+        toast.error("Failed to submit feedback. Please try again!", {
+          // variants: success | info | warning | error | default
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          draggable: true,
+          theme: "colored",
+        });
       }
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      alert("An error occurred. Please try again later.");
+
+      toast.error("An error occurred. Please try again later!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
     }
   };
 
@@ -211,6 +238,7 @@ const GiveFeedback = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };

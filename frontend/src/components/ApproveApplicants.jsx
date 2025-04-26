@@ -1,5 +1,5 @@
 "use client";
-
+import { ToastContainer, toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Footer from "./Footer";
@@ -120,16 +120,20 @@ const ApproveApplicants = () => {
         { withCredentials: true }
       );
 
-      console.log("TenantID", tenantResponse.data._id)
+      console.log("TenantID", tenantResponse.data._id);
       const notificationData = {
-              tenantId: tenantResponse.data._id,
-              date: new Date().toISOString(),
-              description: `Your Application has been accepted.`
-            };
-      console.log("Notification data:", notificationData);  
-      await axios.post(`http://localhost:5556/notifications`, notificationData, {
-        withCredentials: true
-      });
+        tenantId: tenantResponse.data._id,
+        date: new Date().toISOString(),
+        description: `Your Application has been accepted.`,
+      };
+      console.log("Notification data:", notificationData);
+      await axios.post(
+        `http://localhost:5556/notifications`,
+        notificationData,
+        {
+          withCredentials: true,
+        }
+      );
 
       // Remove applicant from applyRentals using applicantId
       await axios.delete(`http://localhost:5556/applyRental/${applicationId}`, {
@@ -139,7 +143,14 @@ const ApproveApplicants = () => {
       // Update state
       setApplicants((prev) => prev.filter((app) => app._id !== applicationId));
       console.log(`Accepted applicant ${applicationId} and moved to Rent.`);
-      alert("Application accepted successfully!");
+      toast.success("Application accepted successfully!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
     } catch (error) {
       console.error("Error accepting applicant:", error);
     }
@@ -154,7 +165,15 @@ const ApproveApplicants = () => {
 
       // Update state
       setApplicants((prev) => prev.filter((app) => app._id !== applicantId));
-      alert("Application rejected successfully!");
+
+      toast.success("Application rejected successfully!", {
+        // variants: success | info | warning | error | default
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        draggable: true,
+        theme: "colored",
+      });
       console.log(`Rejected applicant ${applicantId}.`);
     } catch (error) {
       console.error("Error rejecting applicant:", error);
@@ -206,6 +225,7 @@ const ApproveApplicants = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };
