@@ -5,7 +5,7 @@ import "./css/rental-view.css";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
-import { Link } from "react-router-dom";
+import RentalCard from "./rentalCard";
 
 const RentalView = () => {
   const [rentals, setRentals] = useState([]);
@@ -55,37 +55,7 @@ const RentalView = () => {
           <div className="property-grid">
             {filteredRentals.length > 0 ? (
               filteredRentals.map((rental) => (
-                <div className="property-card" key={rental._id}>
-                  <div className="property-image">
-                    <img
-                      src={rental.image || "/placeholder.svg"}
-                      alt={rental.rentalName}
-                    />
-                  </div>
-                  <div className="property-details">
-                    <h3 className="property-title">{rental.rentalName}</h3>
-                    <p className="property-address">{rental.address}</p>
-                    <div className="property-specs">
-                      <p className="property-units">
-                        Total Rooms: {rental.totalRooms}
-                      </p>
-                      <p className="property-beds">
-                        Available: {rental.availableRooms}
-                      </p>
-                    </div>
-                    <div className="property-footer">
-                      <span className="property-price">
-                        Facilities: {rental.facilities.join(", ")}
-                      </span>
-                    </div>
-                    <Link
-                      to={`/rental/${rental._id}`}
-                      className="view-property-btn"
-                    >
-                      View Property
-                    </Link>
-                  </div>
-                </div>
+                <RentalCard key={rental._id} rental={rental} />
               ))
             ) : (
               <p>No properties found.</p>

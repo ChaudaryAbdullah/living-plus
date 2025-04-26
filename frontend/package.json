@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@angular/animations": "^19.2.8",
+    "@cloudinary/react": "^1.14.1",
+    "@cloudinary/url-gen": "^1.21.0",
     "axios": "^1.8.4",
     "jspdf": "^3.0.1",
     "lucide-react": "^0.483.0",

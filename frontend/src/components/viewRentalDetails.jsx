@@ -10,6 +10,7 @@ import Footer from "./Footer";
 
 const ViewRentalDetails = () => {
   const { id } = useParams(); // URL param from /rental/:id
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [rental, setRental] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [user, setUser] = useState(null);
@@ -35,6 +36,7 @@ const ViewRentalDetails = () => {
     };
     fetchCurrentUser();
   }, []);
+
   useEffect(() => {
     const fetchRental = async () => {
       try {
@@ -80,10 +82,48 @@ const ViewRentalDetails = () => {
         <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
 
         <div className="main-body">
-          <img
-            src={rental.image || "/placeholder.svg"}
-            alt={rental.rentalName}
-          />
+          <div className="image-slider-container">
+            {rental.images && rental.images.length > 0 ? (
+              <div className="image-slider">
+                <img
+                  src={rental.images[currentImageIndex]}
+                  alt={`Rental Image ${currentImageIndex + 1}`}
+                  className="rental-image"
+                />
+
+                {/* Left Button */}
+                {rental.images.length > 1 && (
+                  <button
+                    className="slider-btn left"
+                    onClick={() =>
+                      setCurrentImageIndex((prev) =>
+                        prev === 0 ? rental.images.length - 1 : prev - 1
+                      )
+                    }
+                  >
+                    ‹
+                  </button>
+                )}
+
+                {/* Right Button */}
+                {rental.images.length > 1 && (
+                  <button
+                    className="slider-btn right"
+                    onClick={() =>
+                      setCurrentImageIndex((prev) =>
+                        prev === rental.images.length - 1 ? 0 : prev + 1
+                      )
+                    }
+                  >
+                    ›
+                  </button>
+                )}
+              </div>
+            ) : (
+              <img src="/placeholder.svg" alt="No images available" />
+            )}
+          </div>
+
           <div className="rental-grid">
             <div className="rental-details">
               <h1>{rental.rentalName}</h1>
@@ -100,7 +140,7 @@ const ViewRentalDetails = () => {
               </p>
               <p>
                 <strong>Facilities: </strong>
-                {rental.amenities.join(", ")}
+                {rental.facilities.join(", ")}
               </p>
             </div>
 
