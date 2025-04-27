@@ -133,7 +133,7 @@ const ViewRatings = () => {
                     <p className="property-address">{property.address}</p>
                     <p className="property-amenities">{property.amenities}</p>
                     <p className="property-capacity">
-                      Capacity: {property.capacity}
+                      Capacity: {property.totalRooms}
                     </p>
 
                     <div className="property-ratings">
