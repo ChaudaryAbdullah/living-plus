@@ -1,7 +1,8 @@
 .chat-layout {
   width: 100%;
+  height: 85vh; /* Full viewport height */
   display: flex;
-  min-height: 150vh;
+  flex-direction: row;
 }
 
 .chat-sidebar {
@@ -27,38 +28,33 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  height: 85vh; /* Very important */
 }
 
 .messages {
-  flex-grow: 1;
+  flex: 1;
   overflow-y: auto;
   padding: 20px;
   background: #f9f9f9;
-  width: 100%;
-  /* width: 40rem; */
+  display: flex;
+  flex-direction: column;
 }
 
 .msg {
-  /* max-width: 60%;
-  min-width: 20%; */
-
-  margin: 5px;
+  max-width: 70%;
+  margin: 5px 0;
   padding: 10px;
   border-radius: 10px;
   word-wrap: break-word;
 }
 
 .sender {
-  width: 130px;
+  align-self: flex-start;
   background-color: #cce5ff;
 }
 
 .recipient {
-  display: flex;
-  justify-items: flex-end;
-  /* align-self: flex-start; */
-  width: 150px;
+  align-self: flex-end;
   background-color: #f1f1f1;
 }
 
