@@ -121,7 +121,7 @@ const NotificationsPage = () => {
   return (
     <div className="app-container">
       <Header title={activePage} />
-      <div className="main-content">
+      <div className="notification-main-content">
         <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
         <main className="main-body">
           <div className="notifications-header">

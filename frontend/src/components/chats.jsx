@@ -147,7 +147,11 @@ function ChatRoomLayout() {
       <Header title={activePage} />
 
       <div className="main-content">
-        <Sidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+        <Sidebar
+          // style={{ minHeight: "90vh" }}
+          activeItem={activeItem}
+          setActiveItem={setActiveItem}
+        />
         <div className="chat-layout">
           <div className="chat-sidebar">
             <h2>Chats</h2>
