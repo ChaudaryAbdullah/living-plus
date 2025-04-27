@@ -90,7 +90,7 @@ const AddRooms = () => {
       if (response.ok) {
         toast.success("Room added Successful!", {
           // variants: success | info | warning | error | default
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
           draggable: true,
@@ -109,7 +109,7 @@ const AddRooms = () => {
       } else {
         toast.error("Some fields are missing!", {
           // variants: success | info | warning | error | default
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
           draggable: true,
